@@ -1,13 +1,9 @@
 import { expect, test } from '@playwright/test'
+import { clearAuthState } from '../helpers/auth'
 
 test.describe('登录流程', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login', { waitUntil: 'commit' })
-    await page.evaluate(() => {
-      localStorage.clear()
-      sessionStorage.clear()
-    })
-    await page.waitForLoadState('load')
+    await clearAuthState(page)
   })
 
   test('账号密码登录成功', async ({ page }) => {

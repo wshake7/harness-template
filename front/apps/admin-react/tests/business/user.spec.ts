@@ -1,22 +1,9 @@
 import { expect, test } from '@playwright/test'
-
-async function login(page: any) {
-  await page.goto('/login', { waitUntil: 'commit' })
-  await page.evaluate(() => {
-    localStorage.clear()
-    sessionStorage.clear()
-  })
-  await page.waitForLoadState('load')
-  await page.getByPlaceholder('用户名: admin or user').fill('admin')
-  await page.getByPlaceholder('密码: ant.design').fill('123456')
-  await page.getByRole('button', { name: '登 录' }).click()
-  await page.waitForURL('**/')
-}
+import { gotoAsAdmin } from '../helpers/auth'
 
 test.describe('用户管理', () => {
   test.beforeEach(async ({ page }) => {
-    await login(page)
-    await page.goto('/account/user')
+    await gotoAsAdmin(page, '/account/user')
   })
 
   test('页面加载显示用户列表', async ({ page }) => {

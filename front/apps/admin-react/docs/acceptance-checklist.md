@@ -29,22 +29,35 @@
 | 字典管理 | `tests/business/dict.spec.ts` | 类型列表显示 | 已完成 |
 | 角色管理 | `tests/business/role.spec.ts` | 角色列表、创建抽屉 | 已完成 |
 | 菜单管理 | `tests/business/menu.spec.ts` | 菜单列表、创建抽屉 | 已完成 |
+| API 资源管理 | `tests/business/resource-api.spec.ts` | 列表加载、创建抽屉、路径必填校验 | 已完成 |
+| 语言管理 | `tests/business/language.spec.ts` | 语言类型列表、创建入口 | 已完成 |
+| 任务配置 | `tests/business/job-schedule.spec.ts` | 列表加载、创建抽屉、必填校验 | 已完成 |
+| 执行记录 | `tests/business/job-execution.spec.ts` | 列表加载、详情弹窗 | 已完成 |
+| API 日志 | `tests/business/api-log.spec.ts` | 日志列表、详情弹窗 | 已完成 |
+| 登录日志 | `tests/business/login-log.spec.ts` | 日志列表、详情弹窗 | 已完成 |
+
+E2E 使用 `VITE_MOCK=true` 启动本地 mock 服务，不依赖真实后端。`playwright.config.ts` 固定 `workers: 1`，避免登录态、mock 内存数据和 Vite dev server 在多 worker 下互相干扰。
 
 ## 二、本地测试命令
 
 ```bash
 # 单元测试
 cd front/apps/admin-react
-pnpm test
+node_modules/.bin/vp test --run
 
 # 组件测试
-pnpm ct
+node_modules/.bin/playwright test -c playwright-ct.config.ts
 
 # E2E 测试
-pnpm e2e
+node_modules/.bin/playwright test -c playwright.config.ts
 
 # 全量测试
-pnpm test && pnpm ct && pnpm e2e
+node_modules/.bin/vp test --run \
+  && node_modules/.bin/playwright test -c playwright-ct.config.ts \
+  && node_modules/.bin/playwright test -c playwright.config.ts
+
+# 仓库级门禁
+./scripts/ci.sh
 ```
 
 ## 三、自动化门禁
@@ -59,6 +72,7 @@ pnpm test && pnpm ct && pnpm e2e
 - 所有单元测试通过
 - 所有组件测试通过
 - 所有 E2E 测试通过
+- `./scripts/ci.sh` 通过
 
 ## 四、已知限制
 
@@ -66,3 +80,4 @@ pnpm test && pnpm ct && pnpm e2e
 2. **AntIconPicker**：依赖 ResizeObserver 和大量 DOM 操作，CT 测试较复杂，后续迭代
 3. **文件上传/下载**：当前业务不涉及，暂不覆盖
 4. **移动端适配**：当前只测试 Desktop Chrome
+5. **深度 CRUD**：当前 E2E 以核心页面冒烟、抽屉/详情和关键校验为主，完整新增、编辑、删除和筛选链路后续按业务优先级补齐

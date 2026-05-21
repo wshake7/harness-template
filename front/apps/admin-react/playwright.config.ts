@@ -5,6 +5,7 @@ const base = createPlaywrightConfig()
 
 export default {
   ...base,
+  workers: 1,
   use: {
     ...base.use,
     baseURL: 'http://localhost:3000',

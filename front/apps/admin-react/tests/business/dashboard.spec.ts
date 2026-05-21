@@ -1,26 +1,13 @@
 import { expect, test } from '@playwright/test'
-
-async function login(page: any) {
-  await page.goto('/login', { waitUntil: 'commit' })
-  await page.evaluate(() => {
-    localStorage.clear()
-    sessionStorage.clear()
-  })
-  await page.waitForLoadState('load')
-  await page.getByPlaceholder('用户名: admin or user').fill('admin')
-  await page.getByPlaceholder('密码: ant.design').fill('123456')
-  await page.getByRole('button', { name: '登 录' }).click()
-  await page.waitForURL('**/')
-}
+import { gotoAsAdmin } from '../helpers/auth'
 
 test.describe('Dashboard 页面', () => {
   test.beforeEach(async ({ page }) => {
-    await login(page)
-    await page.goto('/dashboard')
+    await gotoAsAdmin(page, '/dashboard')
   })
 
   test('页面加载显示欢迎信息', async ({ page }) => {
-    await expect(page.getByText('Hello "/_app/dashboard"!')).toBeVisible()
+    await expect(page.getByText('Test Action12 Hello "/_app/dashboard"!')).toBeVisible()
   })
 
   test('侧边栏显示菜单项', async ({ page }) => {
