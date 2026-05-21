@@ -31,13 +31,13 @@ make init PROJECT=your-project-name
 ## 常用命令
 
 ```bash
-make check-docs
-make check-repo
-make ci
-make new-plan SLUG=example-plan
-make new-history SLUG=example-change
-make new-experience SCOPE=project/example SLUG=example-lesson
-make validate-matrix
+make check-docs # 检查必需文档、Harness 入口和脚本是否齐全
+make check-repo # 检查文档骨架和仓库基础卫生
+make ci # 运行完整模板级 CI 门禁
+make new-plan SLUG=example-plan # 创建一份 execution plan
+make new-history SLUG=example-change # 创建一份交付 history 记录
+make new-experience SCOPE=project/example SLUG=example-lesson # 创建一条可复用经验
+make validate-matrix # 校验服务/项目矩阵
 ```
 
 ## 设计边界
