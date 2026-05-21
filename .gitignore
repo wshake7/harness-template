@@ -68,6 +68,7 @@ __debug_bin*
 
 # AI agent worktrees
 .claude/worktrees/
+.claude/settings.local.json
 .output/
 tmp*/
 .vite-inspect

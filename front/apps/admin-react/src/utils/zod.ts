@@ -19,7 +19,7 @@ interface UseFormTypes<T> {
   rules: Rule[]
 }
 
-const mapErrorFromZodIssue = (issues: z.core.$ZodIssue[]) =>
+export const mapErrorFromZodIssue = (issues: z.core.$ZodIssue[]) =>
   issues.reduce((obj: Record<string, string[]>, issue) => {
     const fieldName = issue.path.join('.')
     if (!obj[fieldName]) {
@@ -31,7 +31,7 @@ const mapErrorFromZodIssue = (issues: z.core.$ZodIssue[]) =>
     return obj
   }, {})
 
-const getZodIssues = (error: unknown) => {
+export const getZodIssues = (error: unknown) => {
   const issues = (error as { issues?: unknown })?.issues
   return Array.isArray(issues) ? issues as z.core.$ZodIssue[] : []
 }
@@ -45,12 +45,12 @@ const getIssueMessage = (issue: z.core.$ZodIssue) => {
   return `${getIssueFieldName(issue)} 校验失败`
 }
 
-const getFirstIssueMessage = (issues: z.core.$ZodIssue[]) => {
+export const getFirstIssueMessage = (issues: z.core.$ZodIssue[]) => {
   const issue = issues[0]
   return issue ? getIssueMessage(issue) : '请检查表单信息'
 }
 
-const setZodFormErrors = <T extends Record<string, any>>(
+export const setZodFormErrors = <T extends Record<string, any>>(
   form: FormInstance<T>,
   issues: z.core.$ZodIssue[],
 ) => {

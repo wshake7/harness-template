@@ -18,6 +18,8 @@ allowBuilds:
 overrides:
   vite: "catalog:dev"
   vitest: "catalog:dev"
+catalog:
+  jsdom: ^29.1.1
 catalogs:
   build:
     "@ant-design/cssinjs": latest

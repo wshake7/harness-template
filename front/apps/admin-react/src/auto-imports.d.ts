@@ -59,13 +59,17 @@ declare global {
   const gMessage: typeof import('./utils/message').gMessage
   const generateAesKey: typeof import('./utils/encrypt').generateAesKey
   const getAntIconStyle: typeof import('./utils/antIcons').getAntIconStyle
+  const getFirstIssueMessage: typeof import('./utils/zod').getFirstIssueMessage
+  const getZodIssues: typeof import('./utils/zod').getZodIssues
   const globalZodValidator: typeof import('./utils/zod').globalZodValidator
   const lazy: typeof import('react').lazy
+  const mapErrorFromZodIssue: typeof import('./utils/zod').mapErrorFromZodIssue
   const memo: typeof import('react').memo
   const message: typeof import('./utils/message').default
   const renderAntIcon: typeof import('./utils/antIcons').renderAntIcon
   const renderDictEntryLabel: typeof import('./components/dictEntryLabel').renderDictEntryLabel
   const rsaEncrypt: typeof import('./utils/encrypt').rsaEncrypt
+  const setZodFormErrors: typeof import('./utils/zod').setZodFormErrors
   const startTransition: typeof import('react').startTransition
   const uriSort: typeof import('./utils/encrypt').uriSort
   const use: typeof import('react').use

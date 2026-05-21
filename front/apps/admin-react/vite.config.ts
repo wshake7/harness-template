@@ -26,7 +26,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
   return {
     base: env.GITHUB_ACTIONS === 'true' ? '/template/' : '/',
     staged: {
-      '*': '',
+      '*.{ts,tsx}': 'eslint --fix',
     },
     resolve: {
       alias: workspacePackageAliases,
@@ -35,6 +35,12 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     preview: {
       strictPort: true,
+    },
+    test: {
+      environment: 'jsdom',
+      include: ['src/**/*.test.ts'],
+      exclude: ['node_modules', 'dist', 'tests', 'playwright'],
+      globals: true,
     },
     server: {
       port: Number(env.VITE_PORT),

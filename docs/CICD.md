@@ -1,6 +1,6 @@
 # CI/CD 说明
 
-这个仓库保留 Harness 模板自带的基础 CI/CD 骨架，并已接入前后端项目文档。当前 CI 仍以仓库治理和供应链底线为主，项目级构建测试还没有强制进入 `make ci`。
+这个仓库保留 Harness 模板自带的基础 CI/CD 骨架，并已接入前后端项目文档。当前 CI 覆盖仓库治理、供应链安全和前端测试验证。
 
 ## 默认包含的内容
 
@@ -20,9 +20,15 @@ scripts/check-action-pinning.sh
 scripts/validate-service-matrix.sh
 scripts/check-init-project.sh
 bash -n scripts/*.sh
+
+# 前端测试
+cd front/apps/admin-react
+node_modules/.bin/vp test --run
+node_modules/.bin/playwright test -c playwright-ct.config.ts
+node_modules/.bin/playwright test -c playwright.config.ts
 ```
 
-也就是说，`make ci` 能验证文档骨架、服务矩阵、基础仓库卫生和脚本语法，但不会自动运行前端 `pnpm ready` 或后端 `go test ./...`。
+也就是说，`make ci` 能验证文档骨架、服务矩阵、基础仓库卫生、脚本语法，并自动运行前端 admin-react 的单元测试、组件测试和 E2E 测试。
 
 ## 项目级验证建议
 
@@ -53,7 +59,7 @@ cd front/apps/admin-react && VITE_PORT=5173 VITE_API_URL=http://127.0.0.1:3001 V
 1. 保留 `ci.yml`，作为唯一默认常驻的仓库基础门禁。
 2. 确认前端 `pnpm ready` 在当前锁文件和 Node 版本下稳定。
 3. 确认后端 `cd backend/go && go test ./...` 不依赖未文档化的本地服务。
-4. 将稳定后的前后端验证命令接入 `scripts/ci.sh`。
+4. ~~将稳定后的前后端验证命令接入 `scripts/ci.sh`。~~ 前端测试已接入；后端测试稳定后接入。
 5. 用真实前端/后端构建产物替换 `scripts/release-package.sh` 的占位打包逻辑。
 6. 技术栈和环境稳定后，再补具体部署 job。
 
