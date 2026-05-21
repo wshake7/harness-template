@@ -1,0 +1,36 @@
+{
+  "name": "@vp/request",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared request and encryption factories for VP front-end apps.",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "test": "vp test",
+    "check": "vp check",
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@vp/core": "workspace:*",
+    "@vp/utils": "workspace:*",
+    "alova": "catalog:build",
+    "js-cookie": "catalog:build",
+    "nprogress": "catalog:build"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "catalog:dev",
+    "@types/node": "catalog:dev",
+    "@types/nprogress": "catalog:dev",
+    "@typescript/native-preview": "catalog:dev",
+    "typescript": "catalog:dev",
+    "vite-plus": "catalog:dev"
+  }
+}

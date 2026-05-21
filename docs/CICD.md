@@ -1,29 +1,61 @@
 # CI/CD 说明
 
-这个模板自带一套不依赖具体语言栈的 CI/CD 骨架。
+这个仓库保留 Harness 模板自带的基础 CI/CD 骨架，并已接入前后端项目文档。当前 CI 仍以仓库治理和供应链底线为主，项目级构建测试还没有强制进入 `make ci`。
 
 ## 默认包含的内容
 
-- `ci.yml`：仓库级检查，覆盖 docs、repo hygiene、Markdown 和 shell 脚本校验。
-- `.vite-hooks/pre-commit`：提交前运行 `scripts/harness-sync.sh --staged` 和 `vp staged`，把手动重构带来的文档同步风险提前暴露。
+- `ci.yml`：仓库级检查，覆盖 docs、repo hygiene、Markdown、shell 脚本和服务矩阵校验。
+- `.vite-hooks/pre-commit`：提交前运行 `scripts/harness-sync.sh --staged` 和 `vp staged`，提前暴露文档同步风险。
 - `supply-chain-security.yml`：在 PR 上做依赖变更检查，并在 PR、定时任务和手动触发时运行 OSV 扫描。
 - `release.yml`：手动触发的 release 流水线，用来打包仓库级制品、生成 provenance，并创建 GitHub Release。
 
-## 设计原则
+## 当前仓库级门禁
 
-这套默认流水线的目标，是在项目真正成形前先把交付链路搭起来，而不是假装已经知道未来项目该怎么 build 和 deploy。
+`make ci` 当前执行：
 
-当新项目的技术栈确定后，你应该把 `scripts/release-package.sh` 里的占位打包逻辑替换成真实构建产物，而不是另起一套平行流程。
+```bash
+scripts/check-docs.sh
+scripts/check-repo-hygiene.sh
+scripts/check-action-pinning.sh
+scripts/validate-service-matrix.sh
+scripts/check-init-project.sh
+bash -n scripts/*.sh
+```
 
-所有 GitHub Actions 都已经 pin 到 commit SHA。后续升级 action 时，也要继续保持这个约束。
+也就是说，`make ci` 能验证文档骨架、服务矩阵、基础仓库卫生和脚本语法，但不会自动运行前端 `pnpm ready` 或后端 `go test ./...`。
+
+## 项目级验证建议
+
+前端：
+
+```bash
+pnpm lint
+pnpm ready
+cd front/apps/admin-react && pnpm e2e:test
+```
+
+后端：
+
+```bash
+cd backend/go
+go test ./...
+```
+
+跨端联调：
+
+```bash
+cd backend/go/admin && make run
+cd front/apps/admin-react && VITE_PORT=5173 VITE_API_URL=http://127.0.0.1:3001 VITE_MOCK=false pnpm dev
+```
 
 ## 推荐接入顺序
 
 1. 保留 `ci.yml`，作为唯一默认常驻的仓库基础门禁。
-2. 在 `scripts/ci.sh` 里继续叠加项目自己的验证命令。
-3. 用真实构建产物替换 `scripts/release-package.sh`。
-4. 技术栈和环境稳定后，再补具体的部署 job。
-5. 即使交付方式变化，SBOM 和 provenance 这类供应链能力也建议保留。
+2. 确认前端 `pnpm ready` 在当前锁文件和 Node 版本下稳定。
+3. 确认后端 `cd backend/go && go test ./...` 不依赖未文档化的本地服务。
+4. 将稳定后的前后端验证命令接入 `scripts/ci.sh`。
+5. 用真实前端/后端构建产物替换 `scripts/release-package.sh` 的占位打包逻辑。
+6. 技术栈和环境稳定后，再补具体部署 job。
 
 ## 默认 release 产物
 
@@ -34,4 +66,4 @@
 - `sbom.spdx.json`
 - 对 release artifact 生成的 GitHub artifact attestation
 
-也就是说，即使项目还没进入真实部署阶段，这个模板也已经把“可追溯的制品封装”这一步准备好了。
+后续如果前端或后端进入真实发布流程，应继续保留 SBOM 和 provenance，不要另起一套绕过现有供应链能力的临时发布链路。

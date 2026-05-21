@@ -1,0 +1,31 @@
+{
+  "name": "@vp/build-config",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared build and test configuration helpers for VP front-end apps.",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "test": "vp test",
+    "check": "vp check",
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@playwright/experimental-ct-react": "catalog:dev",
+    "@playwright/test": "catalog:dev",
+    "vite-plus": "catalog:dev"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:dev",
+    "@typescript/native-preview": "catalog:dev",
+    "typescript": "catalog:dev"
+  }
+}

@@ -1,0 +1,22 @@
+Host: 0.0.0.0
+Port: 3001
+IsSwagger: true
+Orm:
+  DriverName: postgres
+  DataSource: host=localhost port=5432 user=postgres password=postgres dbname=wshake sslmode=disable
+  #  DriverName: "mysql"
+  #  DataSource: "root:@tcp(localhost:3306)/wshake?parseTime=true&charset=utf8mb4&loc=Asia%2FShanghai"
+  IsGenCode: false
+  IsAutoMigrate: true
+  IsLog: true
+Redis:
+  Addr: "127.0.0.1:6379"
+  Username:
+  Password:
+Temporal:
+  Enabled: true
+  HostPort: 127.0.0.1:7233
+  Namespace: default
+  Identity:
+  TaskQueue: admin
+  WorkerEnabled: true

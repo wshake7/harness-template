@@ -1,18 +1,17 @@
 # 项目级上下文
 
-项目级上下文记录具体项目、模块和服务的知识。模板提供 `example/` 作为结构示例，真实项目初始化后应替换或扩展它。
+项目级上下文记录具体项目、模块和服务的知识。当前仓库已经接入前后端代码，Agent 开始项目相关任务时应优先读取这里，再按任务选择更细文档。
 
-推荐结构：
+## 当前项目入口
 
-```text
-context/project/
-  example/
-    INDEX.md
-    experience/
-```
+- `context/project/admin/INDEX.md`：管理后台项目前后端上下文入口。
+- `.service-matrix/dependencies.yaml`：模块、服务和路径归属的单一真相源。
+- `docs/ARCHITECTURE.md`：整体拓扑、依赖边界和前后端数据流。
+- `docs/BACKEND.md`：Go 后端启动、配置、依赖、API 和验证方式。
+- `docs/FRONTEND.md`：React/pnpm workspace、环境变量、联调、请求和验证方式。
 
-项目级内容适合沉淀：
+## 维护规则
 
-- 架构、模块边界和关键数据流。
-- 外部依赖、运行手册和排障路径。
-- Agent 或工程师反复踩到的模式性经验。
+- 如果新增真实项目或服务，先更新 `.service-matrix/dependencies.yaml`，再新增对应 `context/project/<name>/INDEX.md`。
+- 如果某类经验会反复影响 Agent 执行，沉淀到 `context/project/<name>/experience/`，不要只写在 history。
+- 模板示例仍保留在 `context/project/example/`，仅作为目录结构参考。

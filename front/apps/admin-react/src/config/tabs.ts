@@ -1,0 +1,1 @@
+export const TAB_REFRESH_INTERVAL = 10 * 60 * 1000
