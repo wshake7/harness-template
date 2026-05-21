@@ -1,0 +1,27 @@
+{
+  "name": "vp",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "ready": "eslint . && vp run test -r && vp run build -r",
+    "prepare": "vp config",
+    "lint:fix": "eslint . --fix",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:dev",
+    "@eslint-react/eslint-plugin": "catalog:dev",
+    "@tanstack/eslint-config": "catalog:dev",
+    "eslint": "catalog:dev",
+    "eslint-plugin-format": "catalog:dev",
+    "eslint-plugin-react-hooks": "catalog:dev",
+    "eslint-plugin-react-refresh": "catalog:dev",
+    "taze": "catalog:dev",
+    "vite-plus": "catalog:dev"
+  }
+}

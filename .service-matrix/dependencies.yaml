@@ -1,0 +1,25 @@
+project_name: harness-template-cn
+
+placeholders:
+  app-root: apps
+  package-root: packages
+  infra-root: infra
+  project-name: harness-template-cn
+
+roots:
+  apps: "{app-root}"
+  packages: "{package-root}"
+  infra: "{infra-root}"
+
+modules:
+  example:
+    name: 示例模块
+    owner: template-maintainers
+
+services:
+  example-service:
+    module: example
+    repo_path: "{app-root}/example-service"
+    package_path: "{package-root}/example"
+    infra_path: "{infra-root}/example-service"
+    description: 模板中的服务矩阵示例，真实项目落地后替换。

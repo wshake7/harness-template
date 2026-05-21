@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+./scripts/harness-sync.sh --staged
+vp staged
