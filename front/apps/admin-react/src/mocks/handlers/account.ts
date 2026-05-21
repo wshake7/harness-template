@@ -13,6 +13,7 @@ export const accountHandlers = [
     }
     return HttpResponse.json(success({
       token: account.token,
+      publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD2TJoOBk8KZE9z2CIYQsip86ANw7N7Wl15s4GmxBokdOv+pYdkHmyc24Jt2W4hqUZGetKsmcNjEu8ZtDj3dVrRjuopg+phzGmUrrW+oeGiacK35sLKLkK7ZZv9u9s4HQVOMq9M9v+1leCEJ4g17dGM2YppxTJjzrxNzPVg/XWJYwIDAQAB',
     }))
   }),
 

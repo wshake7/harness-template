@@ -56,7 +56,7 @@ function EntryEditorDrawer({
       title={title}
       open={open}
       onClose={onClose}
-      width={680}
+      size={680}
       placement="right"
       extra={(
         <Space>

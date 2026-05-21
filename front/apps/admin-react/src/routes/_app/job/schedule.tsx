@@ -470,7 +470,7 @@ function JobScheduleManagement() {
 
       <Drawer
         title={editing ? '编辑任务配置' : '创建任务配置'}
-        width={560}
+        size={560}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         extra={(

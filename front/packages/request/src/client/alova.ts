@@ -53,13 +53,16 @@ export function createVpApiClient(options: CreateVpApiClientOptions) {
     },
     async login(response, method) {
       if (response.ok) {
-        const encryptedText = await response.clone().text()
         const aesKey = (method.meta as { aesKey?: CryptoKey }).aesKey
-        if (!aesKey) {
-          return
+        let json: unknown
+        if (aesKey) {
+          const encryptedText = await response.clone().text()
+          const decrypted = await options.decryptText(encryptedText, aesKey)
+          json = JSON.parse(decrypted)
         }
-        const decrypted = await options.decryptText(encryptedText, aesKey)
-        const json = JSON.parse(decrypted)
+        else {
+          json = await response.clone().json()
+        }
         const res = json as ApiResponse<ResLogin>
         const data = res.data
         if (res.code === HttpCode.SUCCESS && data) {
