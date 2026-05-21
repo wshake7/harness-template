@@ -20,6 +20,15 @@
 - `scripts/check-action-pinning.sh`：如果 workflow 里出现浮动 tag 而不是 SHA，直接让 CI 失败。
 - `pnpm-workspace.yaml`：记录 pnpm trust policy 和精确版本例外。
 
+## pnpm trust policy 例外
+
+`trustPolicyExclude` 只能使用精确包名和版本，新增例外时要记录原因，不能扩大到包级或关闭 `trustPolicy: no-downgrade`。
+
+| 包 | 原因 |
+| --- | --- |
+| `semver@6.3.1` | 由 `@babel/core` 经 `eslint-plugin-react-hooks` 传递引入；仓库保留全局 no-downgrade，只放行该精确旧版本。 |
+| `@trickfilm400/rollup-plugin-off-main-thread@3.0.0-pre1` | `workbox-build@7.4.1` 传递引入；该 prerelease 版本缺少 provenance attestation，触发 `ERR_PNPM_TRUST_DOWNGRADE`，当前只放行报错精确版本以恢复安装。 |
+
 ## 限制和前提
 
 - Dependency Review 在 public repo 可以直接使用；private repo 通常需要 GitHub Advanced Security 或对应的代码安全能力。

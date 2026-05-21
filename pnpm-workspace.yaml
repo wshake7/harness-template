@@ -5,6 +5,9 @@ trustPolicyExclude:
   # semver 6.3.1 is pulled transitively by @babel/core via eslint-plugin-react-hooks.
   # Keep no-downgrade enabled globally and scope this exception to the exact version.
   - semver@6.3.1
+  # workbox-build 7.4.1 pulls this prerelease package without provenance attestation.
+  # Keep the exception scoped to the exact version reported by ERR_PNPM_TRUST_DOWNGRADE.
+  - "@trickfilm400/rollup-plugin-off-main-thread@3.0.0-pre1"
 
 packages:
   - front/apps/*
