@@ -15,6 +15,7 @@ import (
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
 	"admin/internal/services/temporaljob"
+	"admin/internal/workflows"
 	"github.com/bytedance/sonic"
 	"go-common/utils/str"
 	"go.temporal.io/api/serviceerror"
@@ -113,7 +114,7 @@ func (h *JobScheduleHandler) Options(ctx *handler.Ctx) (*RespJobScheduleOptions,
 		defaultTaskQueue: defaultTaskQueue,
 	}
 	return &RespJobScheduleOptions{
-		WorkflowTypes:    buildJobScheduleOptions(temporaljob.WorkflowTypeOptions()),
+		WorkflowTypes:    buildJobScheduleOptions(workflows.WorkflowTypeOptions()),
 		TaskQueues:       buildJobScheduleOptions(taskQueues),
 		DefaultTaskQueue: defaultTaskQueue,
 	}, nil
@@ -565,7 +566,7 @@ func findActiveJobSchedule(q *query.Query, id uint64) (*models.JobSchedule, erro
 }
 
 func syncTemporalSchedule(temporal service.TemporalService, ctx context.Context, m *models.JobSchedule, inputValue any, createOnly bool) error {
-	
+
 	options, err := buildScheduleOptions(m, inputValue)
 	if err != nil {
 		return err
@@ -602,12 +603,12 @@ func deleteTemporalSchedule(temporal service.TemporalService, ctx context.Contex
 	if scheduleID == "" {
 		return nil
 	}
-	
+
 	return temporal.DeleteSchedule(ctx, scheduleID)
 }
 
 func switchTemporalSchedule(temporal service.TemporalService, ctx context.Context, scheduleID string, enabled bool) error {
-	
+
 	if enabled {
 		return temporal.UnpauseSchedule(ctx, scheduleID, client.ScheduleUnpauseOptions{})
 	}
@@ -615,7 +616,7 @@ func switchTemporalSchedule(temporal service.TemporalService, ctx context.Contex
 }
 
 func triggerTemporalSchedule(temporal service.TemporalService, ctx context.Context, scheduleID string) error {
-	
+
 	return temporal.TriggerSchedule(ctx, scheduleID, client.ScheduleTriggerOptions{})
 }
 
@@ -679,7 +680,6 @@ func buildScheduleSpec(m *models.JobSchedule) (client.ScheduleSpec, int, error) 
 	}
 	return spec, 0, nil
 }
-
 
 func normalizeJSONText(text string) (datatypes.JSON, any, error) {
 	text = strings.TrimSpace(text)

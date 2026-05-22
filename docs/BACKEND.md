@@ -21,6 +21,12 @@
 - 日志与可观测性：zap、Prometheus client、Fiber monitor。
 - API 文档：Swaggo，生成产物在 `backend/go/admin/docs/`。
 
+## 后端代码边界
+
+- `backend/go/admin/internal/services` 放 Redis、Temporal、Casbin、ORM 等基础服务适配和可复用服务层能力。
+- `backend/go/admin/internal/workflows` 放具体 Temporal Workflow 业务实现；任务分发、执行记录和 Worker 注册仍由 `internal/services/temporaljob` 承担。
+- `backend/go/admin/internal/domains` 放跨路由、服务和中间件共享的领域常量与轻量 DTO，例如加密公钥缓存 key 和 key pair 结构。
+
 ## 本地配置
 
 `backend/go/admin/etc/config.yaml` 是本地默认配置：

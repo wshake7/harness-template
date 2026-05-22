@@ -1,4 +1,4 @@
-package temporaljob
+package example
 
 import "go.temporal.io/sdk/workflow"
 

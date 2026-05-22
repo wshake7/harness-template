@@ -3,6 +3,7 @@ package services
 import (
 	"admin/internal/config"
 	"admin/internal/services/temporalc"
+	"admin/internal/services/temporaljob"
 	"context"
 	"fmt"
 
@@ -11,12 +12,13 @@ import (
 )
 
 type Temporal struct {
-	conf   config.TemporalConfig
-	client *temporalc.Temporal
+	conf              config.TemporalConfig
+	client            *temporalc.Temporal
+	registerWorkflows func(temporaljob.WorkerRegistry)
 }
 
-func NewTemporal(conf config.TemporalConfig) *Temporal {
-	return &Temporal{conf: conf}
+func NewTemporal(conf config.TemporalConfig, registerWorkflows func(temporaljob.WorkerRegistry)) *Temporal {
+	return &Temporal{conf: conf, registerWorkflows: registerWorkflows}
 }
 
 func (t *Temporal) Start(ctx context.Context) error {
@@ -28,6 +30,10 @@ func (t *Temporal) Start(ctx context.Context) error {
 		return err
 	}
 	if temporalClient.Worker != nil {
+		temporaljob.RegisterWorker(temporalClient.Worker)
+		if t.registerWorkflows != nil {
+			t.registerWorkflows(temporalClient.Worker)
+		}
 		if err = temporalClient.Worker.Start(); err != nil {
 			temporalc.Close()
 			return fmt.Errorf("start temporal worker: %w", err)

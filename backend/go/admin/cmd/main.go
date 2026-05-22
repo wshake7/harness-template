@@ -5,6 +5,7 @@ import (
 	"admin/internal/fiberc"
 	"admin/internal/router"
 	"admin/internal/services"
+	"admin/internal/workflows"
 	"flag"
 	"go-common/log"
 	"go-common/viperc"
@@ -34,7 +35,7 @@ func main() {
 		panic(err)
 	}
 	log.Init(log.DevConfig())
-	services.New(conf)
+	services.New(conf, workflows.RegisterWorker)
 	app := fiberc.NewFiber(conf)
 	group := app.Group(conf.RestPrefix)
 	r := router.Router{}

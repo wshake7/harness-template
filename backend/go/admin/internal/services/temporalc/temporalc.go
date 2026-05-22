@@ -2,7 +2,6 @@ package temporalc
 
 import (
 	"admin/internal/config"
-	"admin/internal/services/temporaljob"
 	"fmt"
 
 	"go.temporal.io/sdk/client"
@@ -35,7 +34,6 @@ func New(conf config.TemporalConfig, logger *zap.Logger) (*Temporal, error) {
 	}
 	if conf.WorkerEnabled {
 		Client.Worker = worker.New(workflowClient, conf.TaskQueue, worker.Options{})
-		temporaljob.RegisterWorker(Client.Worker)
 	}
 	return Client, nil
 }

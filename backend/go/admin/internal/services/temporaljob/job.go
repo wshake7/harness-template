@@ -16,12 +16,6 @@ import (
 
 const DispatchWorkflowName = "JobDispatchWorkflow"
 
-func WorkflowTypeOptions() map[string]string {
-	return map[string]string{
-		PrintCountWorkflowName: PrintCountWorkflowName,
-	}
-}
-
 type DispatchInput struct {
 	JobCode          string `json:"jobCode"`
 	WorkflowType     string `json:"workflowType"`
@@ -51,14 +45,13 @@ type CreateExecutionResult struct {
 	ID uint64 `json:"id"`
 }
 
-func RegisterWorker(w workerRegistry) {
+func RegisterWorker(w WorkerRegistry) {
 	w.RegisterWorkflowWithOptions(DispatchWorkflow, workflow.RegisterOptions{Name: DispatchWorkflowName})
-	w.RegisterWorkflowWithOptions(PrintCountWorkflow, workflow.RegisterOptions{Name: PrintCountWorkflowName})
 	w.RegisterActivity(CreateExecution)
 	w.RegisterActivity(CompleteExecution)
 }
 
-type workerRegistry interface {
+type WorkerRegistry interface {
 	RegisterWorkflowWithOptions(workflowFunc any, options workflow.RegisterOptions)
 	RegisterActivity(activityFunc any)
 }

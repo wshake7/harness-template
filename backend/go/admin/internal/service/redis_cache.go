@@ -1,6 +1,7 @@
 package service
 
 import (
+	"admin/internal/domains"
 	"admin/internal/services/redisc"
 	"context"
 	"errors"
@@ -25,8 +26,8 @@ func NewRedisCache() RedisCache {
 var ErrCacheMiss = errors.New("cache miss")
 
 func (r *redisCacheImpl) GetEncryptKeyPair(ctx context.Context) (string, string, error) {
-	var keyPair redisc.DtoKeyPair
-	err := redisc.Client.GetJson(ctx, redisc.KeyGlobalEncryptPublicKey, &keyPair)
+	var keyPair domains.EncryptKeyPair
+	err := redisc.Client.GetJson(ctx, domains.KeyGlobalEncryptPublicKey, &keyPair)
 	if err != nil {
 		if errors.Is(err, rueidis.Nil) {
 			return "", "", ErrCacheMiss
@@ -37,8 +38,8 @@ func (r *redisCacheImpl) GetEncryptKeyPair(ctx context.Context) (string, string,
 }
 
 func (r *redisCacheImpl) SetEncryptKeyPair(ctx context.Context, publicKey, privateKey string) error {
-	keyPair := redisc.DtoKeyPair{PublicKey: publicKey, PrivateKey: privateKey}
-	return redisc.Client.Do(ctx, redisc.Client.B().Set().Key(redisc.KeyGlobalEncryptPublicKey).Value(rueidis.JSON(keyPair)).Build()).Error()
+	keyPair := domains.EncryptKeyPair{PublicKey: publicKey, PrivateKey: privateKey}
+	return redisc.Client.Do(ctx, redisc.Client.B().Set().Key(domains.KeyGlobalEncryptPublicKey).Value(rueidis.JSON(keyPair)).Build()).Error()
 }
 
 // GenerateAndCacheKeyPair is a helper used by EncryptHandler on cache miss.

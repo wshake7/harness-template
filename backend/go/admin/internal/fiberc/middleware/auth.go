@@ -6,7 +6,7 @@ import (
 	"admin/internal/domains"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	redisc2 "admin/internal/services/redisc"
+	"admin/internal/services/redisc"
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
@@ -48,8 +48,8 @@ func AuthMiddleware() fiber.Handler {
 
 func PublicMiddleware() fiber.Handler {
 	return handler.CtxNilMiddlewareFunc(func(ctx *handler.Ctx) error {
-		var keyPair redisc2.DtoKeyPair
-		err := redisc2.Client.GetJson(ctx, redisc2.KeyGlobalEncryptPublicKey, &keyPair)
+		var keyPair domains.EncryptKeyPair
+		err := redisc.Client.GetJson(ctx, domains.KeyGlobalEncryptPublicKey, &keyPair)
 		if err != nil || keyPair.PrivateKey == "" {
 			ctx.L().Error("get key error", zap.Error(err), zap.String("key", keyPair.PrivateKey))
 			return res.FailRequestKey
