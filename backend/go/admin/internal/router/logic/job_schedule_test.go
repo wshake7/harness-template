@@ -18,7 +18,7 @@ func TestJobScheduleHandler_List_Empty(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	result, err := h.List(newTestCtx(t), &v1.PagingRequest{})
 	assert.NoError(t, err)
@@ -29,7 +29,7 @@ func TestJobScheduleHandler_List_WithData(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	q.JobSchedule.Create(&models.JobSchedule{
 		AutoIncrementID: mixin.AutoIncrementID{ID: 1},
@@ -50,7 +50,7 @@ func TestJobScheduleHandler_Detail_NotFound(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	_, err := h.Detail(newTestCtx(t), &ReqJobScheduleDetail{ID: 99})
 	assert.Error(t, err)
@@ -60,7 +60,7 @@ func TestJobScheduleHandler_Detail_Success(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	q.JobSchedule.Create(&models.JobSchedule{
 		AutoIncrementID: mixin.AutoIncrementID{ID: 1},
@@ -81,7 +81,7 @@ func TestJobScheduleHandler_Options(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	result, err := h.Options(newTestCtx(t))
 	assert.NoError(t, err)
@@ -94,7 +94,7 @@ func TestJobScheduleHandler_Create_Invalid(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	err := h.Create(newTestCtx(t), &ReqJobScheduleCreate{})
 	assert.Error(t, err)
@@ -105,7 +105,7 @@ func TestJobScheduleHandler_Create_Success(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 
 	mockTemporal.EXPECT().UpdateSchedule(gomock.Any(), gomock.Any(), gomock.Any()).Return(assert.AnError)
 	mockTemporal.EXPECT().CreateSchedule(gomock.Any(), gomock.Any()).Return(nil, nil)
@@ -122,7 +122,7 @@ func TestJobScheduleHandler_Del_NotFound(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	err := h.Del(newTestCtx(t), &ReqJobScheduleID{ID: 99})
 	assert.Error(t, err)
@@ -132,7 +132,7 @@ func TestJobScheduleHandler_Switch_NotFound(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	err := h.Switch(newTestCtx(t), &ReqJobScheduleSwitch{ID: 99, Enabled: true})
 	assert.Error(t, err)
@@ -142,7 +142,7 @@ func TestJobScheduleHandler_Sync_NotFound(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	err := h.Sync(newTestCtx(t), &ReqJobScheduleID{ID: 99})
 	assert.Error(t, err)
@@ -152,7 +152,7 @@ func TestJobScheduleHandler_Trigger_NotFound(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	err := h.Trigger(newTestCtx(t), &ReqJobScheduleID{ID: 99})
 	assert.Error(t, err)
@@ -247,7 +247,7 @@ func TestJobScheduleHandler_Update_NotFound(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 	name := "Updated"
 	err := h.Update(newTestCtx(t), &ReqJobScheduleUpdate{ID: 99, JobName: &name})
 	assert.Error(t, err)
@@ -258,7 +258,7 @@ func TestJobScheduleHandler_Del_Success(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 	q.JobSchedule.Create(&models.JobSchedule{AutoIncrementID: mixin.AutoIncrementID{ID: 1}, JobCode: "test-job", JobName: "Test Job", WorkflowType: "wf", TaskQueue: "admin", ScheduleType: models.JobScheduleTypeCron, CronExpr: "* * * * *", Status: models.JobScheduleStatusEnabled, TemporalScheduleID: "sched-1"})
 	mockTemporal.EXPECT().DeleteSchedule(gomock.Any(), "sched-1").Return(nil)
 	err := h.Del(newTestCtx(t), &ReqJobScheduleID{ID: 1})
@@ -270,7 +270,7 @@ func TestJobScheduleHandler_Sync_Success(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 	q.JobSchedule.Create(&models.JobSchedule{AutoIncrementID: mixin.AutoIncrementID{ID: 1}, JobCode: "test-job", JobName: "Test Job", WorkflowType: "wf", TaskQueue: "admin", ScheduleType: models.JobScheduleTypeCron, CronExpr: "* * * * *", Status: models.JobScheduleStatusEnabled, TemporalScheduleID: "sched-1", TemporalWorkflowIDPrefix: "prefix", InputJSON: []byte(`{"a":1}`)})
 	mockTemporal.EXPECT().UpdateSchedule(gomock.Any(), "sched-1", gomock.Any()).Return(assert.AnError)
 	mockTemporal.EXPECT().CreateSchedule(gomock.Any(), gomock.Any()).Return(nil, nil)
@@ -283,7 +283,7 @@ func TestJobScheduleHandler_Trigger_Success(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 	q.JobSchedule.Create(&models.JobSchedule{AutoIncrementID: mixin.AutoIncrementID{ID: 1}, JobCode: "test-job", JobName: "Test Job", WorkflowType: "wf", TaskQueue: "admin", ScheduleType: models.JobScheduleTypeCron, CronExpr: "* * * * *", Status: models.JobScheduleStatusEnabled, TemporalScheduleID: "sched-1"})
 	mockTemporal.EXPECT().TriggerSchedule(gomock.Any(), "sched-1", gomock.Any()).Return(nil)
 	err := h.Trigger(newTestCtx(t), &ReqJobScheduleID{ID: 1})
@@ -294,7 +294,7 @@ func TestJobScheduleHandler_Update_InvalidMergedModel(t *testing.T) {
 	q := mustMigrateJob(t)
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
-	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl))
+	h := NewJobScheduleHandler(q, mock.NewMockTemporalService(ctrl), "admin")
 
 	q.JobSchedule.Create(&models.JobSchedule{
 		AutoIncrementID: mixin.AutoIncrementID{ID: 1},
@@ -319,7 +319,7 @@ func TestJobScheduleHandler_Update_Success(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 
 	q.JobSchedule.Create(&models.JobSchedule{
 		AutoIncrementID:          mixin.AutoIncrementID{ID: 1},
@@ -346,7 +346,7 @@ func TestJobScheduleHandler_Switch_EnableSuccess(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 
 	q.JobSchedule.Create(&models.JobSchedule{
 		AutoIncrementID:    mixin.AutoIncrementID{ID: 1},
@@ -370,7 +370,7 @@ func TestJobScheduleHandler_Switch_NotFoundRecoverySuccess(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 
 	q.JobSchedule.Create(&models.JobSchedule{
 		AutoIncrementID:          mixin.AutoIncrementID{ID: 1},
@@ -399,7 +399,7 @@ func TestJobScheduleHandler_Switch_NotFoundRecoveryBadJSON(t *testing.T) {
 	query.SetDefault(q.JobSchedule.UnderlyingDB())
 	ctrl := gomock.NewController(t)
 	mockTemporal := mock.NewMockTemporalService(ctrl)
-	h := NewJobScheduleHandler(q, mockTemporal)
+	h := NewJobScheduleHandler(q, mockTemporal, "admin")
 
 	q.JobSchedule.Create(&models.JobSchedule{
 		AutoIncrementID:    mixin.AutoIncrementID{ID: 1},

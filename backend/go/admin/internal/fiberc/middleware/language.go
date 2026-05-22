@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"admin/internal/config"
 	domains2 "admin/internal/domains"
 	"admin/internal/fiberc/handler"
 	"github.com/gofiber/fiber/v3"
@@ -9,8 +8,7 @@ import (
 	"strings"
 )
 
-func LanguageMiddleware() fiber.Handler {
-	defaultLanguage := config.Conf.DefaultLanguage
+func LanguageMiddleware(defaultLanguage string) fiber.Handler {
 	return handler.CtxNilMiddlewareFunc(func(ctx *handler.Ctx) error {
 		language := strings.TrimSpace(fiber.GetReqHeader[string](ctx, domains2.HeaderXLanguage))
 		if language == "" {

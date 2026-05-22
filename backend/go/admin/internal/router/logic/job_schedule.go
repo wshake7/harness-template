@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"admin/internal/appsvc"
-	"admin/internal/config"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
 	"admin/internal/services/orm/models"
@@ -28,12 +27,13 @@ import (
 )
 
 type JobScheduleHandler struct {
-	Q        *query.Query
-	Temporal appsvc.TemporalService
+	Q               *query.Query
+	Temporal        appsvc.TemporalService
+	DefaultTaskQueue string
 }
 
-func NewJobScheduleHandler(q *query.Query, temporal appsvc.TemporalService) *JobScheduleHandler {
-	return &JobScheduleHandler{Q: q, Temporal: temporal}
+func NewJobScheduleHandler(q *query.Query, temporal appsvc.TemporalService, defaultTaskQueue string) *JobScheduleHandler {
+	return &JobScheduleHandler{Q: q, Temporal: temporal, DefaultTaskQueue: defaultTaskQueue}
 }
 
 type RespJobSchedule struct {
@@ -105,7 +105,7 @@ type ReqJobScheduleSwitch struct {
 // @Success 200 {object} res.Response{data=RespJobScheduleOptions} "成功"
 // @Router /api/sys/job/schedule/options [post]
 func (h *JobScheduleHandler) Options(ctx *handler.Ctx) (*RespJobScheduleOptions, error) {
-	defaultTaskQueue := strings.TrimSpace(config.Conf.Temporal.TaskQueue)
+	defaultTaskQueue := strings.TrimSpace(h.DefaultTaskQueue)
 	if defaultTaskQueue == "" {
 		defaultTaskQueue = "admin"
 	}

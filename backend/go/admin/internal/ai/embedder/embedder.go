@@ -9,8 +9,7 @@ import (
 	"github.com/cloudwego/eino/components/embedding"
 )
 
-func New(ctx context.Context) (embedding.Embedder, error) {
-	conf := config.Conf.AI.Embedding
+func New(ctx context.Context, conf config.AIEmbeddingConfig) (embedding.Embedder, error) {
 	if conf.Provider != "" && conf.Provider != "dashscope" {
 		return nil, fmt.Errorf("unsupported embedding provider: %s", conf.Provider)
 	}

@@ -38,7 +38,7 @@ func main() {
 	services.New(conf, workflows.RegisterWorker)
 	app := fiberc.NewFiber(conf)
 	group := app.Group(conf.RestPrefix)
-	r := router.Router{}
+	r := router.Router{Conf: conf}
 	r.RegisterRouters(group)
 	app.Start()
 }

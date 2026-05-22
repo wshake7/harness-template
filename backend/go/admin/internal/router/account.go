@@ -2,6 +2,7 @@ package router
 
 import (
 	"admin/internal/appsvc"
+	"admin/internal/config"
 	"admin/internal/fiberc/handler"
 	middleware2 "admin/internal/fiberc/middleware"
 	"admin/internal/router/logic"
@@ -9,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-func registerAccountRouters(router fiber.Router) {
+func registerAccountRouters(router fiber.Router, conf *config.Config) {
 	accountHandler := logic.NewAccountHandler(
 		query.Q,
 		appsvc.NewAuthService(),
@@ -21,7 +22,7 @@ func registerAccountRouters(router fiber.Router) {
 			return res, err
 		}
 		ctx.Cookie(&fiber.Cookie{
-			Name:     ctx.Config.Auth.TokenName,
+			Name:     conf.Auth.TokenName,
 			Value:    res.Token,
 			SameSite: "Lax",
 			Secure:   false,
@@ -29,6 +30,6 @@ func registerAccountRouters(router fiber.Router) {
 		})
 		return res, err
 	}))
-	router.Post("/changePwd", middleware2.AuthMiddleware(), middleware2.EncryptMiddleware(), handler.CtxHandlerNilFunc(accountHandler.ChangePwd))
-	router.Get("/logout", middleware2.AuthMiddleware(), handler.CtxHandlerNilFunc(accountHandler.Logout))
+	router.Post("/changePwd", middleware2.AuthMiddleware(conf.Auth.TokenName), middleware2.EncryptMiddleware(), handler.CtxHandlerNilFunc(accountHandler.ChangePwd))
+	router.Get("/logout", middleware2.AuthMiddleware(conf.Auth.TokenName), handler.CtxHandlerNilFunc(accountHandler.Logout))
 }

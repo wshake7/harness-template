@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"admin/internal/auth"
-	"admin/internal/config"
 	"admin/internal/domains"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
@@ -11,10 +10,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func AuthMiddleware() fiber.Handler {
+func AuthMiddleware(tokenName string) fiber.Handler {
 	return handler.CtxNilMiddlewareFunc(func(ctx *handler.Ctx) error {
-		headerToken := fiber.GetReqHeader[string](ctx, config.Conf.Auth.TokenName)
-		cookieToken := ctx.Cookies(config.Conf.Auth.TokenName)
+		headerToken := fiber.GetReqHeader[string](ctx, tokenName)
+		cookieToken := ctx.Cookies(tokenName)
 		token := headerToken
 		if token == "" {
 			token = cookieToken

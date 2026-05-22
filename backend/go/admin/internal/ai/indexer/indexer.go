@@ -17,21 +17,21 @@ import (
 
 const defaultCollectionName = "biz"
 
-func New(ctx context.Context) (einoindexer.Indexer, error) {
-	if !config.Conf.Milvus.Enabled {
+func New(ctx context.Context, conf *config.Config) (einoindexer.Indexer, error) {
+	if !conf.Milvus.Enabled {
 		return nil, fmt.Errorf("milvus is disabled")
 	}
 
-	cli, err := getMilvusClient(ctx)
+	cli, err := getMilvusClient(ctx, conf.Milvus)
 	if err != nil {
 		return nil, err
 	}
-	eb, err := embedder.New(ctx)
+	eb, err := embedder.New(ctx, conf.AI.Embedding)
 	if err != nil {
 		return nil, err
 	}
 
-	knowledge := config.Conf.AI.Knowledge
+	knowledge := conf.AI.Knowledge
 	collection := knowledge.Collection
 	if collection == "" {
 		collection = defaultCollectionName
@@ -44,36 +44,36 @@ func New(ctx context.Context) (einoindexer.Indexer, error) {
 		Vector: &milvus2.VectorConfig{
 			// Use the configured embedding dimension directly so Milvus schema stays aligned
 			// with the active embedding model.
-			Dimension:    int64(config.Conf.AI.Embedding.Dimensions),
-			MetricType:   metricType(),
-			IndexBuilder: indexBuilder(),
+			Dimension:    int64(conf.AI.Embedding.Dimensions),
+			MetricType:   metricType(conf.AI.Knowledge.IndexMetricType),
+			IndexBuilder: indexBuilder(conf.AI.Knowledge.IndexType),
 			VectorField:  "vector",
 		},
-		FieldParams: fieldParams(),
+		FieldParams: fieldParams(conf.AI.Knowledge),
 		Embedding:   eb,
 	})
 }
 
-func getMilvusClient(ctx context.Context) (*milvusclient.Client, error) {
+func getMilvusClient(ctx context.Context, conf config.MilvusConfig) (*milvusclient.Client, error) {
 	if milvusc.Client != nil {
 		return milvusc.Client, nil
 	}
-	return milvusc.New(ctx, config.Conf.Milvus)
+	return milvusc.New(ctx, conf)
 }
 
-func fieldParams() map[string]map[string]string {
+func fieldParams(conf config.AIKnowledgeConfig) map[string]map[string]string {
 	return map[string]map[string]string{
 		"id": {
-			entity.TypeParamMaxLength: strconv.FormatUint(uint64(config.Conf.AI.Knowledge.IDMaxLength), 10),
+			entity.TypeParamMaxLength: strconv.FormatUint(uint64(conf.IDMaxLength), 10),
 		},
 		"content": {
-			entity.TypeParamMaxLength: strconv.FormatUint(uint64(config.Conf.AI.Knowledge.ContentMaxLength), 10),
+			entity.TypeParamMaxLength: strconv.FormatUint(uint64(conf.ContentMaxLength), 10),
 		},
 	}
 }
 
-func indexBuilder() milvus2.IndexBuilder {
-	switch strings.ToLower(config.Conf.AI.Knowledge.IndexType) {
+func indexBuilder(indexType string) milvus2.IndexBuilder {
+	switch strings.ToLower(indexType) {
 	case "hnsw":
 		return milvus2.NewHNSWIndexBuilder()
 	case "ivf_flat":
@@ -83,8 +83,8 @@ func indexBuilder() milvus2.IndexBuilder {
 	}
 }
 
-func metricType() milvus2.MetricType {
-	switch strings.ToUpper(config.Conf.AI.Knowledge.IndexMetricType) {
+func metricType(indexMetricType string) milvus2.MetricType {
+	switch strings.ToUpper(indexMetricType) {
 	case "IP":
 		return milvus2.IP
 	case "L2":

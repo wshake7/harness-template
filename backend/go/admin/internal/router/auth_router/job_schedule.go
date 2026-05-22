@@ -2,6 +2,7 @@ package auth_router
 
 import (
 	"admin/internal/appsvc"
+	"admin/internal/config"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/middleware"
 	"admin/internal/router/logic"
@@ -10,8 +11,8 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-func registerJobScheduleRouters(router fiber.Router) {
-	jobScheduleHandler := logic.NewJobScheduleHandler(query.Q, appsvc.NewTemporalService())
+func registerJobScheduleRouters(router fiber.Router, conf *config.Config) {
+	jobScheduleHandler := logic.NewJobScheduleHandler(query.Q, appsvc.NewTemporalService(), conf.Temporal.TaskQueue)
 	logMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("job_schedule"))
 	createLogMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("job_schedule"), middleware.WithChangeQuery(jobScheduleCreateChangeQuery))
 	updateLogMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("job_schedule"), middleware.WithChangeQuery(jobScheduleUpdateChangeQuery))

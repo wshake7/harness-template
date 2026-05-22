@@ -1,13 +1,14 @@
 package knowledge_pipeline
 
 import (
+	"admin/internal/config"
 	"context"
 
 	"github.com/cloudwego/eino/components/document"
 	"github.com/cloudwego/eino/compose"
 )
 
-func BuildKnowledgeIndexing(ctx context.Context) (r compose.Runnable[document.Source, []string], err error) {
+func BuildKnowledgeIndexing(ctx context.Context, conf *config.Config) (r compose.Runnable[document.Source, []string], err error) {
 	const (
 		FileLoader       = "FileLoader"
 		MarkdownSplitter = "MarkdownSplitter"
@@ -24,7 +25,7 @@ func BuildKnowledgeIndexing(ctx context.Context) (r compose.Runnable[document.So
 		return nil, err
 	}
 	_ = g.AddDocumentTransformerNode(MarkdownSplitter, markdownSplitterKeyOfDocumentTransformer)
-	indexerKeyOfIndexer, err := newIndexer(ctx)
+	indexerKeyOfIndexer, err := newIndexer(ctx, conf)
 	if err != nil {
 		return nil, err
 	}
