@@ -20,3 +20,7 @@ Temporal:
   Identity:
   TaskQueue: admin
   WorkerEnabled: true
+Milvus:
+  Enabled: true
+  Address: 127.0.0.1:19530
+  APIKey:

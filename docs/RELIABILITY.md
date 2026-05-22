@@ -17,6 +17,7 @@
 | Postgres | `localhost:5432` | 管理后台业务数据和权限数据。 |
 | Redis | `127.0.0.1:6379` | 缓存、会话或加密相关临时数据。 |
 | Temporal | `127.0.0.1:7233` | 任务调度、任务执行和 workflow 管理。 |
+| Milvus | `127.0.0.1:19530` | 向量数据库，用于向量检索和语义搜索。 |
 
 本地默认值来自 `backend/go/admin/etc/config.yaml`。生产或共享环境必须提供环境隔离后的配置，不应直接复用本地默认连接串。
 
@@ -55,7 +56,7 @@ go test ./...
 
 - 前端请求失败：检查 `VITE_API_URL`、Vite proxy、后端是否监听 `3001`、浏览器请求路径是否以 `/api` 开头。
 - 登录或加密请求失败：检查 `/api/encrypt/public/key`、Cookie 中 Token、前端 `encryptRequest` 和后端加密中间件。
-- 后端启动失败：检查 `backend/go/admin/etc/config.yaml` 中 Postgres、Redis、Temporal 是否可访问。
+- 后端启动失败：检查 `backend/go/admin/etc/config.yaml` 中 Postgres、Redis、Temporal、Milvus 是否可访问。
 - 任务调度失败：检查 Temporal 地址、namespace、task queue `admin` 和 worker 是否启用。
 - Swagger 不一致：在 `backend/go/admin` 运行 `make swagger`，确认 `docs/` 生成产物同步。
 

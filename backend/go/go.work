@@ -1,10 +1,10 @@
 go 1.26.3
 
 use (
+	./admin
 	./go-common
 	./orm-crud/api
 	./orm-crud/gormc
 	./orm-crud/pagination
-	./admin
 	./sa-token/rueidis
 )

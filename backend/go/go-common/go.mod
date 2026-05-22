@@ -6,8 +6,6 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/sonic v1.15.0
 	github.com/creasty/defaults v1.8.0
-	github.com/dop251/goja v0.0.0-20260106131823-651366fbe6e3
-	github.com/dop251/goja_nodejs v0.0.0-20251015164255-5e94316bedaf
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/go-viper/mapstructure/v2 v2.4.0
 	github.com/google/uuid v1.6.0
@@ -26,8 +24,8 @@ require (
 	go.mongodb.org/mongo-driver/v2 v2.5.1
 	go.uber.org/zap v1.27.1
 	go.uber.org/zap/exp v0.3.0
-	golang.org/x/crypto v0.46.0
-	golang.org/x/sys v0.39.0
+	golang.org/x/crypto v0.50.0
+	golang.org/x/sys v0.43.0
 )
 
 require (
@@ -36,15 +34,13 @@ require (
 	github.com/bytedance/sonic/loader v0.5.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/dlclark/regexp2 v1.11.4 // indirect
-	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
 	github.com/ipipdotnet/ipdb-go v1.3.3 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/oschwald/maxminddb-golang/v2 v2.1.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sagikazarmark/locafero v0.11.0 // indirect
 	github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
@@ -56,6 +52,7 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.23.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

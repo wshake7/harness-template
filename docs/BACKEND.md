@@ -36,6 +36,9 @@
 | `Temporal.HostPort` | `127.0.0.1:7233` |
 | `Temporal.TaskQueue` | `admin` |
 | `Temporal.WorkerEnabled` | `true` |
+| `Milvus.Enabled` | `true` |
+| `Milvus.Address` | `127.0.0.1:19530` |
+| `Milvus.APIKey` | 留空 |
 
 配置里包含本地数据库密码，仅用于开发默认值；生产或共享环境必须改用安全的配置注入方式。
 
@@ -78,6 +81,7 @@ go test ./...
 - Postgres：默认数据库 `wshake`，默认本地用户 `postgres`。
 - Redis：默认 `127.0.0.1:6379`。
 - Temporal：默认 `127.0.0.1:7233`，namespace `default`，task queue `admin`。
+- Milvus：默认 `127.0.0.1:19530`，默认启用；本地未启动 Milvus 时可把 `Milvus.Enabled` 改为 `false`。
 - Swagger：`IsSwagger=true` 时启用，文档生成入口为 `make swagger`。
 
 ## 变更要求

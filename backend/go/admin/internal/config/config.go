@@ -17,6 +17,7 @@ type Config struct {
 	Orm             OrmConfig
 	Redis           RedisConfig
 	Temporal        TemporalConfig
+	Milvus          MilvusConfig
 }
 
 var Conf = new(Config)
@@ -65,4 +66,11 @@ type TemporalConfig struct {
 	Identity      string `mapstructure:"Identity"`
 	TaskQueue     string `mapstructure:"TaskQueue" default:"admin"`
 	WorkerEnabled bool   `mapstructure:"WorkerEnabled" default:"false"`
+}
+
+type MilvusConfig struct {
+	Enabled  bool   `mapstructure:"Enabled" default:"true"`
+	Address  string `mapstructure:"Address" default:"127.0.0.1:19530"`
+	APIKey   string `mapstructure:"APIKey"`
+	DBName   string `mapstructure:"DBName"`
 }
