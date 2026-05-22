@@ -1,6 +1,23 @@
 Host: 0.0.0.0
 Port: 3001
 IsSwagger: true
+AI:
+  Embedding:
+    Provider: dashscope
+    APIKey:
+    Model: text-embedding-v3
+    # Must match the output dimension of the configured embedding model.
+    Dimensions: 1024
+  Knowledge:
+    # Milvus collection used by the Eino knowledge indexing pipeline.
+    Collection: biz
+    CollectionDesc: Knowledge documents for admin AI workflows
+    IDMaxLength: 255
+    ContentMaxLength: 8192
+    IndexType: auto
+    IndexMetricType: COSINE
+    LoadTimeoutSeconds: 60
+    FlushTimeoutSeconds: 30
 Orm:
   DriverName: postgres
   DataSource: host=localhost port=5432 user=postgres password=postgres dbname=wshake sslmode=disable

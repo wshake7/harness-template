@@ -14,6 +14,7 @@ type Config struct {
 	DefaultLanguage string `mapstructure:"DefaultLanguage" default:"cn"`
 	Auth            AuthConfig
 	Fiber           FiberConfig
+	AI              AIConfig
 	Orm             OrmConfig
 	Redis           RedisConfig
 	Temporal        TemporalConfig
@@ -21,6 +22,29 @@ type Config struct {
 }
 
 var Conf = new(Config)
+
+type AIConfig struct {
+	Embedding AIEmbeddingConfig `mapstructure:"Embedding"`
+	Knowledge AIKnowledgeConfig `mapstructure:"Knowledge"`
+}
+
+type AIEmbeddingConfig struct {
+	Provider   string `mapstructure:"Provider" default:"dashscope"`      // Embedding provider. Current default is DashScope.
+	APIKey     string `mapstructure:"APIKey"`                            // Third-party embedding credential.
+	Model      string `mapstructure:"Model" default:"text-embedding-v3"` // Embedding model name.
+	Dimensions uint   `mapstructure:"Dimensions" default:"1024"`         // Dense vector dimension expected by the embedding model.
+}
+
+type AIKnowledgeConfig struct {
+	Collection          string `mapstructure:"Collection" default:"biz"`                                            // Target Milvus collection.
+	CollectionDesc      string `mapstructure:"CollectionDesc" default:"Knowledge documents for admin AI workflows"` // Collection description used on first create.
+	IDMaxLength         uint   `mapstructure:"IDMaxLength" default:"255"`                                           // Max length for the Milvus varchar primary key field.
+	ContentMaxLength    uint   `mapstructure:"ContentMaxLength" default:"8192"`                                     // Max length for the Milvus varchar content field.
+	IndexType           string `mapstructure:"IndexType" default:"auto"`                                            // Dense vector index type: auto, hnsw, ivf_flat.
+	IndexMetricType     string `mapstructure:"IndexMetricType" default:"COSINE"`                                    // Dense vector similarity metric.
+	LoadTimeoutSeconds  int    `mapstructure:"LoadTimeoutSeconds" default:"60"`
+	FlushTimeoutSeconds int    `mapstructure:"FlushTimeoutSeconds" default:"30"`
+}
 
 type OrmConfig struct {
 	DriverName      string        `mapstructure:"DriverName"`
@@ -69,8 +93,8 @@ type TemporalConfig struct {
 }
 
 type MilvusConfig struct {
-	Enabled  bool   `mapstructure:"Enabled" default:"true"`
-	Address  string `mapstructure:"Address" default:"127.0.0.1:19530"`
-	APIKey   string `mapstructure:"APIKey"`
-	DBName   string `mapstructure:"DBName"`
+	Enabled bool   `mapstructure:"Enabled" default:"true"`
+	Address string `mapstructure:"Address" default:"127.0.0.1:19530"`
+	APIKey  string `mapstructure:"APIKey"`
+	DBName  string `mapstructure:"DBName"`
 }
