@@ -1,9 +1,9 @@
 package logic
 
 import (
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/res"
 	"admin/internal/mock"
-	"admin/internal/service"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +28,7 @@ func TestEncryptHandler_PublicKey_CacheMiss(t *testing.T) {
 	mockCache := mock.NewMockRedisCache(ctrl)
 	h := NewEncryptHandler(mockCache)
 
-	mockCache.EXPECT().GetEncryptKeyPair(gomock.Any()).Return("", "", service.ErrCacheMiss)
+	mockCache.EXPECT().GetEncryptKeyPair(gomock.Any()).Return("", "", appsvc.ErrCacheMiss)
 	mockCache.EXPECT().SetEncryptKeyPair(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
 	ctx := newTestCtx(t)

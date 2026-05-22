@@ -1,10 +1,10 @@
 package router
 
 import (
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	middleware2 "admin/internal/fiberc/middleware"
 	"admin/internal/router/logic"
-	"admin/internal/service"
 	"admin/internal/services/orm/query"
 	"github.com/gofiber/fiber/v3"
 )
@@ -12,8 +12,8 @@ import (
 func registerAccountRouters(router fiber.Router) {
 	accountHandler := logic.NewAccountHandler(
 		query.Q,
-		service.NewAuthService(),
-		service.NewLoginLogger(),
+		appsvc.NewAuthService(),
+		appsvc.NewLoginLogger(),
 	)
 	router.Post("/login/pwd", middleware2.PublicMiddleware(), middleware2.EncryptMiddleware(), handler.CtxHandlerFunc(func(ctx *handler.Ctx, req *logic.ReqAccountPwdLogin) (*logic.ResAccountPwdLogin, error) {
 		res, err := accountHandler.PwdLogin(ctx, req)

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	"admin/internal/service"
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
 	"admin/internal/services/temporaljob"
@@ -22,10 +22,10 @@ import (
 
 type JobExecutionHandler struct {
 	Q        *query.Query
-	Temporal service.TemporalService
+	Temporal appsvc.TemporalService
 }
 
-func NewJobExecutionHandler(q *query.Query, temporal service.TemporalService) *JobExecutionHandler {
+func NewJobExecutionHandler(q *query.Query, temporal appsvc.TemporalService) *JobExecutionHandler {
 	return &JobExecutionHandler{Q: q, Temporal: temporal}
 }
 

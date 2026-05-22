@@ -1,11 +1,11 @@
 package logic
 
 import (
+	"admin/internal/appsvc"
 	"admin/internal/auth"
 	"admin/internal/domains"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	"admin/internal/service"
 	"admin/internal/services/orm/query"
 	"errors"
 
@@ -18,11 +18,11 @@ import (
 
 type AccountHandler struct {
 	Q           *query.Query
-	Auth        service.AuthService
-	LoginLogger service.LoginLogger
+	Auth        appsvc.AuthService
+	LoginLogger appsvc.LoginLogger
 }
 
-func NewAccountHandler(q *query.Query, auth service.AuthService, logger service.LoginLogger) *AccountHandler {
+func NewAccountHandler(q *query.Query, auth appsvc.AuthService, logger appsvc.LoginLogger) *AccountHandler {
 	return &AccountHandler{Q: q, Auth: auth, LoginLogger: logger}
 }
 

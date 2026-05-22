@@ -5,9 +5,9 @@ import (
 	"strings"
 	"unicode"
 
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	"admin/internal/service"
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
 	"go-common/utils/slices_utils"
@@ -42,10 +42,10 @@ var validResourceApiMethods = map[string]struct{}{
 
 type SysResourceApiHandler struct {
 	Q      *query.Query
-	Casbin service.CasbinService
+	Casbin appsvc.CasbinService
 }
 
-func NewSysResourceApiHandler(q *query.Query, casbin service.CasbinService) *SysResourceApiHandler {
+func NewSysResourceApiHandler(q *query.Query, casbin appsvc.CasbinService) *SysResourceApiHandler {
 	return &SysResourceApiHandler{Q: q, Casbin: casbin}
 }
 

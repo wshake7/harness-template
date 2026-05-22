@@ -17,6 +17,7 @@
 - `backend/go/admin` 是当前核心后端服务，模块名为 `admin`，使用 Go Fiber v3 提供 HTTP API，默认入口为 `cmd/main.go`。
 - `backend/go/admin/etc/config.yaml` 是本地默认配置：服务默认监听 `0.0.0.0:3001`，开启 Swagger，使用 Postgres、Redis 和 Temporal。
 - 后端路由统一注册到 `/api` 下，当前包括账号登录/登出、加密公钥、用户、角色、资源菜单/API、字典、语言、日志、任务调度和任务执行。
+- `backend/go/admin/internal/appsvc` 承担 router/logic 面向的应用层服务接口和薄适配实现，和 `internal/services` 的基础设施生命周期层分开。
 - `backend/go/admin/internal/workflows` 存放具体 Temporal Workflow 实现；`internal/services/temporaljob` 只保留调度分发、执行记录和 Worker 注册等任务基础能力。
 - `backend/go/go-common` 提供通用 DTO、结果封装、日志、配置读取、集合、加密、ID、字符串、时间等 Go 共享能力。
 - `backend/go/orm-crud` 提供 ORM CRUD、分页 proto 和 GORM 查询辅助能力；`backend/go/orm-crud/api` 含 Buf/protobuf 相关生成入口。

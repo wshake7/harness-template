@@ -1,17 +1,17 @@
 package auth_router
 
 import (
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/middleware"
 	"admin/internal/router/logic"
-	"admin/internal/service"
 	"admin/internal/services/orm/query"
 
 	"github.com/gofiber/fiber/v3"
 )
 
 func registerSysRoleRouters(router fiber.Router) {
-	sysRoleHandler := logic.NewSysRoleHandler(query.Q, service.NewCasbinService())
+	sysRoleHandler := logic.NewSysRoleHandler(query.Q, appsvc.NewCasbinService())
 	logMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("role"))
 	createLogMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("role"), middleware.WithChangeQuery(sysRoleCreateChangeQuery))
 	updateLogMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("role"), middleware.WithChangeQuery(sysRoleUpdateChangeQuery))

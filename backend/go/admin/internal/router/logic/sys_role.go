@@ -5,9 +5,9 @@ import (
 	"slices"
 	"strings"
 
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	"admin/internal/service"
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
 	"go-common/utils/slices_utils"
@@ -21,10 +21,10 @@ import (
 
 type SysRoleHandler struct {
 	Q      *query.Query
-	Casbin service.CasbinService
+	Casbin appsvc.CasbinService
 }
 
-func NewSysRoleHandler(q *query.Query, casbin service.CasbinService) *SysRoleHandler {
+func NewSysRoleHandler(q *query.Query, casbin appsvc.CasbinService) *SysRoleHandler {
 	return &SysRoleHandler{Q: q, Casbin: casbin}
 }
 

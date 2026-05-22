@@ -23,7 +23,8 @@
 
 ## 后端代码边界
 
-- `backend/go/admin/internal/services` 放 Redis、Temporal、Casbin、ORM 等基础服务适配和可复用服务层能力。
+- `backend/go/admin/internal/appsvc` 放 router/logic 面向的应用层服务接口和薄实现，例如认证、缓存、权限、数据权限和 Temporal 调度门面。
+- `backend/go/admin/internal/services` 放 Redis、Temporal、Casbin、ORM、HTTP client 等基础设施生命周期服务，以及它们的底层适配能力。
 - `backend/go/admin/internal/workflows` 放具体 Temporal Workflow 业务实现；任务分发、执行记录和 Worker 注册仍由 `internal/services/temporaljob` 承担。
 - `backend/go/admin/internal/domains` 放跨路由、服务和中间件共享的领域常量与轻量 DTO，例如加密公钥缓存 key 和 key pair 结构。
 
@@ -42,9 +43,6 @@
 | `Temporal.HostPort` | `127.0.0.1:7233` |
 | `Temporal.TaskQueue` | `admin` |
 | `Temporal.WorkerEnabled` | `true` |
-| `Milvus.Enabled` | `true` |
-| `Milvus.Address` | `127.0.0.1:19530` |
-| `Milvus.APIKey` | 留空 |
 
 配置里包含本地数据库密码，仅用于开发默认值；生产或共享环境必须改用安全的配置注入方式。
 
@@ -87,7 +85,6 @@ go test ./...
 - Postgres：默认数据库 `wshake`，默认本地用户 `postgres`。
 - Redis：默认 `127.0.0.1:6379`。
 - Temporal：默认 `127.0.0.1:7233`，namespace `default`，task queue `admin`。
-- Milvus：默认 `127.0.0.1:19530`，默认启用；本地未启动 Milvus 时可把 `Milvus.Enabled` 改为 `false`。
 - Swagger：`IsSwagger=true` 时启用，文档生成入口为 `make swagger`。
 
 ## 变更要求

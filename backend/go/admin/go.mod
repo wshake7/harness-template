@@ -218,6 +218,10 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.42.2 // indirect
+	github.com/cloudwego/eino-ext/components/embedding/openai latest
+	github.com/cloudwego/eino-ext/components/document/loader/file latest
+	github.com/cloudwego/eino-ext/components/document/transformer/splitter/markdown latest
+	github.com/cloudwego/eino-ext/components/indexer/redis latest
 )
 
 exclude go.etcd.io/etcd/server/v3 v3.5.5

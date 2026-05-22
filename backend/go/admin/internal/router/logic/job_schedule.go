@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"admin/internal/appsvc"
 	"admin/internal/config"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	"admin/internal/service"
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
 	"admin/internal/services/temporaljob"
@@ -29,10 +29,10 @@ import (
 
 type JobScheduleHandler struct {
 	Q        *query.Query
-	Temporal service.TemporalService
+	Temporal appsvc.TemporalService
 }
 
-func NewJobScheduleHandler(q *query.Query, temporal service.TemporalService) *JobScheduleHandler {
+func NewJobScheduleHandler(q *query.Query, temporal appsvc.TemporalService) *JobScheduleHandler {
 	return &JobScheduleHandler{Q: q, Temporal: temporal}
 }
 
@@ -565,7 +565,7 @@ func findActiveJobSchedule(q *query.Query, id uint64) (*models.JobSchedule, erro
 	return current, nil
 }
 
-func syncTemporalSchedule(temporal service.TemporalService, ctx context.Context, m *models.JobSchedule, inputValue any, createOnly bool) error {
+func syncTemporalSchedule(temporal appsvc.TemporalService, ctx context.Context, m *models.JobSchedule, inputValue any, createOnly bool) error {
 
 	options, err := buildScheduleOptions(m, inputValue)
 	if err != nil {
@@ -599,7 +599,7 @@ func syncTemporalSchedule(temporal service.TemporalService, ctx context.Context,
 	return err
 }
 
-func deleteTemporalSchedule(temporal service.TemporalService, ctx context.Context, scheduleID string) error {
+func deleteTemporalSchedule(temporal appsvc.TemporalService, ctx context.Context, scheduleID string) error {
 	if scheduleID == "" {
 		return nil
 	}
@@ -607,7 +607,7 @@ func deleteTemporalSchedule(temporal service.TemporalService, ctx context.Contex
 	return temporal.DeleteSchedule(ctx, scheduleID)
 }
 
-func switchTemporalSchedule(temporal service.TemporalService, ctx context.Context, scheduleID string, enabled bool) error {
+func switchTemporalSchedule(temporal appsvc.TemporalService, ctx context.Context, scheduleID string, enabled bool) error {
 
 	if enabled {
 		return temporal.UnpauseSchedule(ctx, scheduleID, client.ScheduleUnpauseOptions{})
@@ -615,7 +615,7 @@ func switchTemporalSchedule(temporal service.TemporalService, ctx context.Contex
 	return temporal.PauseSchedule(ctx, scheduleID, client.SchedulePauseOptions{Note: "disabled by admin"})
 }
 
-func triggerTemporalSchedule(temporal service.TemporalService, ctx context.Context, scheduleID string) error {
+func triggerTemporalSchedule(temporal appsvc.TemporalService, ctx context.Context, scheduleID string) error {
 
 	return temporal.TriggerSchedule(ctx, scheduleID, client.ScheduleTriggerOptions{})
 }

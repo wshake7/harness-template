@@ -1,4 +1,4 @@
-package service
+package appsvc
 
 import (
 	"admin/internal/domains"

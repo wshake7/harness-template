@@ -1,17 +1,17 @@
 package auth_router
 
 import (
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/middleware"
 	"admin/internal/router/logic"
-	"admin/internal/service"
 	"admin/internal/services/orm/query"
 
 	"github.com/gofiber/fiber/v3"
 )
 
 func registerJobExecutionRouters(router fiber.Router) {
-	jobExecutionHandler := logic.NewJobExecutionHandler(query.Q, service.NewTemporalService())
+	jobExecutionHandler := logic.NewJobExecutionHandler(query.Q, appsvc.NewTemporalService())
 	logMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("job_execution"))
 	changeLogMiddleware := middleware.ApiLogMiddleware(middleware.WithModule("job_execution"), middleware.WithChangeQuery(jobExecutionChangeQuery))
 

@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	"admin/internal/service"
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
 	"go-common/utils/slices_utils"
@@ -24,10 +24,10 @@ import (
 
 type SysDictHandler struct {
 	Q              *query.Query
-	DataPermission service.DataPermissionService
+	DataPermission appsvc.DataPermissionService
 }
 
-func NewSysDictHandler(q *query.Query, dp service.DataPermissionService) *SysDictHandler {
+func NewSysDictHandler(q *query.Query, dp appsvc.DataPermissionService) *SysDictHandler {
 	return &SysDictHandler{Q: q, DataPermission: dp}
 }
 
@@ -123,7 +123,7 @@ func (h *SysDictHandler) TypeList(ctx *handler.Ctx, req *v1.PagingRequest) (*gor
 	}, nil
 }
 
-func queryAllowedDictTypeIDSetByExpr(dp service.DataPermissionService, ids []uint64, permissionExpr *v1.FilterExpr) (map[uint64]bool, error) {
+func queryAllowedDictTypeIDSetByExpr(dp appsvc.DataPermissionService, ids []uint64, permissionExpr *v1.FilterExpr) (map[uint64]bool, error) {
 	allowedIDSet := make(map[uint64]bool, len(ids))
 	if len(ids) == 0 {
 		return allowedIDSet, nil

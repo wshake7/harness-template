@@ -1,19 +1,19 @@
 package logic
 
 import (
+	"admin/internal/appsvc"
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
-	"admin/internal/service"
 	"errors"
 
 	"go.uber.org/zap"
 )
 
 type EncryptHandler struct {
-	Cache service.RedisCache
+	Cache appsvc.RedisCache
 }
 
-func NewEncryptHandler(cache service.RedisCache) *EncryptHandler {
+func NewEncryptHandler(cache appsvc.RedisCache) *EncryptHandler {
 	return &EncryptHandler{Cache: cache}
 }
 
@@ -32,12 +32,12 @@ func (h *EncryptHandler) PublicKey(ctx *handler.Ctx) (*ResPublicKey, error) {
 	if err == nil {
 		return &ResPublicKey{PublicKey: publicKey}, nil
 	}
-	if !errors.Is(err, service.ErrCacheMiss) {
+	if !errors.Is(err, appsvc.ErrCacheMiss) {
 		ctx.L().Error("获取全局Key错误", zap.Error(err))
 		return nil, res.FailDefault
 	}
 
-	publicKey, _, err = service.GenerateAndCacheKeyPair(ctx, h.Cache)
+	publicKey, _, err = appsvc.GenerateAndCacheKeyPair(ctx, h.Cache)
 	if err != nil {
 		ctx.L().Error("生成或保存rsaKey错误", zap.Error(err))
 		return nil, res.FailDefault
