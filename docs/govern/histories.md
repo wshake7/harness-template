@@ -1,6 +1,6 @@
 # 代码变更历史记录规范
 
-`docs/histories/` 用来记录已经完成的代码变更任务。纯问答、调研、分析类任务默认不需要记 history，除非最后确实改了仓库内容。
+`docs/records/histories/` 用来记录已经完成的代码变更任务。纯问答、调研、分析类任务默认不需要记 history，除非最后确实改了仓库内容。
 
 在 Harness 主流程里，history 是阶段 5「交付」的审计产物。可复用教训不应该只写在 history 里，应按范围沉淀到 `context/team/`、`context/harness-framework/` 或 `context/project/<project>/experience/`。
 
@@ -14,14 +14,14 @@
 
 ## 目录与命名
 
-- 目录：`docs/histories/YYYY-MM/`
+- 目录：`docs/records/histories/YYYY-MM/`
 - 文件名：`YYYYMMDD-HHmm-task-slug.md`
-- 模板：`docs/histories/template.md`
+- 模板：`docs/records/histories/template.md`
 
 示例：
 
 ```text
-docs/histories/
+docs/records/histories/
   2026-04/
     20260408-1430-bootstrap-template.md
 ```

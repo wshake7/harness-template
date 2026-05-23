@@ -7,19 +7,19 @@
 | 阶段 | 目标 | 主要产物 |
 | --- | --- | --- |
 | 1. 初始化 | 建立项目名称、上下文入口和矩阵骨架。 | `README.md`、`context/`、`.service-matrix/dependencies.yaml` |
-| 2. 需求定义 | 明确背景、目标、非目标和验收标准。 | `docs/product-specs/` 或需求系统链接 |
-| 3. 设计 | 记录方案、影响面、风险、回滚和验证方式。 | `docs/exec-plans/active/` 或轻量设计说明 |
+| 2. 需求定义 | 明确背景、目标、非目标和验收标准。 | `docs/product/specs/` 或需求系统链接 |
+| 3. 设计 | 记录方案、影响面、风险、回滚和验证方式。 | `docs/records/exec-plans/active/` 或轻量设计说明 |
 | 4. 实现 | 修改代码、脚本、文档和测试，并保持同源更新。 | diff、测试、文档、必要的经验记录 |
-| 5. 交付 | 验证、审查、发布记录和知识沉淀。 | `make ci` 输出、`docs/histories/`、release note |
+| 5. 交付 | 验证、审查、发布记录和知识沉淀。 | `make ci` 输出、`docs/records/histories/`、release note |
 
 ## 轻量门禁
 
 | 门禁 | 位置 | 阻塞条件 | 可机读检查 |
 | --- | --- | --- | --- |
 | 需求门禁 | 阶段 2 末尾 | 没有目标、非目标或验收标准。 | 需求文档必须包含 `目标` 和 `验收标准` 段落。 |
-| 设计门禁 | 阶段 3 末尾 | 缺少实现方案、影响面、风险或验证方式。 | 复杂任务必须有 `docs/exec-plans/active/` 计划。 |
+| 设计门禁 | 阶段 3 末尾 | 缺少实现方案、影响面、风险或验证方式。 | 复杂任务必须有 `docs/records/exec-plans/active/` 计划。 |
 | 实现入口门禁 | 阶段 4 开始 | 任务没有可执行切分，或服务矩阵路径不合法。 | `scripts/validate-service-matrix.sh` 必须通过。 |
-| 交付门禁 | 阶段 5 | 未运行 CI，或代码/流程变更没有 history。 | `make ci` 必须通过，实质变更补 `docs/histories/`。 |
+| 交付门禁 | 阶段 5 | 未运行 CI，或代码/流程变更没有 history。 | `make ci` 必须通过，实质变更补 `docs/records/histories/`。 |
 
 ## 执行原则
 

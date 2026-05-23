@@ -21,6 +21,6 @@
 ## 验收标准
 
 - `make ci` 通过。
-- `docs/HARNESS_PROCESS.md` 存在并定义阶段和门禁。
+- `docs/govern/harness-process.md` 存在并定义阶段和门禁。
 - `context/`、`.harness/`、`.service-matrix/` 的入口文件存在。
 - 交付时有 history 记录。

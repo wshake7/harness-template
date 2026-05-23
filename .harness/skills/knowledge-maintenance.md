@@ -11,6 +11,6 @@
 归属建议：
 
 - 团队通用规则写入 `context/team/`。
-- Harness 流程规则写入 `context/harness-framework/` 或 `docs/HARNESS_PROCESS.md`。
+- Harness 流程规则写入 `context/harness-framework/` 或 `docs/govern/harness-process.md`。
 - 项目或模块经验写入 `context/project/<project>/experience/`。
-- 一次性完成记录写入 `docs/histories/`。
+- 一次性完成记录写入 `docs/records/histories/`。

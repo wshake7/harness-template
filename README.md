@@ -71,11 +71,14 @@ cd admin && make swagger
 
 ## 文档入口
 
-- `docs/ARCHITECTURE.md`：整体拓扑、依赖边界和前后端数据流。
-- `docs/BACKEND.md`：Go 后端启动、配置、依赖、API 和验证方式。
-- `docs/FRONTEND.md`：React/pnpm workspace、环境变量、联调、请求和验证方式。
-- `docs/RELIABILITY.md`：启动、外部依赖、可观测性和排障入口。
-- `docs/SECURITY.md`：认证、权限、加密、配置和依赖安全约束。
+- `docs/README.md`：完整文档地图、目录职责和常用阅读路径。
+- `docs/start/principles.md`：Agent-first、产品取舍和设计原则。
+- `docs/build/architecture.md`：整体拓扑、依赖边界和前后端数据流。
+- `docs/build/backend.md`：Go 后端启动、配置、依赖、API 和验证方式。
+- `docs/build/frontend.md`：React/pnpm workspace、环境变量、联调、请求和验证方式。
+- `docs/operate/reliability.md`：启动、外部依赖、可观测性和排障入口。
+- `docs/operate/security.md`：认证、权限、加密、配置和依赖安全约束。
+- `docs/govern/harness-process.md`：Harness 五阶段流程和轻量门禁。
 - `context/project/admin/INDEX.md`：Agent 执行管理后台任务时的项目级入口。
 
 ## Harness 闭环
@@ -90,4 +93,4 @@ cd admin && make swagger
 4. 实现：按任务修改代码、文档和测试。
 5. 交付：运行 `make ci`，补 history 或 release note，沉淀可复用经验。
 
-流程与门禁的单一真相源是 `docs/HARNESS_PROCESS.md`。
+流程与门禁的单一真相源是 `docs/govern/harness-process.md`。

@@ -79,7 +79,7 @@ require_companion() {
 require_history() {
   require_companion \
     "交付记录缺失" \
-    '^docs/histories/[0-9]{4}-[0-9]{2}/[0-9]{8}-[0-9]{4}-[^/]+\.md$' \
+    '^docs/records/histories/[0-9]{4}-[0-9]{2}/[0-9]{8}-[0-9]{4}-[^/]+\.md$' \
     "运行 make new-history SLUG=<change-name>，补充并 stage 对应 history。"
 }
 
@@ -90,15 +90,15 @@ delivery_change_pattern='^(scripts/|apps/|packages/|infra/|\.github/|\.vite-hook
 if has_changed_matching "${process_change_pattern}"; then
   require_companion \
     "流程或工具链变更未同步说明" \
-    '^(docs/HARNESS_PROCESS\.md|docs/CICD\.md|docs/REPO_COLLAB_GUIDE\.md|docs/SUPPLY_CHAIN_SECURITY\.md|context/harness-framework/INDEX\.md|\.harness/)' \
-    "同步 stage docs/HARNESS_PROCESS.md、docs/CICD.md、docs/REPO_COLLAB_GUIDE.md、docs/SUPPLY_CHAIN_SECURITY.md、context/harness-framework/INDEX.md 或 .harness/ 中的相关入口。"
+    '^(docs/govern/harness-process\.md|docs/operate/cicd\.md|docs/govern/collaboration\.md|docs/operate/security\.md|context/harness-framework/INDEX\.md|\.harness/)' \
+    "同步 stage docs/govern/harness-process.md、docs/operate/cicd.md、docs/govern/collaboration.md、docs/operate/security.md、context/harness-framework/INDEX.md 或 .harness/ 中的相关入口。"
 fi
 
 if has_changed_matching "${topology_change_pattern}"; then
   require_companion \
     "架构或服务拓扑变更未同步说明" \
-    '^(docs/ARCHITECTURE\.md|\.service-matrix/dependencies\.yaml|context/project/)' \
-    "同步 stage docs/ARCHITECTURE.md、.service-matrix/dependencies.yaml 或 context/project/ 中的项目上下文。"
+    '^(docs/build/architecture\.md|\.service-matrix/dependencies\.yaml|context/project/)' \
+    "同步 stage docs/build/architecture.md、.service-matrix/dependencies.yaml 或 context/project/ 中的项目上下文。"
 fi
 
 if has_changed_matching "${delivery_change_pattern}"; then

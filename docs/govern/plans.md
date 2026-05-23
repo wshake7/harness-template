@@ -2,7 +2,7 @@
 
 execution plan 适合用在那些超出单轮聊天上下文、需要多次推进或风险较高的任务上。
 
-在 Harness 主流程里，execution plan 是阶段 3「设计」和阶段 4「实现」之间的重要门禁产物。完整流程见 `docs/HARNESS_PROCESS.md`。
+在 Harness 主流程里，execution plan 是阶段 3「设计」和阶段 4「实现」之间的重要门禁产物。完整流程见 `docs/govern/harness-process.md`。
 
 ## 什么时候该建 plan
 
@@ -14,10 +14,10 @@ execution plan 适合用在那些超出单轮聊天上下文、需要多次推�
 
 ## 存放位置
 
-- 进行中的 plan 放在 `docs/exec-plans/active/`
-- 已完成的 plan 移到 `docs/exec-plans/completed/`
-- 复用模板在 `docs/exec-plans/templates/execution-plan.md`
-- 暂不处理但值得保留的债务放到 `docs/exec-plans/tech-debt-tracker.md`
+- 进行中的 plan 放在 `docs/records/exec-plans/active/`
+- 已完成的 plan 移到 `docs/records/exec-plans/completed/`
+- 复用模板在 `docs/records/exec-plans/templates/execution-plan.md`
+- 暂不处理但值得保留的债务放到 `docs/records/exec-plans/tech-debt-tracker.md`
 
 ## 维护要求
 

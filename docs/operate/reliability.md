@@ -1,6 +1,6 @@
 # 稳定性与可运维性
 
-这份文档定义当前前后端项目的运行质量底线。CI/CD 流程结构和 release 自动化统一写在 `docs/CICD.md`。
+这份文档定义当前前后端项目的运行质量底线。CI/CD 流程结构和 release 自动化统一写在 `docs/operate/cicd.md`。
 
 ## 启动与关键路径
 

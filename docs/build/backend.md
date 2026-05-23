@@ -59,6 +59,7 @@
 make run
 make swagger
 make script-imports
+make script-orm
 make test-cover
 make test-html
 ```
@@ -96,7 +97,8 @@ go test ./...
 
 ## 变更要求
 
-- 修改配置字段、默认端口、外部依赖或启动方式时，同步更新本文件、`docs/RELIABILITY.md` 和 README。
+- 修改配置字段、默认端口、外部依赖或启动方式时，同步更新本文件、`docs/operate/reliability.md` 和 README。
 - 新增公共 API 或修改响应协议时，同步更新 Swagger 注释、前端请求包或业务 API 调用说明。
+- 修改 `backend/go/admin/internal/services/orm/models/` 下的 ORM model 文件时，必须在 `backend/go/admin` 运行 `make script-orm`，并提交同步生成的 `internal/services/orm/query/` 产物。
 - 生成代码、ORM 查询、Swagger 和 protobuf 产物要在 history 中记录生成命令。
-- 涉及认证、加密、权限、Token、Cookie 或敏感配置的改动必须同步更新 `docs/SECURITY.md`。
+- 涉及认证、加密、权限、Token、Cookie 或敏感配置的改动必须同步更新 `docs/operate/security.md`。

@@ -13,17 +13,17 @@
 
 | 区域 | 评分 | 原因 | 下一步 | 验收方式 |
 | --- | --- | --- | --- | --- |
-| 产品面 | C | 已接入管理后台和前端模板，但真实产品目标、用户路径和验收标准仍未沉淀。 | 补真实 product spec。 | `docs/product-specs/` 中存在管理后台真实需求文档。 |
+| 产品面 | C | 已接入管理后台和前端模板，但真实产品目标、用户路径和验收标准仍未沉淀。 | 补真实 product spec。 | `docs/product/specs/` 中存在管理后台真实需求文档。 |
 | Harness 流程 | B | 已有五阶段流程、门禁、Skill/Command 入口、服务矩阵和基础 CI。 | 将稳定的前后端验证纳入仓库门禁。 | `make ci` 覆盖项目级验证命令。 |
 | 上下文治理 | B | 已有 `context/project/admin/INDEX.md` 和服务矩阵真实条目。 | 持续沉淀项目经验。 | Agent 能从项目上下文找到启动、验证和排障入口。 |
 | 架构文档 | B | 已补齐前后端拓扑、包边界、数据流和依赖方向。 | 随部署、数据库和任务拓扑演进继续更新。 | 架构文档和服务矩阵路径一致。 |
 | 前端 | B | pnpm workspace、环境变量、联调、请求和验证方式已记录。 | 稳定 Playwright 和 mock 验收路径。 | `pnpm ready` 和目标应用 `pnpm e2e:test` 有可复现结果。 |
 | 后端 | B | Go workspace、配置、外部依赖、API 和测试命令已记录。 | 补一键本地依赖和健康检查。 | `cd backend/go && go test ./...` 有可复现结果。 |
 | 测试 | C | 文档列出项目级命令，但 `make ci` 仍只跑仓库基础门禁。 | 先确认前后端命令稳定，再接入 `scripts/ci.sh`。 | `make ci` 包含项目级验证。 |
-| 可观测性 | C | 已记录日志、Swagger 和排障入口，但 metrics/traces/health 仍未定型。 | 补健康检查、指标入口和 dashboard 约定。 | `docs/RELIABILITY.md` 有稳定观测入口和排障路径。 |
-| 安全 | C | 已记录认证、权限、加密、配置和供应链约束。 | 补密钥注入、Cookie/CORS/CSRF 和 replay 防护策略。 | `docs/SECURITY.md` 覆盖生产安全默认值。 |
+| 可观测性 | C | 已记录日志、Swagger 和排障入口，但 metrics/traces/health 仍未定型。 | 补健康检查、指标入口和 dashboard 约定。 | `docs/operate/reliability.md` 有稳定观测入口和排障路径。 |
+| 安全 | C | 已记录认证、权限、加密、配置和供应链约束。 | 补密钥注入、Cookie/CORS/CSRF 和 replay 防护策略。 | `docs/operate/security.md` 覆盖生产安全默认值。 |
 
 ## 与技术债的关系
 
-- 评分为 `C` 或 `D` 的区域，必须在 `docs/exec-plans/tech-debt-tracker.md` 中有对应后续动作。
+- 评分为 `C` 或 `D` 的区域，必须在 `docs/records/exec-plans/tech-debt-tracker.md` 中有对应后续动作。
 - 当某项债务关闭时，同步更新这里的评分、原因和验收方式。
