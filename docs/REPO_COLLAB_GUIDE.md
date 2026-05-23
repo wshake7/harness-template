@@ -29,6 +29,7 @@
 - 每次有实质性代码变更，都应该让验证能力比改之前更强一点。
 - 优先沉淀成仓库里可直接运行的命令和脚本。
 - 如果项目包含 UI，要保证本地能独立启动、验证。
+- 如果项目包含 `backend/go/admin`，修改 `internal/services/orm/models/` 下的 model 文件后，必须在 `backend/go/admin` 运行 `make script-orm` 并提交同步生成的 ORM 查询代码。
 - 如果项目依赖 logs、metrics、traces，最好能提供本地或 CI 可用的访问路径。
 - 即使项目还没接入真实业务构建链路，仓库级 CI 也应该先能跑起来。
 
