@@ -9,7 +9,7 @@
 - 管理后台前端是 `front/apps/admin-react`，本地通过 `VITE_API_URL` 将 `/api` proxy 到后端。
 - `VITE_MOCK=true` 时前端启用 MSW，可用于缺少后端依赖时的页面验证。
 - 本地联调默认依赖 Postgres、Redis 和 Temporal；缺少任一依赖时，应优先使用 mock 或记录失败原因。
-- AI 知识索引链路额外依赖 DashScope embedding 凭据和 Milvus collection 配置；缺配置时知识入库流程会初始化失败。
+- AI 知识索引链路额外依赖 Ark (Volcengine) embedding 凭据和 Milvus collection 配置；缺配置时知识入库流程会初始化失败。
 
 ## 外部依赖
 
@@ -58,7 +58,7 @@ go test ./...
 - 前端请求失败：检查 `VITE_API_URL`、Vite proxy、后端是否监听 `3001`、浏览器请求路径是否以 `/api` 开头。
 - 登录或加密请求失败：检查 `/api/encrypt/public/key`、Cookie 中 Token、前端 `encryptRequest` 和后端加密中间件。
 - 后端启动失败：检查 `backend/go/admin/etc/config.yaml` 中 Postgres、Redis、Temporal、Milvus 是否可访问。
-- AI 知识索引失败：检查 `AI.Embedding.APIKey`、`AI.Embedding.Model`、`Milvus.DBName` 和 `AI.Knowledge.Collection` 是否与目标环境一致。
+- AI 知识索引失败：检查 `AI.Embedding.APIKey`（Ark API key）、`AI.Embedding.Model`（如 `doubao-embedding-vision-251215`）、`AI.Embedding.Dimensions`（该模型默认 2048）、`Milvus.DBName` 和 `AI.Knowledge.Collection` 是否与目标环境一致。若报 "collection schema mismatch"，说明 Milvus collection 的向量维度与当前配置不匹配，需要删除旧 collection 后重新创建。
 - 任务调度失败：检查 Temporal 地址、namespace、task queue `admin` 和 worker 是否启用。
 - Swagger 不一致：在 `backend/go/admin` 运行 `make swagger`，确认 `docs/` 生成产物同步。
 

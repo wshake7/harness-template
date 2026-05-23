@@ -5,12 +5,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudwego/eino-ext/components/embedding/dashscope"
+	"github.com/cloudwego/eino-ext/components/embedding/ark"
 	"github.com/cloudwego/eino/components/embedding"
 )
 
 func New(ctx context.Context, conf config.AIEmbeddingConfig) (embedding.Embedder, error) {
-	if conf.Provider != "" && conf.Provider != "dashscope" {
+	if conf.Provider != "" && conf.Provider != "ark" {
 		return nil, fmt.Errorf("unsupported embedding provider: %s", conf.Provider)
 	}
 	if conf.APIKey == "" {
@@ -20,19 +20,19 @@ func New(ctx context.Context, conf config.AIEmbeddingConfig) (embedding.Embedder
 		return nil, fmt.Errorf("ai embedding model is empty")
 	}
 
-	cfg := &dashscope.EmbeddingConfig{
+	cfg := &ark.EmbeddingConfig{
 		APIKey: conf.APIKey,
 		Model:  conf.Model,
 	}
-	if conf.Dimensions > 0 {
-		// The config keeps dimensions as an unsigned count, while the SDK expects *int.
-		dim := int(conf.Dimensions)
-		cfg.Dimensions = &dim
+
+	if conf.Model == "doubao-embedding-vision-251215" || conf.Model == "doubao-embedding-vision-241215" {
+		apiType := ark.APITypeMultiModal
+		cfg.APIType = &apiType
 	}
 
-	eb, err := dashscope.NewEmbedder(ctx, cfg)
+	eb, err := ark.NewEmbedder(ctx, cfg)
 	if err != nil {
-		return nil, fmt.Errorf("create dashscope embedder: %w", err)
+		return nil, fmt.Errorf("create ark embedder: %w", err)
 	}
 	return eb, nil
 }

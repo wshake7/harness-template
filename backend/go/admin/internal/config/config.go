@@ -1,8 +1,19 @@
 package config
 
 import (
+	"flag"
+	"go-common/viperc"
 	"time"
 )
+
+func Init(configFile string) *Config {
+	flag.Parse()
+	_, err := viperc.ParseFile(configFile, conf)
+	if err != nil {
+		panic(err)
+	}
+	return conf
+}
 
 type Config struct {
 	AppName         string `mapstructure:"AppName"`
@@ -21,7 +32,7 @@ type Config struct {
 	Milvus          MilvusConfig
 }
 
-var Conf = new(Config)
+var conf = new(Config)
 
 type AIConfig struct {
 	Embedding AIEmbeddingConfig `mapstructure:"Embedding"`
@@ -29,10 +40,10 @@ type AIConfig struct {
 }
 
 type AIEmbeddingConfig struct {
-	Provider   string `mapstructure:"Provider" default:"dashscope"`      // Embedding provider. Current default is DashScope.
+	Provider   string `mapstructure:"Provider" default:"ark"`            // Embedding provider. Current default is Ark (Volcengine).
 	APIKey     string `mapstructure:"APIKey"`                            // Third-party embedding credential.
 	Model      string `mapstructure:"Model" default:"text-embedding-v3"` // Embedding model name.
-	Dimensions uint   `mapstructure:"Dimensions" default:"1024"`         // Dense vector dimension expected by the embedding model.
+	Dimensions uint   `mapstructure:"Dimensions" default:"2048"`         // Dense vector dimension expected by the embedding model.
 }
 
 type AIKnowledgeConfig struct {

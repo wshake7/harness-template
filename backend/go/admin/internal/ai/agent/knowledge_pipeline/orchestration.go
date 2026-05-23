@@ -12,7 +12,7 @@ func BuildKnowledgeIndexing(ctx context.Context, conf *config.Config) (r compose
 	const (
 		FileLoader       = "FileLoader"
 		MarkdownSplitter = "MarkdownSplitter"
-		Indexer          = "Indexer"
+		MilvusIndexer    = "MilvusIndexer"
 	)
 	g := compose.NewGraph[document.Source, []string]()
 	fileLoaderKeyOfLoader, err := newLoader(ctx)
@@ -29,11 +29,11 @@ func BuildKnowledgeIndexing(ctx context.Context, conf *config.Config) (r compose
 	if err != nil {
 		return nil, err
 	}
-	_ = g.AddIndexerNode(Indexer, indexerKeyOfIndexer)
+	_ = g.AddIndexerNode(MilvusIndexer, indexerKeyOfIndexer)
 	_ = g.AddEdge(compose.START, FileLoader)
-	_ = g.AddEdge(Indexer, compose.END)
+	_ = g.AddEdge(MilvusIndexer, compose.END)
 	_ = g.AddEdge(FileLoader, MarkdownSplitter)
-	_ = g.AddEdge(MarkdownSplitter, Indexer)
+	_ = g.AddEdge(MarkdownSplitter, MilvusIndexer)
 	r, err = g.Compile(ctx, compose.WithGraphName("KnowledgeIndexing"), compose.WithNodeTriggerMode(compose.AnyPredecessor))
 	if err != nil {
 		return nil, err

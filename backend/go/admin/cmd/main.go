@@ -8,7 +8,6 @@ import (
 	"admin/internal/workflows"
 	"flag"
 	"go-common/log"
-	"go-common/viperc"
 )
 
 var configFile = flag.String("f", "./etc/config.yaml", "the config file")
@@ -28,12 +27,7 @@ var configFile = flag.String("f", "./etc/config.yaml", "the config file")
 // @description | 200 | - | 授权相关失败|
 // @BasePath /
 func main() {
-	flag.Parse()
-	conf := config.Conf
-	_, err := viperc.ParseFile(*configFile, conf)
-	if err != nil {
-		panic(err)
-	}
+	conf := config.Init(*configFile)
 	log.Init(log.DevConfig())
 	services.New(conf, workflows.RegisterWorker)
 	app := fiberc.NewFiber(conf)

@@ -42,7 +42,7 @@
 - 后端 API 统一返回业务响应体，Swagger 注释说明成功和失败 code；HTTP 状态不等同于业务状态。
 - 登录接口使用加密中间件，前端在请求层处理公钥、AES key、Token Cookie 和响应解密。
 - 管理后台数据主要经 Postgres 持久化，Redis 用于缓存/会话相关能力，Temporal 用于任务调度与执行。
-- AI 知识索引流程通过 DashScope embedding 生成向量，并使用 Eino 官方 `components/indexer/milvus2` 组件接入现有 `github.com/milvus-io/milvus/client/v2` 客户端写入 Milvus。
+- AI 知识索引流程通过 Ark (Volcengine) embedding 生成向量，并使用 Eino 官方 `components/indexer/milvus2` 组件接入现有 `github.com/milvus-io/milvus/client/v2` 客户端写入 Milvus。
 
 ## 边界约定
 

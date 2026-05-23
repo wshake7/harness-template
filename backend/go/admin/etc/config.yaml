@@ -5,7 +5,7 @@ AI:
   Embedding:
     Provider: dashscope
     APIKey:
-    Model: text-embedding-v3
+    Model: 
     # Must match the output dimension of the configured embedding model.
     Dimensions: 1024
   Knowledge:
@@ -39,5 +39,5 @@ Temporal:
   WorkerEnabled: true
 Milvus:
   Enabled: true
-  Address: 127.0.0.1:19530
+  Address: localhost:19530
   APIKey:

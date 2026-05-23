@@ -1,3 +1,5 @@
+config.local.yaml*
+
 # OS / editor
 .DS_Store
 Thumbs.db
