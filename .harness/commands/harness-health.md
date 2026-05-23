@@ -4,7 +4,7 @@
 
 执行步骤：
 
-1. 读取 `AGENTS.md`、`docs/HARNESS_PROCESS.md` 和 `context/harness-framework/INDEX.md`。
+1. 读取 `AGENTS.md`、`docs/govern/harness-process.md` 和 `context/harness-framework/INDEX.md`。
 2. 运行 `make ci`。
 3. 检查 `.service-matrix/dependencies.yaml` 是否能通过 `scripts/validate-service-matrix.sh`。
 4. 报告缺失的上下文、门禁或文档同步问题。

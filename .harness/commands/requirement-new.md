@@ -7,7 +7,7 @@
 1. 收集需求名称、背景、目标、非目标和验收标准。
 2. 判断是否需要 execution plan：跨多轮、跨模块、高风险或影响协议时必须创建。
 3. 根据 `.service-matrix/dependencies.yaml` 判断可能影响的模块或服务。
-4. 生成或更新 `docs/product-specs/` 下的需求说明。
+4. 生成或更新 `docs/product/specs/` 下的需求说明。
 5. 提醒后续阶段使用 `/requirement:gate-check`。
 
 输出要求：

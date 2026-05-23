@@ -1,6 +1,6 @@
 # /requirement:gate-check
 
-用途：按 `docs/HARNESS_PROCESS.md` 检查当前需求是否能进入下一阶段。
+用途：按 `docs/govern/harness-process.md` 检查当前需求是否能进入下一阶段。
 
 执行步骤：
 

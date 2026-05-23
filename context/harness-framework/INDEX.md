@@ -4,7 +4,7 @@
 
 必读入口：
 
-- `docs/HARNESS_PROCESS.md`：五阶段流程和轻量门禁。
+- `docs/govern/harness-process.md`：五阶段流程和轻量门禁。
 - `.harness/commands/`：稳定命令入口。
 - `.harness/skills/`：可复用工作流。
 - `.service-matrix/dependencies.yaml`：项目、模块、服务和路径占位符。
@@ -12,6 +12,6 @@
 
 维护规则：
 
-- 流程口径只在 `docs/HARNESS_PROCESS.md` 定义。
+- 流程口径只在 `docs/govern/harness-process.md` 定义。
 - Skill 和 Command 只引用流程，不重新定义另一套阶段语义。
 - 新增门禁时必须同时补 CI 或脚本检查。

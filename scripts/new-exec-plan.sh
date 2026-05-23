@@ -10,8 +10,8 @@ fi
 slug="$1"
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 date_prefix="$(date +%Y-%m-%d)"
-target="${repo_root}/docs/exec-plans/active/${date_prefix}-${slug}.md"
+target="${repo_root}/docs/records/exec-plans/active/${date_prefix}-${slug}.md"
 
-cp "${repo_root}/docs/exec-plans/templates/execution-plan.md" "${target}"
+cp "${repo_root}/docs/records/exec-plans/templates/execution-plan.md" "${target}"
 
 echo "${target}"

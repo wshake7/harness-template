@@ -1,5 +1,5 @@
-# Security
+# Security Policy
 
-安全策略和默认约束维护在 `docs/SECURITY.md`。
+安全默认约束、密钥处理、依赖审查、SBOM 和 provenance 说明统一维护在 `docs/operate/security.md`。
 
-如果发现漏洞或敏感信息泄露风险，请不要在公开 issue 中披露细节。先通过项目约定的私有渠道联系维护者，再根据影响范围补充修复、history 和必要的 release note。
+发现安全问题时，不要把凭据、Token、私钥、数据库连接串或完整敏感日志写入公开 issue、history 或 PR 描述。请先脱敏，再用团队约定的私密渠道同步。
