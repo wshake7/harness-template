@@ -82,7 +82,7 @@ go test ./...
 - 服务启动后，`cmd/main.go` 会读取 `-f` 指定的配置文件，默认是 `./etc/config.yaml`。
 - 路由在 `backend/go/admin/internal/router/router.go` 中统一注册到 `/api`。
 - 账号接口位于 `/api/account/*`，加密公钥接口位于 `/api/encrypt/public/key`。
-- 需要登录的业务路由由 `auth_router` 注册，覆盖用户、角色、资源、字典、语言、日志、任务调度和任务执行。
+- 需要登录的业务路由由 `auth_router` 注册，覆盖用户、角色、资源、字典、语言、日志、任务调度、任务执行和知识库（Collection、Document）。
 - Swagger 注释说明业务响应 code：成功为 `1`，通用失败为 `2`，请求超时/重放/错误和认证授权失败使用独立 code。
 - 当前代码说明“所有接口均返回 HTTP 200，通过响应体 code 区分业务状态”；前端仍会对 HTTP 非 2xx 走统一错误路径。
 

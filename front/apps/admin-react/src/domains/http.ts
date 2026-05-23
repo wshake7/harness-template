@@ -1,5 +1,6 @@
 import { HttpCode, HttpCodeSet, XHeader } from '@vp/core'
 import { appNotifier } from '~/utils/notifier'
+import { markNotified, notifiedError } from '~/utils/notifier'
 
 export { HttpCode, XHeader }
 export type { CodeType } from '@vp/core'
@@ -8,7 +9,7 @@ const errorHandlers: Partial<Record<number, (res: Res) => Promise<void> | void>>
   [HttpCode.FailLogin]: (res) => {
     appNotifier.error(res.msg)
     AccountApi.logout()
-    throw new Error(res.msg)
+    throw notifiedError(res.msg)
   },
   [HttpCode.FailRequestKey]: async (res) => {
     appNotifier.error(res.msg)
@@ -20,11 +21,11 @@ const errorHandlers: Partial<Record<number, (res: Res) => Promise<void> | void>>
       return
     }
     useDeviceStore.getState().setPublicKey(publicKey)
-    throw new Error(res.msg)
+    throw notifiedError(res.msg)
   },
   [HttpCode.UN_KNOW]: (res) => {
     appNotifier.error('请求错误')
-    throw new Error(JSON.stringify(res))
+    throw markNotified(new Error(JSON.stringify(res)))
   },
 }
 
@@ -40,7 +41,7 @@ export async function HttpCodeCheck(res: Res) {
   }
   else if (HttpCodeSet.has(code)) {
     appNotifier.error(msg)
-    throw new Error(msg)
+    throw notifiedError(msg)
   }
   else {
     console.error('未识别状态码', code)

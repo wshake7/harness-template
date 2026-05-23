@@ -5,10 +5,6 @@ import (
 	"admin/internal/services/orm/models"
 	"fmt"
 	"go-common/viperc"
-	"go.uber.org/zap"
-	"gorm.io/gen"
-	"gorm.io/gorm"
-	"moul.io/zapgorm2"
 	gormCrud "orm-crud/gormc"
 	"os"
 	"path/filepath"
@@ -16,7 +12,17 @@ import (
 	"strings"
 	"text/template"
 	"unicode"
+
+	gormadapter "github.com/casbin/gorm-adapter/v3"
+	"go.uber.org/zap"
+	"gorm.io/gen"
+	"gorm.io/gorm"
+	"moul.io/zapgorm2"
 )
+
+// initMarkerTable 用来判断是不是首次初始化数据库；
+// 不存在则视为新库，AutoMigrate 之后执行 init.sql。
+const initMarkerTable = "sys_user"
 
 func main() {
 	var conf config.Config
@@ -37,16 +43,49 @@ func main() {
 		gormCrud.WithEnableMetrics(true),
 	)
 
+	migrateModels := append(models.Models, &gormadapter.CasbinRule{})
 	if conf.Orm.IsAutoMigrate {
-		options = append(options, gormCrud.WithAutoMigrate(models.Models...))
+		options = append(options, gormCrud.WithAutoMigrate(migrateModels...))
 	}
+
+	// 先用一个不开 AutoMigrate 的客户端探测库是否已经初始化。
+	probeClient, err := gormCrud.NewClient(
+		gormCrud.WithLogger(zapLogger.Sugar()),
+		gormCrud.WithGormConfig(&gorm.Config{Logger: logger}),
+		gormCrud.WithDriverName(conf.Orm.DriverName),
+		gormCrud.WithDSN(conf.Orm.DataSource),
+	)
+	if err != nil {
+		panic(err)
+	}
+	isFreshDB := !probeClient.DB.Migrator().HasTable(initMarkerTable)
 
 	client, err := gormCrud.NewClient(options...)
 	if err != nil {
 		panic(err)
 	}
 
+	if conf.Orm.IsAutoMigrate && isFreshDB {
+		if err := runInitSQL(client.DB); err != nil {
+			panic(fmt.Sprintf("failed to run init.sql: %v", err))
+		}
+		fmt.Println("init.sql executed for fresh database")
+	}
+
 	codeGenCode(client.DB, models.Models)
+}
+
+func runInitSQL(db *gorm.DB) error {
+	wd, _ := os.Getwd()
+	sqlPath := filepath.Join(wd, "cmd/scripts/init.sql")
+	content, err := os.ReadFile(sqlPath)
+	if err != nil {
+		return fmt.Errorf("read init.sql: %w", err)
+	}
+	if err := db.Exec(string(content)).Error; err != nil {
+		return fmt.Errorf("exec init.sql: %w", err)
+	}
+	return nil
 }
 
 func dbGenCode(db *gorm.DB, models []any) {

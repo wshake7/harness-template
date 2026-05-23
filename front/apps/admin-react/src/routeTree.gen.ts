@@ -13,12 +13,15 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppSystemRouteImport } from './routes/_app/system'
 import { Route as AppLoggerRouteImport } from './routes/_app/logger'
+import { Route as AppKnowledgeRouteImport } from './routes/_app/knowledge'
 import { Route as AppJobRouteImport } from './routes/_app/job'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppAccountRouteImport } from './routes/_app/account'
 import { Route as loginLoginRouteImport } from './routes/(login)/login'
 import { Route as AppSystemLanguageRouteImport } from './routes/_app/system/language'
 import { Route as AppSystemDictRouteImport } from './routes/_app/system/dict'
+import { Route as AppKnowledgeDocumentRouteImport } from './routes/_app/knowledge/document'
+import { Route as AppKnowledgeCollectionRouteImport } from './routes/_app/knowledge/collection'
 import { Route as AppJobScheduleRouteImport } from './routes/_app/job/schedule'
 import { Route as AppJobExecutionRouteImport } from './routes/_app/job/execution'
 import { Route as AppAccountUserRouteImport } from './routes/_app/account/user'
@@ -45,6 +48,11 @@ const AppSystemRoute = AppSystemRouteImport.update({
 const AppLoggerRoute = AppLoggerRouteImport.update({
   id: '/logger',
   path: '/logger',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppKnowledgeRoute = AppKnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
   getParentRoute: () => AppRoute,
 } as any)
 const AppJobRoute = AppJobRouteImport.update({
@@ -76,6 +84,16 @@ const AppSystemDictRoute = AppSystemDictRouteImport.update({
   id: '/dict',
   path: '/dict',
   getParentRoute: () => AppSystemRoute,
+} as any)
+const AppKnowledgeDocumentRoute = AppKnowledgeDocumentRouteImport.update({
+  id: '/document',
+  path: '/document',
+  getParentRoute: () => AppKnowledgeRoute,
+} as any)
+const AppKnowledgeCollectionRoute = AppKnowledgeCollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
+  getParentRoute: () => AppKnowledgeRoute,
 } as any)
 const AppJobScheduleRoute = AppJobScheduleRouteImport.update({
   id: '/schedule',
@@ -124,12 +142,15 @@ export interface FileRoutesByFullPath {
   '/account': typeof AppAccountRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/job': typeof AppJobRouteWithChildren
+  '/knowledge': typeof AppKnowledgeRouteWithChildren
   '/logger': typeof AppLoggerRouteWithChildren
   '/system': typeof AppSystemRouteWithChildren
   '/account/role': typeof AppAccountRoleRoute
   '/account/user': typeof AppAccountUserRoute
   '/job/execution': typeof AppJobExecutionRoute
   '/job/schedule': typeof AppJobScheduleRoute
+  '/knowledge/collection': typeof AppKnowledgeCollectionRoute
+  '/knowledge/document': typeof AppKnowledgeDocumentRoute
   '/system/dict': typeof AppSystemDictRoute
   '/system/language': typeof AppSystemLanguageRoute
   '/logger/api/log': typeof AppLoggerApiLogRoute
@@ -142,6 +163,7 @@ export interface FileRoutesByTo {
   '/account': typeof AppAccountRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/job': typeof AppJobRouteWithChildren
+  '/knowledge': typeof AppKnowledgeRouteWithChildren
   '/logger': typeof AppLoggerRouteWithChildren
   '/system': typeof AppSystemRouteWithChildren
   '/': typeof AppIndexRoute
@@ -149,6 +171,8 @@ export interface FileRoutesByTo {
   '/account/user': typeof AppAccountUserRoute
   '/job/execution': typeof AppJobExecutionRoute
   '/job/schedule': typeof AppJobScheduleRoute
+  '/knowledge/collection': typeof AppKnowledgeCollectionRoute
+  '/knowledge/document': typeof AppKnowledgeDocumentRoute
   '/system/dict': typeof AppSystemDictRoute
   '/system/language': typeof AppSystemLanguageRoute
   '/logger/api/log': typeof AppLoggerApiLogRoute
@@ -163,6 +187,7 @@ export interface FileRoutesById {
   '/_app/account': typeof AppAccountRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/job': typeof AppJobRouteWithChildren
+  '/_app/knowledge': typeof AppKnowledgeRouteWithChildren
   '/_app/logger': typeof AppLoggerRouteWithChildren
   '/_app/system': typeof AppSystemRouteWithChildren
   '/_app/': typeof AppIndexRoute
@@ -170,6 +195,8 @@ export interface FileRoutesById {
   '/_app/account/user': typeof AppAccountUserRoute
   '/_app/job/execution': typeof AppJobExecutionRoute
   '/_app/job/schedule': typeof AppJobScheduleRoute
+  '/_app/knowledge/collection': typeof AppKnowledgeCollectionRoute
+  '/_app/knowledge/document': typeof AppKnowledgeDocumentRoute
   '/_app/system/dict': typeof AppSystemDictRoute
   '/_app/system/language': typeof AppSystemLanguageRoute
   '/_app/logger/api/log': typeof AppLoggerApiLogRoute
@@ -185,12 +212,15 @@ export interface FileRouteTypes {
     | '/account'
     | '/dashboard'
     | '/job'
+    | '/knowledge'
     | '/logger'
     | '/system'
     | '/account/role'
     | '/account/user'
     | '/job/execution'
     | '/job/schedule'
+    | '/knowledge/collection'
+    | '/knowledge/document'
     | '/system/dict'
     | '/system/language'
     | '/logger/api/log'
@@ -203,6 +233,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/dashboard'
     | '/job'
+    | '/knowledge'
     | '/logger'
     | '/system'
     | '/'
@@ -210,6 +241,8 @@ export interface FileRouteTypes {
     | '/account/user'
     | '/job/execution'
     | '/job/schedule'
+    | '/knowledge/collection'
+    | '/knowledge/document'
     | '/system/dict'
     | '/system/language'
     | '/logger/api/log'
@@ -223,6 +256,7 @@ export interface FileRouteTypes {
     | '/_app/account'
     | '/_app/dashboard'
     | '/_app/job'
+    | '/_app/knowledge'
     | '/_app/logger'
     | '/_app/system'
     | '/_app/'
@@ -230,6 +264,8 @@ export interface FileRouteTypes {
     | '/_app/account/user'
     | '/_app/job/execution'
     | '/_app/job/schedule'
+    | '/_app/knowledge/collection'
+    | '/_app/knowledge/document'
     | '/_app/system/dict'
     | '/_app/system/language'
     | '/_app/logger/api/log'
@@ -273,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLoggerRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/knowledge': {
+      id: '/_app/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof AppKnowledgeRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/job': {
       id: '/_app/job'
       path: '/job'
@@ -314,6 +357,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/system/dict'
       preLoaderRoute: typeof AppSystemDictRouteImport
       parentRoute: typeof AppSystemRoute
+    }
+    '/_app/knowledge/document': {
+      id: '/_app/knowledge/document'
+      path: '/document'
+      fullPath: '/knowledge/document'
+      preLoaderRoute: typeof AppKnowledgeDocumentRouteImport
+      parentRoute: typeof AppKnowledgeRoute
+    }
+    '/_app/knowledge/collection': {
+      id: '/_app/knowledge/collection'
+      path: '/collection'
+      fullPath: '/knowledge/collection'
+      preLoaderRoute: typeof AppKnowledgeCollectionRouteImport
+      parentRoute: typeof AppKnowledgeRoute
     }
     '/_app/job/schedule': {
       id: '/_app/job/schedule'
@@ -401,6 +458,20 @@ const AppJobRouteChildren: AppJobRouteChildren = {
 const AppJobRouteWithChildren =
   AppJobRoute._addFileChildren(AppJobRouteChildren)
 
+interface AppKnowledgeRouteChildren {
+  AppKnowledgeCollectionRoute: typeof AppKnowledgeCollectionRoute
+  AppKnowledgeDocumentRoute: typeof AppKnowledgeDocumentRoute
+}
+
+const AppKnowledgeRouteChildren: AppKnowledgeRouteChildren = {
+  AppKnowledgeCollectionRoute: AppKnowledgeCollectionRoute,
+  AppKnowledgeDocumentRoute: AppKnowledgeDocumentRoute,
+}
+
+const AppKnowledgeRouteWithChildren = AppKnowledgeRoute._addFileChildren(
+  AppKnowledgeRouteChildren,
+)
+
 interface AppLoggerRouteChildren {
   AppLoggerApiLogRoute: typeof AppLoggerApiLogRoute
   AppLoggerLoginLogRoute: typeof AppLoggerLoginLogRoute
@@ -437,6 +508,7 @@ interface AppRouteChildren {
   AppAccountRoute: typeof AppAccountRouteWithChildren
   AppDashboardRoute: typeof AppDashboardRoute
   AppJobRoute: typeof AppJobRouteWithChildren
+  AppKnowledgeRoute: typeof AppKnowledgeRouteWithChildren
   AppLoggerRoute: typeof AppLoggerRouteWithChildren
   AppSystemRoute: typeof AppSystemRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
@@ -446,6 +518,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAccountRoute: AppAccountRouteWithChildren,
   AppDashboardRoute: AppDashboardRoute,
   AppJobRoute: AppJobRouteWithChildren,
+  AppKnowledgeRoute: AppKnowledgeRouteWithChildren,
   AppLoggerRoute: AppLoggerRouteWithChildren,
   AppSystemRoute: AppSystemRouteWithChildren,
   AppIndexRoute: AppIndexRoute,

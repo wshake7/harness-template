@@ -26,6 +26,11 @@
 - 稳定性或排障：`docs/operate/reliability.md`
 - 服务路径归属：`.service-matrix/dependencies.yaml`
 
+## 项目经验
+
+- 前端表单校验：`context/project/admin/experience/zod-form-validation.md`
+- 登录互踢兼容性：`context/project/admin/experience/auth-kickout-rueidis.md`
+
 ## Agent 注意事项
 
 - 不要把 `backend/go/admin/internal` 的内部实现当作其他服务可直接依赖的公共 API。

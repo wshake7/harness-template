@@ -409,8 +409,8 @@ function ResourceMenuManagement() {
         closeDrawer()
         await refreshData()
       }
-      catch {
-        gMessage.error('保存失败')
+        catch (e) {
+        notifyError(e, '保存失败')
       }
       finally {
         setSubmitting(false)
@@ -549,8 +549,8 @@ function ResourceMenuManagement() {
                 gMessage.success('删除成功')
                 reload()
               }
-              catch {
-                gMessage.error('删除失败')
+                catch (e) {
+                notifyError(e, '删除失败')
               }
             }}
           >

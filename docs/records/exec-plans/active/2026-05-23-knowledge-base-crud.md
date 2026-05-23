@@ -18,7 +18,7 @@
 |------|------|
 | `backend/go/admin/internal/services/orm/models/knowledge_collection.go` | Collection 模型（已创建） |
 | `backend/go/admin/internal/services/orm/models/knowledge_document.go` | Document 模型（已创建） |
-| `backend/go/admin/internal/router/logic/knowledge_collection.go` | Collection Handler：列表、详情、创建、更新、删除、切换状态 |
+| `backend/go/admin/internal/router/logic/knowledge_collection.go` | Collection Handler：列表、详情、创建、更新、删除 |
 | `backend/go/admin/internal/router/logic/knowledge_document.go` | Document Handler：列表、详情、创建、更新、删除、按 Collection 筛选 |
 | `backend/go/admin/internal/router/auth_router/knowledge.go` | 路由注册：/api/knowledge/collection/*、/api/knowledge/document/* |
 | `backend/go/admin/internal/router/auth_router/auth_router.go` | 新增 knowledge 路由注册调用 |
@@ -108,10 +108,6 @@ type ReqKnowledgeCollectionID struct {
 	ID uint64 `json:"id" binding:"required" binding_msg:"required=请求错误"`
 }
 
-type ReqKnowledgeCollectionSwitch struct {
-	ID      uint64 `json:"id" binding:"required" binding_msg:"required=请求错误"`
-	Enabled bool   `json:"enabled" change:"启用状态"`
-}
 ```
 
 - [ ] **Step 2: 实现 List 方法**
@@ -291,30 +287,6 @@ func (h *KnowledgeCollectionHandler) Del(ctx *handler.Ctx, req *ReqKnowledgeColl
 	info, err := collection.Where(collection.ID.Eq(req.ID)).Delete()
 	if err != nil {
 		ctx.L().Error("delete knowledge collection fail", zap.Error(err), zap.Uint64("id", req.ID))
-		return res.FailDefault
-	}
-	if info.RowsAffected == 0 {
-		return res.FailMsg("集合不存在")
-	}
-	return nil
-}
-```
-
-- [ ] **Step 7: 实现 Switch 方法**
-
-```go
-// @Summary 启用或停用知识库集合
-// @Tags KnowledgeCollection
-// @Accept json
-// @Produce json
-// @Param req body ReqKnowledgeCollectionSwitch true "切换参数"
-// @Success 200 {object} res.Response "成功"
-// @Router /api/knowledge/collection/switch [post]
-func (h *KnowledgeCollectionHandler) Switch(ctx *handler.Ctx, req *ReqKnowledgeCollectionSwitch) error {
-	collection := h.Q.KnowledgeCollection
-	info, err := collection.Where(collection.ID.Eq(req.ID)).Update(collection.IsEnabled, req.Enabled)
-	if err != nil {
-		ctx.L().Error("switch knowledge collection fail", zap.Error(err), zap.Uint64("id", req.ID))
 		return res.FailDefault
 	}
 	if info.RowsAffected == 0 {
@@ -671,7 +643,6 @@ func registerKnowledgeRouters(router fiber.Router) {
 	collectionGroup.Post("/create", handler.CtxHandlerNilFunc(collectionHandler.Create))
 	collectionGroup.Post("/update", handler.CtxHandlerNilFunc(collectionHandler.Update))
 	collectionGroup.Post("/del", handler.CtxHandlerNilFunc(collectionHandler.Del))
-	collectionGroup.Post("/switch", handler.CtxHandlerNilFunc(collectionHandler.Switch))
 
 	documentGroup := router.Group("/knowledge/document")
 	documentGroup.Post("/list", handler.CtxHandlerFunc(documentHandler.List))
@@ -748,10 +719,6 @@ export interface ReqKnowledgeCollectionID {
   id: number
 }
 
-export interface ReqKnowledgeCollectionSwitch extends ReqKnowledgeCollectionID {
-  enabled: boolean
-}
-
 function list(req: PagingRequest) {
   return API.Post<Res<PagingResult<KnowledgeCollection>>>('/api/knowledge/collection/list', req, {
     cacheFor: 0,
@@ -782,19 +749,12 @@ async function del(req: ReqKnowledgeCollectionID) {
   }).send()
 }
 
-async function switchStatus(req: ReqKnowledgeCollectionSwitch) {
-  await API.Post<Res>('/api/knowledge/collection/switch', req, {
-    cacheFor: 0,
-  }).send()
-}
-
 export const KnowledgeCollectionApi = {
   list,
   detail,
   create,
   update,
   del,
-  switchStatus,
 }
 ```
 
@@ -998,6 +958,9 @@ function KnowledgeCollectionManagement() {
     navigate({ to: '/knowledge/document', search: { collectionId: record.id } })
   }, [navigate])
 
+  // 启用/停用通过 update 接口实现
+  // () => KnowledgeCollectionApi.update({ id: record.id, isEnabled: nextEnabled })
+
   // ... 其余实现参考 job/schedule.tsx
 }
 ```
@@ -1184,6 +1147,7 @@ pnpm build
 - **命令：**
   - `cd backend/go/admin && go build ./...` - 后端编译通过
   - `cd front/apps/admin-react && pnpm build` - 前端编译通过
+  - `cd backend/go/admin && go test ./internal/router/logic/ -run "TestKnowledge" -v` - 后端 Handler 单元测试
   - 启动后端后访问 Swagger 文档确认 API 已注册
 
 - **手工检查：**
@@ -1199,14 +1163,61 @@ pnpm build
 
 ---
 
+## 测试文件
+
+### 后端测试
+
+| 文件 | 测试内容 |
+|------|----------|
+| `backend/go/admin/internal/router/logic/knowledge_collection_test.go` | Collection Handler 单元测试：列表、详情、创建、更新、删除、状态切换（Update）、默认值、不存在场景 |
+| `backend/go/admin/internal/router/logic/knowledge_document_test.go` | Document Handler 单元测试：列表、按集合筛选、详情、创建、元数据解析、更新、删除、不存在场景 |
+| `backend/go/admin/internal/router/logic/sqlite_test.go` | 新增 `mustMigrateKnowledge` 辅助函数 |
+
+### 前端 E2E 测试
+
+| 文件 | 测试内容 |
+|------|----------|
+| `front/apps/admin-react/tests/business/knowledge.spec.ts` | 集合页面加载、创建抽屉校验、搜索框、文档页面集合提示、集合到文档跳转 |
+
+### 初始化 SQL
+
+| 文件 | 内容 |
+|------|------|
+| `backend/go/admin/cmd/scripts/init.sql` | 知识库菜单（sys_resource_menu）、API（sys_resource_api）、菜单-API关联、Casbin权限规则、角色-菜单/角色-API关联 |
+
+---
+
 ## 进度记录
 
-- [ ] Task 1: 后端 Collection Handler
-- [ ] Task 2: 后端 Document Handler
-- [ ] Task 3: 后端路由注册
-- [ ] Task 4: 前端 API 封装
-- [ ] Task 5: 前端路由和页面
-- [ ] Task 6: 生成路由并验证
+- [x] Task 1: 后端 Collection Handler
+- [x] Task 2: 后端 Document Handler
+- [x] Task 3: 后端路由注册
+- [x] Task 4: 前端 API 封装
+- [x] Task 5: 前端路由和页面
+- [x] Task 6: 生成路由并验证
+
+## 完成说明
+
+- 后端 `go build ./...` 编译通过
+- 前端知识库相关代码编译通过（`pnpm build` 中知识库文件零错误）
+- 后端 20 个知识库 Handler 单元测试全部通过
+- 修复内容：
+  - `knowledge_document.go:ListByCollection`：将 `Where(...).PageWithPaging()` 链式调用改为通过 query filter 合并 `collectionID` 条件后调用 `PageWithPaging`
+  - `routeTree.gen.ts`：手动添加 knowledge 路由树注册
+  - `collection.tsx`：`ProFormSelect` 的 `isEnabled` options 值从 boolean 改为 number（1/0），同步修改表单初始值和回填值
+  - `document.tsx`：添加 `validateSearch` zod schema 声明 `collectionId` 搜索参数类型
+- 移除内容：
+  - 独立 Switch 接口：Collection 状态切换统一通过 Update 接口实现，减少 API 面
+  - 前端 `switchStatus` API 和路由注册同步移除
+- 新增内容：
+  - `collection.tsx` / `document.tsx`：引入 zod schema 表单校验（`useZodForm` + `superRefine`），实现必填项提示、数值范围校验、JSON 格式校验
+  - `document.tsx`：补充 Drawer 表单，实现创建/编辑文档功能
+  - `context/project/admin/experience/zod-form-validation.md`：沉淀前端表单校验实现模式
+  - 字典化枚举字段：`MetricType`、`IndexType`、`ContentType`、`VectorStatus` 改用 `sys_dict` 管理，前端通过 `useDictMatch` 取选项和渲染标签
+  - 新增字典类型 `knowledge:metric_type`（COSINE/IP/L2）、`knowledge:index_type`（auto/hnsw/ivf_flat）、`knowledge:content_type`（text/markdown/pdf/html）、`knowledge:vector_status`（pending/indexed/failed）
+  - `domains/dict.ts` 注册 4 个新字典 code
+- 删除内容：
+  - `KnowledgeCollection.Status` 字段（与 `IsEnabled` 重复，移除后通过 ORM 重新生成 query 文件）
 
 ---
 
@@ -1215,3 +1226,6 @@ pnpm build
 - 2026-05-23: Document 列表使用独立路由 `/knowledge/document?collectionId=xxx` 而非内嵌面板，符合用户"跳转新 tab"的需求，同时保持 URL 可分享。
 - 2026-05-23: 后端不引入数据权限（DataPermission）简化实现，后续如需可按 sys_dict 模式补充。
 - 2026-05-23: Collection 和 Document 的 CanWrite/CanDelete 暂时固定为 true，后续接入权限系统时动态计算。
+- 2026-05-23: 移除独立 Switch 接口，Collection 启用/停用统一通过 Update 接口（仅传 `id` + `isEnabled`）实现，减少 API 面并保持一致性。
+- 2026-05-23: 删除 `KnowledgeCollection.Status` 字段。`Status` 与 `IsEnabled` 语义重复（active/archived ≈ true/false），保留 `IsEnabled` 即可，避免双状态字段维护成本。
+- 2026-05-23: `MetricType`、`IndexType`、`ContentType`、`VectorStatus` 用 `sys_dict` 管理而非硬编码枚举。优势：选项可以在管理后台动态维护、复用现有翻译/渲染基础设施、与 `is_enabled`、`menu_type` 等系统字典保持一致风格。

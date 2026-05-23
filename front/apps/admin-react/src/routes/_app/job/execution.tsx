@@ -122,8 +122,8 @@ function JobExecutionManagement() {
         setDetailOpen(true)
       }
     }
-    catch {
-      gMessage.error('获取详情失败')
+    catch (e) {
+      notifyError(e, '获取详情失败')
     }
   }, [])
 
@@ -133,8 +133,8 @@ function JobExecutionManagement() {
       gMessage.success(success)
       await send()
     }
-    catch {
-      gMessage.error(fail)
+    catch (e) {
+      notifyError(e, fail)
     }
   }, [send])
 

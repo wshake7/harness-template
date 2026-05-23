@@ -203,8 +203,8 @@ function JobScheduleManagement() {
           setJobScheduleOptions(response.data)
         }
       })
-      .catch(() => {
-        gMessage.error('加载任务选项失败')
+      .catch((e) => {
+        notifyError(e, '加载任务选项失败')
       })
     return () => {
       ignore = true
@@ -300,8 +300,8 @@ function JobScheduleManagement() {
         setDrawerOpen(false)
         await send()
       }
-      catch {
-        gMessage.error('保存失败')
+      catch (e) {
+        notifyError(e, '保存失败')
       }
       finally {
         setSubmitting(false)
@@ -329,8 +329,8 @@ function JobScheduleManagement() {
       gMessage.success(success)
       await send()
     }
-    catch {
-      gMessage.error(fail)
+    catch (e) {
+      notifyError(e, fail)
     }
   }, [send])
 

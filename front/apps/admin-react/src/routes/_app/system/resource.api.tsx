@@ -265,8 +265,8 @@ function ResourceApiManagement() {
         closeDrawer()
         await send()
       }
-      catch {
-        gMessage.error('保存失败')
+        catch (e) {
+        notifyError(e, '保存失败')
       }
       finally {
         setSubmitting(false)
@@ -297,8 +297,8 @@ function ResourceApiManagement() {
       gMessage.success(`${enabledStatus.getLabel(enabledStatusValue(!record.isEnabled), fallbackEnabledStatusLabel(!record.isEnabled))}成功`)
       await send()
     }
-    catch {
-      gMessage.error(`${enabledStatus.getLabel(enabledStatusValue(!record.isEnabled), fallbackEnabledStatusLabel(!record.isEnabled))}失败`)
+      catch (e) {
+      notifyError(e, `${enabledStatus.getLabel(enabledStatusValue(!record.isEnabled), fallbackEnabledStatusLabel(!record.isEnabled))}失败`)
     }
   }
 
@@ -363,8 +363,8 @@ function ResourceApiManagement() {
                 gMessage.success('删除成功')
                 await send()
               }
-              catch {
-                gMessage.error('删除失败')
+                catch (e) {
+                notifyError(e, '删除失败')
               }
             }}
           >

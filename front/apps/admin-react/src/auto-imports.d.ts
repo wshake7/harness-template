@@ -22,6 +22,8 @@ declare global {
   const HttpCodeCheck: typeof import('./domains/http').HttpCodeCheck
   const JobExecutionApi: typeof import('./api/business/jobExecution').JobExecutionApi
   const JobScheduleApi: typeof import('./api/business/jobSchedule').JobScheduleApi
+  const KnowledgeCollectionApi: typeof import('./api/business/knowledgeCollection').KnowledgeCollectionApi
+  const KnowledgeDocumentApi: typeof import('./api/business/knowledgeDocument').KnowledgeDocumentApi
   const LangApi: typeof import('./api/business/sysLanguage').LangApi
   const LanguageEntryPanel: typeof import('./components/business/system/languagePanels').LanguageEntryPanel
   const LanguageTypePanel: typeof import('./components/business/system/languagePanels').LanguageTypePanel
@@ -64,8 +66,11 @@ declare global {
   const globalZodValidator: typeof import('./utils/zod').globalZodValidator
   const lazy: typeof import('react').lazy
   const mapErrorFromZodIssue: typeof import('./utils/zod').mapErrorFromZodIssue
+  const markNotified: typeof import('./utils/notifier').markNotified
   const memo: typeof import('react').memo
   const message: typeof import('./utils/message').default
+  const notifiedError: typeof import('./utils/notifier').notifiedError
+  const notifyError: typeof import('./utils/notifier').notifyError
   const renderAntIcon: typeof import('./utils/antIcons').renderAntIcon
   const renderDictEntryLabel: typeof import('./components/dictEntryLabel').renderDictEntryLabel
   const rsaEncrypt: typeof import('./utils/encrypt').rsaEncrypt
@@ -182,6 +187,7 @@ declare global {
   const useWhyDidYouUpdate: typeof import('ahooks').useWhyDidYouUpdate
   const useZodForm: typeof import('./utils/zod').useZodForm
   const waitForHydration: typeof import('./stores/mock').waitForHydration
+  const wasNotified: typeof import('./utils/notifier').wasNotified
 }
 // for type re-export
 declare global {
@@ -212,6 +218,12 @@ declare global {
   // @ts-ignore
   export type { JobScheduleType, JobScheduleStatus, JobScheduleOption, JobScheduleOptions, JobSchedule, ReqJobScheduleCreate, ReqJobScheduleUpdate, ReqJobScheduleID, ReqJobScheduleSwitch } from './api/business/jobSchedule'
   import('./api/business/jobSchedule')
+  // @ts-ignore
+  export type { KnowledgeCollection, ReqKnowledgeCollectionCreate, ReqKnowledgeCollectionUpdate, ReqKnowledgeCollectionID } from './api/business/knowledgeCollection'
+  import('./api/business/knowledgeCollection')
+  // @ts-ignore
+  export type { KnowledgeDocument, ReqKnowledgeDocumentCreate, ReqKnowledgeDocumentUpdate, ReqKnowledgeDocumentID, ReqKnowledgeDocumentListByCollection } from './api/business/knowledgeDocument'
+  import('./api/business/knowledgeDocument')
   // @ts-ignore
   export type { SysApiLog, ReqLogDetail } from './api/business/sysApiLog'
   import('./api/business/sysApiLog')

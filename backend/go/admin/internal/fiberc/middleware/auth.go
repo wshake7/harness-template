@@ -6,6 +6,7 @@ import (
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
 	"admin/internal/services/redisc"
+
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
 )
@@ -25,7 +26,7 @@ func AuthMiddleware(tokenName string) fiber.Handler {
 		session, err := auth.GetSessionByToken(token)
 		if err != nil {
 			ctx.L().Warn("header token failed, fallback to cookie token", zap.Error(err))
-			session, err = auth.GetSessionByToken(token)
+			return auth.CheckLoginErr(err)
 		}
 		if err != nil {
 			ctx.L().Error("get session error", zap.Error(err))

@@ -272,8 +272,8 @@ function RoleManagement() {
         setDrawerOpen(false)
         await Promise.all([send(), loadRoleTree()])
       }
-      catch {
-        gMessage.error('保存失败')
+        catch (e) {
+        notifyError(e, '保存失败')
       }
       finally {
         setSubmitting(false)
@@ -290,8 +290,8 @@ function RoleManagement() {
         isEnabled: values.isEnabled ?? editing?.isEnabled ?? true,
       })
     }
-    catch {
-      gMessage.error('请检查表单信息')
+      catch (e) {
+      notifyError(e, '请检查表单信息')
     }
   }
 
@@ -323,8 +323,8 @@ function RoleManagement() {
       gMessage.success(`${enabledStatus.getLabel(enabledStatusValue(!record.isEnabled), fallbackEnabledStatusLabel(!record.isEnabled))}成功`)
       await send()
     }
-    catch {
-      gMessage.error(`${enabledStatus.getLabel(enabledStatusValue(!record.isEnabled), fallbackEnabledStatusLabel(!record.isEnabled))}失败`)
+      catch (e) {
+      notifyError(e, `${enabledStatus.getLabel(enabledStatusValue(!record.isEnabled), fallbackEnabledStatusLabel(!record.isEnabled))}失败`)
     }
   }
 
@@ -351,8 +351,8 @@ function RoleManagement() {
       setApiItems(apiRes.data?.items ?? [])
       setPermissionDrawerOpen(true)
     }
-    catch {
-      gMessage.error('加载授权信息失败')
+      catch (e) {
+      notifyError(e, '加载授权信息失败')
     }
   }
 
@@ -371,8 +371,8 @@ function RoleManagement() {
       setPermissionDrawerOpen(false)
       await send()
     }
-    catch {
-      gMessage.error('授权保存失败')
+      catch (e) {
+      notifyError(e, '授权保存失败')
     }
     finally {
       setPermissionSubmitting(false)
@@ -440,8 +440,8 @@ function RoleManagement() {
                 gMessage.success('删除成功')
                 await Promise.all([send(), loadRoleTree()])
               }
-              catch {
-                gMessage.error('删除失败')
+                catch (e) {
+                notifyError(e, '删除失败')
               }
             }}
           >

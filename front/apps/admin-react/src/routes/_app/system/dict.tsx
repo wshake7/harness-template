@@ -32,8 +32,8 @@ function DictManagement() {
       setSelectedEntryIds([])
       setRefreshKey(k => k + 1)
     }
-    catch {
-      gMessage.error('复制失败')
+    catch (e) {
+      notifyError(e, '复制失败')
     }
   }, [])
 

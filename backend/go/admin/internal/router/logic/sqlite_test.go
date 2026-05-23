@@ -56,3 +56,11 @@ func mustMigrateDict(t *testing.T) *query.Query {
 		&models.SysLanguageEntry{},
 	)
 }
+
+func mustMigrateKnowledge(t *testing.T) *query.Query {
+	t.Helper()
+	return setupSQLiteDB(t,
+		&models.KnowledgeCollection{},
+		&models.KnowledgeDocument{},
+	)
+}

@@ -209,7 +209,7 @@ func (s *Storage) Get(key string) (any, error) {
 		}
 		return nil, err
 	}
-	return result, nil
+	return string(result), nil
 }
 
 // Delete 删除键

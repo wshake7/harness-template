@@ -16,31 +16,35 @@ import (
 )
 
 var (
-	Q                  = new(Query)
-	JobExecution       *jobExecution
-	JobSchedule        *jobSchedule
-	SysApiLog          *sysApiLog
-	SysCasbinModel     *sysCasbinModel
-	SysDataPermission  *sysDataPermission
-	SysDictEntry       *sysDictEntry
-	SysDictType        *sysDictType
-	SysLanguageEntry   *sysLanguageEntry
-	SysLanguageType    *sysLanguageType
-	SysLoginLog        *sysLoginLog
-	SysResourceApi     *sysResourceApi
-	SysResourceMenu    *sysResourceMenu
-	SysResourceMenuApi *sysResourceMenuApi
-	SysRole            *sysRole
-	SysRoleApi         *sysRoleApi
-	SysRoleMenu        *sysRoleMenu
-	SysUser            *sysUser
-	SysUserRole        *sysUserRole
+	Q                   = new(Query)
+	JobExecution        *jobExecution
+	JobSchedule         *jobSchedule
+	KnowledgeCollection *knowledgeCollection
+	KnowledgeDocument   *knowledgeDocument
+	SysApiLog           *sysApiLog
+	SysCasbinModel      *sysCasbinModel
+	SysDataPermission   *sysDataPermission
+	SysDictEntry        *sysDictEntry
+	SysDictType         *sysDictType
+	SysLanguageEntry    *sysLanguageEntry
+	SysLanguageType     *sysLanguageType
+	SysLoginLog         *sysLoginLog
+	SysResourceApi      *sysResourceApi
+	SysResourceMenu     *sysResourceMenu
+	SysResourceMenuApi  *sysResourceMenuApi
+	SysRole             *sysRole
+	SysRoleApi          *sysRoleApi
+	SysRoleMenu         *sysRoleMenu
+	SysUser             *sysUser
+	SysUserRole         *sysUserRole
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	JobExecution = &Q.JobExecution
 	JobSchedule = &Q.JobSchedule
+	KnowledgeCollection = &Q.KnowledgeCollection
+	KnowledgeDocument = &Q.KnowledgeDocument
 	SysApiLog = &Q.SysApiLog
 	SysCasbinModel = &Q.SysCasbinModel
 	SysDataPermission = &Q.SysDataPermission
@@ -61,74 +65,80 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:                 db,
-		JobExecution:       newJobExecution(db, opts...),
-		JobSchedule:        newJobSchedule(db, opts...),
-		SysApiLog:          newSysApiLog(db, opts...),
-		SysCasbinModel:     newSysCasbinModel(db, opts...),
-		SysDataPermission:  newSysDataPermission(db, opts...),
-		SysDictEntry:       newSysDictEntry(db, opts...),
-		SysDictType:        newSysDictType(db, opts...),
-		SysLanguageEntry:   newSysLanguageEntry(db, opts...),
-		SysLanguageType:    newSysLanguageType(db, opts...),
-		SysLoginLog:        newSysLoginLog(db, opts...),
-		SysResourceApi:     newSysResourceApi(db, opts...),
-		SysResourceMenu:    newSysResourceMenu(db, opts...),
-		SysResourceMenuApi: newSysResourceMenuApi(db, opts...),
-		SysRole:            newSysRole(db, opts...),
-		SysRoleApi:         newSysRoleApi(db, opts...),
-		SysRoleMenu:        newSysRoleMenu(db, opts...),
-		SysUser:            newSysUser(db, opts...),
-		SysUserRole:        newSysUserRole(db, opts...),
+		db:                  db,
+		JobExecution:        newJobExecution(db, opts...),
+		JobSchedule:         newJobSchedule(db, opts...),
+		KnowledgeCollection: newKnowledgeCollection(db, opts...),
+		KnowledgeDocument:   newKnowledgeDocument(db, opts...),
+		SysApiLog:           newSysApiLog(db, opts...),
+		SysCasbinModel:      newSysCasbinModel(db, opts...),
+		SysDataPermission:   newSysDataPermission(db, opts...),
+		SysDictEntry:        newSysDictEntry(db, opts...),
+		SysDictType:         newSysDictType(db, opts...),
+		SysLanguageEntry:    newSysLanguageEntry(db, opts...),
+		SysLanguageType:     newSysLanguageType(db, opts...),
+		SysLoginLog:         newSysLoginLog(db, opts...),
+		SysResourceApi:      newSysResourceApi(db, opts...),
+		SysResourceMenu:     newSysResourceMenu(db, opts...),
+		SysResourceMenuApi:  newSysResourceMenuApi(db, opts...),
+		SysRole:             newSysRole(db, opts...),
+		SysRoleApi:          newSysRoleApi(db, opts...),
+		SysRoleMenu:         newSysRoleMenu(db, opts...),
+		SysUser:             newSysUser(db, opts...),
+		SysUserRole:         newSysUserRole(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	JobExecution       jobExecution
-	JobSchedule        jobSchedule
-	SysApiLog          sysApiLog
-	SysCasbinModel     sysCasbinModel
-	SysDataPermission  sysDataPermission
-	SysDictEntry       sysDictEntry
-	SysDictType        sysDictType
-	SysLanguageEntry   sysLanguageEntry
-	SysLanguageType    sysLanguageType
-	SysLoginLog        sysLoginLog
-	SysResourceApi     sysResourceApi
-	SysResourceMenu    sysResourceMenu
-	SysResourceMenuApi sysResourceMenuApi
-	SysRole            sysRole
-	SysRoleApi         sysRoleApi
-	SysRoleMenu        sysRoleMenu
-	SysUser            sysUser
-	SysUserRole        sysUserRole
+	JobExecution        jobExecution
+	JobSchedule         jobSchedule
+	KnowledgeCollection knowledgeCollection
+	KnowledgeDocument   knowledgeDocument
+	SysApiLog           sysApiLog
+	SysCasbinModel      sysCasbinModel
+	SysDataPermission   sysDataPermission
+	SysDictEntry        sysDictEntry
+	SysDictType         sysDictType
+	SysLanguageEntry    sysLanguageEntry
+	SysLanguageType     sysLanguageType
+	SysLoginLog         sysLoginLog
+	SysResourceApi      sysResourceApi
+	SysResourceMenu     sysResourceMenu
+	SysResourceMenuApi  sysResourceMenuApi
+	SysRole             sysRole
+	SysRoleApi          sysRoleApi
+	SysRoleMenu         sysRoleMenu
+	SysUser             sysUser
+	SysUserRole         sysUserRole
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:                 db,
-		JobExecution:       q.JobExecution.clone(db),
-		JobSchedule:        q.JobSchedule.clone(db),
-		SysApiLog:          q.SysApiLog.clone(db),
-		SysCasbinModel:     q.SysCasbinModel.clone(db),
-		SysDataPermission:  q.SysDataPermission.clone(db),
-		SysDictEntry:       q.SysDictEntry.clone(db),
-		SysDictType:        q.SysDictType.clone(db),
-		SysLanguageEntry:   q.SysLanguageEntry.clone(db),
-		SysLanguageType:    q.SysLanguageType.clone(db),
-		SysLoginLog:        q.SysLoginLog.clone(db),
-		SysResourceApi:     q.SysResourceApi.clone(db),
-		SysResourceMenu:    q.SysResourceMenu.clone(db),
-		SysResourceMenuApi: q.SysResourceMenuApi.clone(db),
-		SysRole:            q.SysRole.clone(db),
-		SysRoleApi:         q.SysRoleApi.clone(db),
-		SysRoleMenu:        q.SysRoleMenu.clone(db),
-		SysUser:            q.SysUser.clone(db),
-		SysUserRole:        q.SysUserRole.clone(db),
+		db:                  db,
+		JobExecution:        q.JobExecution.clone(db),
+		JobSchedule:         q.JobSchedule.clone(db),
+		KnowledgeCollection: q.KnowledgeCollection.clone(db),
+		KnowledgeDocument:   q.KnowledgeDocument.clone(db),
+		SysApiLog:           q.SysApiLog.clone(db),
+		SysCasbinModel:      q.SysCasbinModel.clone(db),
+		SysDataPermission:   q.SysDataPermission.clone(db),
+		SysDictEntry:        q.SysDictEntry.clone(db),
+		SysDictType:         q.SysDictType.clone(db),
+		SysLanguageEntry:    q.SysLanguageEntry.clone(db),
+		SysLanguageType:     q.SysLanguageType.clone(db),
+		SysLoginLog:         q.SysLoginLog.clone(db),
+		SysResourceApi:      q.SysResourceApi.clone(db),
+		SysResourceMenu:     q.SysResourceMenu.clone(db),
+		SysResourceMenuApi:  q.SysResourceMenuApi.clone(db),
+		SysRole:             q.SysRole.clone(db),
+		SysRoleApi:          q.SysRoleApi.clone(db),
+		SysRoleMenu:         q.SysRoleMenu.clone(db),
+		SysUser:             q.SysUser.clone(db),
+		SysUserRole:         q.SysUserRole.clone(db),
 	}
 }
 
@@ -142,69 +152,75 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:                 db,
-		JobExecution:       q.JobExecution.replaceDB(db),
-		JobSchedule:        q.JobSchedule.replaceDB(db),
-		SysApiLog:          q.SysApiLog.replaceDB(db),
-		SysCasbinModel:     q.SysCasbinModel.replaceDB(db),
-		SysDataPermission:  q.SysDataPermission.replaceDB(db),
-		SysDictEntry:       q.SysDictEntry.replaceDB(db),
-		SysDictType:        q.SysDictType.replaceDB(db),
-		SysLanguageEntry:   q.SysLanguageEntry.replaceDB(db),
-		SysLanguageType:    q.SysLanguageType.replaceDB(db),
-		SysLoginLog:        q.SysLoginLog.replaceDB(db),
-		SysResourceApi:     q.SysResourceApi.replaceDB(db),
-		SysResourceMenu:    q.SysResourceMenu.replaceDB(db),
-		SysResourceMenuApi: q.SysResourceMenuApi.replaceDB(db),
-		SysRole:            q.SysRole.replaceDB(db),
-		SysRoleApi:         q.SysRoleApi.replaceDB(db),
-		SysRoleMenu:        q.SysRoleMenu.replaceDB(db),
-		SysUser:            q.SysUser.replaceDB(db),
-		SysUserRole:        q.SysUserRole.replaceDB(db),
+		db:                  db,
+		JobExecution:        q.JobExecution.replaceDB(db),
+		JobSchedule:         q.JobSchedule.replaceDB(db),
+		KnowledgeCollection: q.KnowledgeCollection.replaceDB(db),
+		KnowledgeDocument:   q.KnowledgeDocument.replaceDB(db),
+		SysApiLog:           q.SysApiLog.replaceDB(db),
+		SysCasbinModel:      q.SysCasbinModel.replaceDB(db),
+		SysDataPermission:   q.SysDataPermission.replaceDB(db),
+		SysDictEntry:        q.SysDictEntry.replaceDB(db),
+		SysDictType:         q.SysDictType.replaceDB(db),
+		SysLanguageEntry:    q.SysLanguageEntry.replaceDB(db),
+		SysLanguageType:     q.SysLanguageType.replaceDB(db),
+		SysLoginLog:         q.SysLoginLog.replaceDB(db),
+		SysResourceApi:      q.SysResourceApi.replaceDB(db),
+		SysResourceMenu:     q.SysResourceMenu.replaceDB(db),
+		SysResourceMenuApi:  q.SysResourceMenuApi.replaceDB(db),
+		SysRole:             q.SysRole.replaceDB(db),
+		SysRoleApi:          q.SysRoleApi.replaceDB(db),
+		SysRoleMenu:         q.SysRoleMenu.replaceDB(db),
+		SysUser:             q.SysUser.replaceDB(db),
+		SysUserRole:         q.SysUserRole.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	JobExecution       IJobExecutionDo
-	JobSchedule        IJobScheduleDo
-	SysApiLog          ISysApiLogDo
-	SysCasbinModel     ISysCasbinModelDo
-	SysDataPermission  ISysDataPermissionDo
-	SysDictEntry       ISysDictEntryDo
-	SysDictType        ISysDictTypeDo
-	SysLanguageEntry   ISysLanguageEntryDo
-	SysLanguageType    ISysLanguageTypeDo
-	SysLoginLog        ISysLoginLogDo
-	SysResourceApi     ISysResourceApiDo
-	SysResourceMenu    ISysResourceMenuDo
-	SysResourceMenuApi ISysResourceMenuApiDo
-	SysRole            ISysRoleDo
-	SysRoleApi         ISysRoleApiDo
-	SysRoleMenu        ISysRoleMenuDo
-	SysUser            ISysUserDo
-	SysUserRole        ISysUserRoleDo
+	JobExecution        IJobExecutionDo
+	JobSchedule         IJobScheduleDo
+	KnowledgeCollection IKnowledgeCollectionDo
+	KnowledgeDocument   IKnowledgeDocumentDo
+	SysApiLog           ISysApiLogDo
+	SysCasbinModel      ISysCasbinModelDo
+	SysDataPermission   ISysDataPermissionDo
+	SysDictEntry        ISysDictEntryDo
+	SysDictType         ISysDictTypeDo
+	SysLanguageEntry    ISysLanguageEntryDo
+	SysLanguageType     ISysLanguageTypeDo
+	SysLoginLog         ISysLoginLogDo
+	SysResourceApi      ISysResourceApiDo
+	SysResourceMenu     ISysResourceMenuDo
+	SysResourceMenuApi  ISysResourceMenuApiDo
+	SysRole             ISysRoleDo
+	SysRoleApi          ISysRoleApiDo
+	SysRoleMenu         ISysRoleMenuDo
+	SysUser             ISysUserDo
+	SysUserRole         ISysUserRoleDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		JobExecution:       q.JobExecution.WithContext(ctx),
-		JobSchedule:        q.JobSchedule.WithContext(ctx),
-		SysApiLog:          q.SysApiLog.WithContext(ctx),
-		SysCasbinModel:     q.SysCasbinModel.WithContext(ctx),
-		SysDataPermission:  q.SysDataPermission.WithContext(ctx),
-		SysDictEntry:       q.SysDictEntry.WithContext(ctx),
-		SysDictType:        q.SysDictType.WithContext(ctx),
-		SysLanguageEntry:   q.SysLanguageEntry.WithContext(ctx),
-		SysLanguageType:    q.SysLanguageType.WithContext(ctx),
-		SysLoginLog:        q.SysLoginLog.WithContext(ctx),
-		SysResourceApi:     q.SysResourceApi.WithContext(ctx),
-		SysResourceMenu:    q.SysResourceMenu.WithContext(ctx),
-		SysResourceMenuApi: q.SysResourceMenuApi.WithContext(ctx),
-		SysRole:            q.SysRole.WithContext(ctx),
-		SysRoleApi:         q.SysRoleApi.WithContext(ctx),
-		SysRoleMenu:        q.SysRoleMenu.WithContext(ctx),
-		SysUser:            q.SysUser.WithContext(ctx),
-		SysUserRole:        q.SysUserRole.WithContext(ctx),
+		JobExecution:        q.JobExecution.WithContext(ctx),
+		JobSchedule:         q.JobSchedule.WithContext(ctx),
+		KnowledgeCollection: q.KnowledgeCollection.WithContext(ctx),
+		KnowledgeDocument:   q.KnowledgeDocument.WithContext(ctx),
+		SysApiLog:           q.SysApiLog.WithContext(ctx),
+		SysCasbinModel:      q.SysCasbinModel.WithContext(ctx),
+		SysDataPermission:   q.SysDataPermission.WithContext(ctx),
+		SysDictEntry:        q.SysDictEntry.WithContext(ctx),
+		SysDictType:         q.SysDictType.WithContext(ctx),
+		SysLanguageEntry:    q.SysLanguageEntry.WithContext(ctx),
+		SysLanguageType:     q.SysLanguageType.WithContext(ctx),
+		SysLoginLog:         q.SysLoginLog.WithContext(ctx),
+		SysResourceApi:      q.SysResourceApi.WithContext(ctx),
+		SysResourceMenu:     q.SysResourceMenu.WithContext(ctx),
+		SysResourceMenuApi:  q.SysResourceMenuApi.WithContext(ctx),
+		SysRole:             q.SysRole.WithContext(ctx),
+		SysRoleApi:          q.SysRoleApi.WithContext(ctx),
+		SysRoleMenu:         q.SysRoleMenu.WithContext(ctx),
+		SysUser:             q.SysUser.WithContext(ctx),
+		SysUserRole:         q.SysUserRole.WithContext(ctx),
 	}
 }
 
