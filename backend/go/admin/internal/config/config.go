@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"go-common/viperc"
 	"time"
 )
@@ -37,6 +38,26 @@ var conf = new(Config)
 type AIConfig struct {
 	Embedding AIEmbeddingConfig `mapstructure:"Embedding"`
 	Knowledge AIKnowledgeConfig `mapstructure:"Knowledge"`
+	Memory    AIMemoryConfig    `mapstructure:"Memory"`
+	Models    []ChatModelConfig `mapstructure:"Models"`
+	McpURL    string            `mapstructure:"McpURL"` // MCP log tool server URL
+}
+
+type ChatModelConfig struct {
+	Name    string `mapstructure:"Name"`    // 模型别名，如 "deepseek-v3", "deepseek-r1"
+	Model   string `mapstructure:"Model"`   // 模型名，如 "deepseek-chat"
+	APIKey  string `mapstructure:"APIKey"`  // API Key
+	BaseURL string `mapstructure:"BaseURL"` // API Base URL
+}
+
+// ResolveModel finds a chat model config by name. Returns an error if not found.
+func ResolveModel(models []ChatModelConfig, name string) (ChatModelConfig, error) {
+	for _, m := range models {
+		if m.Name == name {
+			return m, nil
+		}
+	}
+	return ChatModelConfig{}, fmt.Errorf("chat model %q not found in config", name)
 }
 
 type AIEmbeddingConfig struct {
@@ -55,6 +76,12 @@ type AIKnowledgeConfig struct {
 	IndexMetricType     string `mapstructure:"IndexMetricType" default:"COSINE"`                                    // Dense vector similarity metric.
 	LoadTimeoutSeconds  int    `mapstructure:"LoadTimeoutSeconds" default:"60"`
 	FlushTimeoutSeconds int    `mapstructure:"FlushTimeoutSeconds" default:"30"`
+}
+
+type AIMemoryConfig struct {
+	Type          string `mapstructure:"Type" default:"memory"`     // "memory", "redis", or "db"
+	MaxWindowSize int    `mapstructure:"MaxWindowSize" default:"6"`
+	TTLSeconds    int    `mapstructure:"TTLSeconds" default:"3600"` // Redis key TTL in seconds, only used when Type is "redis"
 }
 
 type OrmConfig struct {

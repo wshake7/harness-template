@@ -9,10 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	milvus2 "github.com/cloudwego/eino-ext/components/indexer/milvus2"
+	"github.com/cloudwego/eino-ext/components/indexer/milvus2"
 	einoindexer "github.com/cloudwego/eino/components/indexer"
 	"github.com/milvus-io/milvus/client/v2/entity"
-	"github.com/milvus-io/milvus/client/v2/milvusclient"
 )
 
 const defaultCollectionName = "biz"
@@ -22,9 +21,9 @@ func New(ctx context.Context, conf *config.Config) (einoindexer.Indexer, error) 
 		return nil, fmt.Errorf("milvus is disabled")
 	}
 
-	cli, err := getMilvusClient(ctx, conf.Milvus)
-	if err != nil {
-		return nil, err
+	cli := milvusc.Client
+	if cli == nil {
+		return nil, fmt.Errorf("milvus client is nil")
 	}
 	eb, err := embedder.New(ctx, conf.AI.Embedding)
 	if err != nil {
@@ -52,13 +51,6 @@ func New(ctx context.Context, conf *config.Config) (einoindexer.Indexer, error) 
 		FieldParams: fieldParams(conf.AI.Knowledge),
 		Embedding:   eb,
 	})
-}
-
-func getMilvusClient(ctx context.Context, conf config.MilvusConfig) (*milvusclient.Client, error) {
-	if milvusc.Client != nil {
-		return milvusc.Client, nil
-	}
-	return milvusc.New(ctx, conf)
 }
 
 func fieldParams(conf config.AIKnowledgeConfig) map[string]map[string]string {

@@ -20,7 +20,7 @@
 - 缓存：Redis/rueidis。
 - 日志与可观测性：zap、Prometheus client、Fiber monitor。
 - API 文档：Swaggo，生成产物在 `backend/go/admin/docs/`。
-- AI 组件：CloudWeGo Eino 工作流，Ark (Volcengine) embedding，Eino `milvus2` indexer，Milvus `client/v2` 向量存储。
+- AI 组件：CloudWeGo Eino 工作流（ReAct Agent、RAG、ChatTemplate、Milvus Indexer/Retriever），Ark (Volcengine) embedding，OpenAI 兼容 ChatModel，MCP SSE 工具集成，Prometheus 告警查询。
 
 ## 后端代码边界
 
@@ -48,6 +48,9 @@
 | `AI.Embedding.Model` | `doubao-embedding-vision-251215` |
 | `AI.Embedding.Dimensions` | `2048` |
 | `AI.Knowledge.Collection` | `biz` |
+| `AI.Models` | ChatModel 数组，每项含 Name/Model/APIKey/BaseURL |
+| `AI.Memory.Type` | `memory`（可选 `redis`、`db`） |
+| `AI.McpURL` | MCP SSE 日志工具 Server URL |
 
 配置里包含本地数据库密码，仅用于开发默认值；生产或共享环境必须改用安全的配置注入方式。
 
@@ -94,6 +97,8 @@ go test ./...
 - Swagger：`IsSwagger=true` 时启用，文档生成入口为 `make swagger`。
 - Ark (Volcengine)：需要在 `AI.Embedding.APIKey` 注入火山方舟 embedding API key。
 - Milvus：AI 知识索引默认使用 `Milvus.DBName` 指定的数据库和 `AI.Knowledge.Collection` 指定的 collection。
+- OpenAI 兼容 ChatModel：需要在 `AI.Models` 中配置 Name/Model/APIKey/BaseURL，当前使用 DeepSeek。
+- MCP Server：AI Agent 通过 SSE 协议连接外部 MCP 日志查询 Server，URL 由 `AI.McpURL` 配置。
 
 ## 变更要求
 

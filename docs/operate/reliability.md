@@ -10,6 +10,7 @@
 - `VITE_MOCK=true` 时前端启用 MSW，可用于缺少后端依赖时的页面验证。
 - 本地联调默认依赖 Postgres、Redis 和 Temporal；缺少任一依赖时，应优先使用 mock 或记录失败原因。
 - AI 知识索引链路额外依赖 Ark (Volcengine) embedding 凭据和 Milvus collection 配置；缺配置时知识入库流程会初始化失败。
+- AI Chat Agent 额外依赖 OpenAI 兼容 ChatModel API 凭据（`AI.Models`）和可选的 MCP SSE 日志 Server（`AI.McpURL`）；缺 ChatModel 配置时 Agent 图编译失败，缺 MCP URL 时日志查询工具以 Warn 级别降级跳过。
 
 ## 外部依赖
 
@@ -19,6 +20,8 @@
 | Redis | `127.0.0.1:6379` | 缓存、会话或加密相关临时数据。 |
 | Temporal | `127.0.0.1:7233` | 任务调度、任务执行和 workflow 管理。 |
 | Milvus | `127.0.0.1:19530` | 向量数据库，用于向量检索和语义搜索。 |
+| OpenAI 兼容 ChatModel API | 由 `AI.Models[].BaseURL` 配置 | LLM 推理，当前接入 DeepSeek。 |
+| MCP SSE Server | 由 `AI.McpURL` 配置 | 日志查询 MCP 工具 Server（可选）。 |
 
 本地默认值来自 `backend/go/admin/etc/config.yaml`。生产或共享环境必须提供环境隔离后的配置，不应直接复用本地默认连接串。
 
@@ -59,6 +62,7 @@ go test ./...
 - 登录或加密请求失败：检查 `/api/encrypt/public/key`、Cookie 中 Token、前端 `encryptRequest` 和后端加密中间件。
 - 后端启动失败：检查 `backend/go/admin/etc/config.yaml` 中 Postgres、Redis、Temporal、Milvus 是否可访问。
 - AI 知识索引失败：检查 `AI.Embedding.APIKey`（Ark API key）、`AI.Embedding.Model`（如 `doubao-embedding-vision-251215`）、`AI.Embedding.Dimensions`（该模型默认 2048）、`Milvus.DBName` 和 `AI.Knowledge.Collection` 是否与目标环境一致。若报 "collection schema mismatch"，说明 Milvus collection 的向量维度与当前配置不匹配，需要删除旧 collection 后重新创建。
+- AI Chat Agent 失败：检查 `AI.Models` 中是否配置了目标模型别名（如 `deepseek-v4-flash`）及对应的 APIKey/BaseURL；确认 `AI.McpURL` 指向的 MCP SSE Server 可访问（不可访问时 Agent 会降级跳过日志工具）。若 ReAct Agent 达到 `MaxStep=25` 仍未完成，会返回达到最大步数的错误。
 - 任务调度失败：检查 Temporal 地址、namespace、task queue `admin` 和 worker 是否启用。
 - Swagger 不一致：在 `backend/go/admin` 运行 `make swagger`，确认 `docs/` 生成产物同步。
 

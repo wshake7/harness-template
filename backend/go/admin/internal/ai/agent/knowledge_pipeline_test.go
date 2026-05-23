@@ -18,7 +18,7 @@ import (
 	"github.com/milvus-io/milvus/client/v2/milvusclient"
 )
 
-func TestRun(t *testing.T) {
+func TestKnowledgeRun(t *testing.T) {
 	ctx := context.Background()
 	conf := config.Init("../../../etc/config.local.yaml")
 	cli, err := milvusc.New(ctx, conf.Milvus)

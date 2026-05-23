@@ -18,7 +18,7 @@
 - `backend/go/admin/etc/config.yaml` 是本地默认配置：服务默认监听 `0.0.0.0:3001`，开启 Swagger，使用 Postgres、Redis 和 Temporal。
 - 后端路由统一注册到 `/api` 下，当前包括账号登录/登出、加密公钥、用户、角色、资源菜单/API、字典、语言、日志、任务调度、任务执行和知识库（Collection、Document）。
 - `backend/go/admin/internal/appsvc` 承担 router/logic 面向的应用层服务接口和薄适配实现，和 `internal/services` 的基础设施生命周期层分开。
-- `backend/go/admin/internal/ai` 存放管理后台内部 AI 组件与 Eino workflow：`agent/knowledge_pipeline` 负责编排，`embedder`、`loader`、`indexer` 提供可复用底层组件。
+- `backend/go/admin/internal/ai` 存放管理后台内部 AI 组件与 Eino workflow：`agent/chat_pipeline` 负责 ReAct Agent 图编排（RAG 检索、ChatTemplate、ReAct 推理、工具调用），`agent/knowledge_pipeline` 负责知识索引编排，`embedder`、`loader`、`indexer`、`retriever` 提供可复用底层组件，`models` 封装 OpenAI 兼容的 ChatModel 工厂，`tools` 提供内省工具（日志 MCP、Prometheus 告警、数据库 CRUD、时间、内部文档搜索），`mem` 提供多后端对话记忆（内存/Redis/DB）。
 - `backend/go/admin/internal/workflows` 存放具体 Temporal Workflow 实现；`internal/services/temporaljob` 只保留调度分发、执行记录和 Worker 注册等任务基础能力。
 - `backend/go/go-common` 提供通用 DTO、结果封装、日志、配置读取、集合、加密、ID、字符串、时间等 Go 共享能力。
 - `backend/go/orm-crud` 提供 ORM CRUD、分页 proto 和 GORM 查询辅助能力；`backend/go/orm-crud/api` 含 Buf/protobuf 相关生成入口。
@@ -43,6 +43,7 @@
 - 登录接口使用加密中间件，前端在请求层处理公钥、AES key、Token Cookie 和响应解密。
 - 管理后台数据主要经 Postgres 持久化，Redis 用于缓存/会话相关能力，Temporal 用于任务调度与执行。
 - AI 知识索引流程通过 Ark (Volcengine) embedding 生成向量，并使用 Eino 官方 `components/indexer/milvus2` 组件接入现有 `github.com/milvus-io/milvus/client/v2` 客户端写入 Milvus。
+- AI 对话流程（`chat_pipeline`）通过 Eino ReAct Agent 图编排：用户输入经 Milvus RAG 检索注入 ChatTemplate，由 OpenAI 兼容 ChatModel 执行推理，Agent 可调用日志 MCP Server、Prometheus 告警、数据库 CRUD、内部文档搜索等工具完成复合任务，对话记忆支持内存/Redis/DB 三种后端。
 
 ## 边界约定
 
