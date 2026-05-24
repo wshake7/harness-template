@@ -9,7 +9,7 @@ type HttpcClient struct {
 	*resty.Client
 }
 
-var Client *HttpcClient
+var Client = &HttpcClient{resty.New()}
 
 func New(logger *zap.SugaredLogger) *HttpcClient {
 	Client = &HttpcClient{resty.New().SetLogger(logger.With(zap.String("module", "httpc")))}

@@ -11,9 +11,10 @@ import (
 // OpenAIChatModelConfig is the model-layer config for an OpenAI-compatible chat model.
 // It is intentionally decoupled from the application config package.
 type OpenAIChatModelConfig struct {
-	Model   string
-	APIKey  string
-	BaseURL string
+	Model       string
+	APIKey      string
+	BaseURL     string
+	ExtraFields map[string]any
 }
 
 // NewChatModel creates an OpenAI-compatible chat model.
@@ -25,8 +26,9 @@ func NewChatModel(ctx context.Context, cfg OpenAIChatModelConfig) (cm model.Tool
 		return nil, fmt.Errorf("API key is empty for model %q, please set it in config", cfg.Model)
 	}
 	return openai.NewChatModel(ctx, &openai.ChatModelConfig{
-		Model:   cfg.Model,
-		APIKey:  cfg.APIKey,
-		BaseURL: cfg.BaseURL,
+		Model:       cfg.Model,
+		APIKey:      cfg.APIKey,
+		BaseURL:     cfg.BaseURL,
+		ExtraFields: cfg.ExtraFields,
 	})
 }

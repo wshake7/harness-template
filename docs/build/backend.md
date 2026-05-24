@@ -20,7 +20,7 @@
 - 缓存：Redis/rueidis。
 - 日志与可观测性：zap、Prometheus client、Fiber monitor。
 - API 文档：Swaggo，生成产物在 `backend/go/admin/docs/`。
-- AI 组件：CloudWeGo Eino 工作流（ReAct Agent、RAG、ChatTemplate、Milvus Indexer/Retriever），Ark (Volcengine) embedding，OpenAI 兼容 ChatModel，MCP SSE 工具集成，Prometheus 告警查询。
+- AI 组件：CloudWeGo Eino 工作流（ReAct Agent、Plan-Execute-Replan Agent、RAG、ChatTemplate、Milvus Indexer/Retriever），Ark (Volcengine) embedding，OpenAI 兼容 ChatModel，MCP SSE 工具集成，Prometheus 告警查询。
 
 ## 后端代码边界
 
@@ -28,6 +28,37 @@
 - `backend/go/admin/internal/services` 放 Redis、Temporal、Casbin、ORM、HTTP client 等基础设施生命周期服务，以及它们的底层适配能力。
 - `backend/go/admin/internal/workflows` 放具体 Temporal Workflow 业务实现；任务分发、执行记录和 Worker 注册仍由 `internal/services/temporaljob` 承担。
 - `backend/go/admin/internal/domains` 放跨路由、服务和中间件共享的领域常量与轻量 DTO，例如加密公钥缓存 key 和 key pair 结构。
+
+## AI Agent 模块
+
+AI Agent 代码位于 `backend/go/admin/internal/ai/`，按职责分层：
+
+```
+internal/ai/
+├── agent/
+│   ├── chat_pipeline/       ReAct Agent 图编排（RAG + ChatTemplate + 工具调用）
+│   ├── knowledge_pipeline/  知识索引编排（Loader → Transformer → Indexer）
+│   └── plan_execute_replan/ Plan-Execute-Replan Agent（规划→执行→重规）
+├── models/open_ai.go        OpenAI 兼容 ChatModel 工厂
+├── tools/                   内省工具（日志 MCP、Prometheus 告警、DB CRUD、时间、文档搜索）
+├── mem/                     多后端对话记忆（Memory/Redis/DB）
+├── embedder/                文本向量化
+├── indexer/                 Milvus 向量索引
+├── loader/                  文档加载
+└── retriever/               Milvus RAG 检索
+```
+
+### Agent 模式
+
+**chat_pipeline (ReAct Agent)**：适合单轮对话。用户输入 → Milvus RAG 检索 → ChatTemplate 拼装 prompt → ReAct Agent 推理并调用工具。入口为 `BuildChatAgent`，返回 `compose.Runnable`。
+
+**plan_execute_replan (Plan-Execute-Replan Agent)**：适合复杂多步任务。Planner 先制定执行计划 → Executor 逐步执行并调用工具 → Replanner 根据执行结果决定是否重新规划。入口为 `BuildPlanAgent`。模型和工具通过依赖注入传入，因为模型创建需要 API Key/BaseURL 等外部配置，工具创建也需要 MCP URL、Embedding 配置等参数。
+
+### 模型配置
+
+`models.OpenAIChatModelConfig` 包含：
+- `Model` / `APIKey` / `BaseURL` — 基础连接参数
+- `ExtraFields map[string]any` — 透传到 OpenAI API 请求体的额外字段，例如 `{"thinking": {"type": "disabled"}}` 可禁用 DeepSeek 思考模式，解决 thinking 模型不支持 `tool_choice` 的问题
 
 ## 本地配置
 
