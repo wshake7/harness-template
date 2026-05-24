@@ -6,7 +6,7 @@
 
 - 从 `AGENTS.md` 开始，再按任务类型读取对应文档。
 - 涉及架构、路径或服务归属时，先看 `.service-matrix/dependencies.yaml`。
-- 涉及后端时，读 `docs/build/backend.md`；涉及前端时，读 `docs/build/frontend.md`。
+- 涉及后端时，读 `docs/develop/backend.md`；涉及前端时，读 `docs/develop/frontend.md`。
 - 行为变更要同步更新代码、文档、测试、服务矩阵和 history。
 - 跨端、跨模块、高风险或会分多轮推进的任务，先在 `docs/records/exec-plans/active/` 下建 execution plan。
 

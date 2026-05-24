@@ -73,9 +73,9 @@ cd admin && make swagger
 
 - `docs/README.md`：完整文档地图、目录职责和常用阅读路径。
 - `docs/start/principles.md`：Agent-first、产品取舍和设计原则。
-- `docs/build/architecture.md`：整体拓扑、依赖边界和前后端数据流。
-- `docs/build/backend.md`：Go 后端启动、配置、依赖、API 和验证方式。
-- `docs/build/frontend.md`：React/pnpm workspace、环境变量、联调、请求和验证方式。
+- `docs/develop/architecture.md`：整体拓扑、依赖边界和前后端数据流。
+- `docs/develop/backend.md`：Go 后端启动、配置、依赖、API 和验证方式。
+- `docs/develop/frontend.md`：React/pnpm workspace、环境变量、联调、请求和验证方式。
 - `docs/operate/reliability.md`：启动、外部依赖、可观测性和排障入口。
 - `docs/operate/security.md`：认证、权限、加密、配置和依赖安全约束。
 - `docs/govern/harness-process.md`：Harness 五阶段流程和轻量门禁。

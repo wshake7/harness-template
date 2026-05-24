@@ -6,9 +6,9 @@
 
 - `context/project/admin/INDEX.md`：管理后台项目前后端上下文入口。
 - `.service-matrix/dependencies.yaml`：模块、服务和路径归属的单一真相源。
-- `docs/build/architecture.md`：整体拓扑、依赖边界和前后端数据流。
-- `docs/build/backend.md`：Go 后端启动、配置、依赖、API 和验证方式。
-- `docs/build/frontend.md`：React/pnpm workspace、环境变量、联调、请求和验证方式。
+- `docs/develop/architecture.md`：整体拓扑、依赖边界和前后端数据流。
+- `docs/develop/backend.md`：Go 后端启动、配置、依赖、API 和验证方式。
+- `docs/develop/frontend.md`：React/pnpm workspace、环境变量、联调、请求和验证方式。
 
 ## 维护规则
 

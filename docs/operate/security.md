@@ -22,7 +22,7 @@
 - `backend/go/admin/etc/config.yaml` 包含本地开发数据库连接串和密码，仅可作为本地默认值。
 - 不要把生产数据库、Redis、Temporal、JWT、Token、私钥或第三方凭据提交到仓库。
 - 共享环境应通过安全配置注入方式覆盖本地默认值，并记录配置来源和轮换方式。
-- 新增环境变量必须同步更新 `docs/build/backend.md`、`docs/build/frontend.md` 或运行手册。
+- 新增环境变量必须同步更新 `docs/develop/backend.md`、`docs/develop/frontend.md` 或运行手册。
 - Milvus `APIKey` 属于外部服务凭据，示例配置留空；生产环境必须通过安全配置注入方式提供，不得提交真实 token 到仓库。
 - DashScope embedding `APIKey` 属于第三方模型凭据，示例配置必须留空，并与 Milvus 凭据一样走安全注入和轮换流程。
 

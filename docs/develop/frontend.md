@@ -74,5 +74,5 @@ pnpm e2e:test-ui
 
 - 新增跨应用能力优先放入 `front/packages/*`，避免复制到多个 app。
 - 新增环境变量必须同步更新本文件，并确认 `createVpEnv` 校验规则。
-- 修改路由、请求协议、mock 或构建配置时，同步更新 `docs/build/architecture.md`、`docs/operate/reliability.md` 或 history。
+- 修改路由、请求协议、mock 或构建配置时，同步更新 `docs/develop/architecture.md`、`docs/operate/reliability.md` 或 history。
 - UI 验证优先使用应用内 Playwright 配置；涉及真实联调时记录后端依赖和启动顺序。

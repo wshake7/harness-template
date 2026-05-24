@@ -19,9 +19,9 @@
 
 ## 任务前必读
 
-- 架构或跨端联调：`docs/build/architecture.md`
-- 后端服务、配置或 API：`docs/build/backend.md`
-- 前端应用、环境变量或 UI 验证：`docs/build/frontend.md`
+- 架构或跨端联调：`docs/develop/architecture.md`
+- 后端服务、配置或 API：`docs/develop/backend.md`
+- 前端应用、环境变量或 UI 验证：`docs/develop/frontend.md`
 - 安全相关：`docs/operate/security.md`
 - 稳定性或排障：`docs/operate/reliability.md`
 - 服务路径归属：`.service-matrix/dependencies.yaml`

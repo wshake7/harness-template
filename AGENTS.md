@@ -11,7 +11,7 @@
 - `docs/README.md`：文档总入口、目录职责和常用阅读路径。
 - `docs/start/principles.md`：Agent-first、产品取舍和设计原则。
 - `docs/govern/collaboration.md`：仓库级协作、提交、文档同步与测试约定。
-- `docs/build/architecture.md`：仓库整体结构和预期边界。
+- `docs/develop/architecture.md`：仓库整体结构和预期边界。
 - `docs/govern/harness-process.md`：Harness 五阶段流程、门禁和交付闭环。
 - `context/harness-framework/INDEX.md`：Agent 执行时的框架级上下文入口。
 
@@ -29,8 +29,8 @@
 - `docs/operate/reliability.md`：运行稳定性、观测性和上线前的基本要求。
 - `docs/operate/security.md`：认证、数据处理、外部集成和供应链安全默认约束。
 - `docs/operate/cicd.md`：仓库的 CI/CD 骨架以及后续如何接入真实项目。
-- `docs/build/frontend.md`：如果仓库包含前端界面，这里记录对应规范。
-- `docs/build/backend.md`：如果任务涉及 Go 后端、API、配置或外部依赖，这里记录对应规范。
+- `docs/develop/frontend.md`：如果仓库包含前端界面，这里记录对应规范。
+- `docs/develop/backend.md`：如果任务涉及 Go 后端、API、配置或外部依赖，这里记录对应规范。
 - `CONTRIBUTING.md`：提 PR 前后的默认检查项和协作要求。
 - `docs/records/releases/README.md`：如何维护面向用户的发布记录。
 - `docs/records/references/README.md`：沉淀到仓库里的外部参考资料。
