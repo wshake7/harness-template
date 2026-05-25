@@ -97,8 +97,8 @@ fi
 if has_changed_matching "${topology_change_pattern}"; then
   require_companion \
     "架构或服务拓扑变更未同步说明" \
-    '^(docs/build/architecture\.md|\.service-matrix/dependencies\.yaml|context/project/)' \
-    "同步 stage docs/build/architecture.md、.service-matrix/dependencies.yaml 或 context/project/ 中的项目上下文。"
+    '^(docs/develop/architecture\.md|\.service-matrix/dependencies\.yaml|context/project/)' \
+    "同步 stage docs/develop/architecture.md、.service-matrix/dependencies.yaml 或 context/project/ 中的项目上下文。"
 fi
 
 if has_changed_matching "${delivery_change_pattern}"; then

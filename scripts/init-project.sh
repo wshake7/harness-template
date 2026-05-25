@@ -39,4 +39,4 @@ done
 perl -0pi -e "s/harness-template-cn/${project_name}/g; s/harness-template/${project_name}/g" "${targets[@]}"
 
 echo "已将模板名称初始化为: ${project_name}"
-echo "下一步建议: 补齐 docs/build/architecture.md、context/project/ 和 docs/product/specs/ 中的真实项目信息"
+echo "下一步建议: 补齐 docs/develop/architecture.md、context/project/ 和 docs/product/specs/ 中的真实项目信息"

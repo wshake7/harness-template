@@ -5,7 +5,7 @@
 ## 目录职责
 
 - `start/`：最先阅读的原则和判断标准。
-- `build/`：架构、后端、前端和开发协作说明。
+- `develop/`：架构、后端、前端和开发协作说明。
 - `operate/`：稳定性、CI/CD、安全和供应链治理。
 - `govern/`：协作方式、Harness 流程、计划、history 和质量评分。
 - `product/specs/`：需求、目标、非目标和验收标准。
@@ -13,9 +13,9 @@
 
 ## 常用阅读路径
 
-- 开始任意任务：读本文件、`start/principles.md`、`govern/collaboration.md`、`build/architecture.md`、`govern/harness-process.md`。
-- 后端任务：再读 `build/backend.md`、`operate/reliability.md`，涉及认证或外部凭据时读 `operate/security.md`。
-- 前端任务：再读 `build/frontend.md`、`operate/reliability.md`，涉及请求协议或 Token 时读 `operate/security.md`。
+- 开始任意任务：读本文件、`start/principles.md`、`govern/collaboration.md`、`develop/architecture.md`、`govern/harness-process.md`。
+- 后端任务：再读 `develop/backend.md`、`operate/reliability.md`，涉及认证或外部凭据时读 `operate/security.md`。
+- 前端任务：再读 `develop/frontend.md`、`operate/reliability.md`，涉及请求协议或 Token 时读 `operate/security.md`。
 - 流程或脚本任务：再读 `govern/harness-process.md`、`operate/cicd.md`、`govern/histories.md`。
 - 高风险或跨模块任务：先读 `govern/plans.md`，在 `records/exec-plans/active/` 建立或更新计划。
 - 交付前：读 `govern/histories.md`、`govern/quality-score.md`，确认是否需要 history、release note 或质量评分更新。
@@ -23,9 +23,9 @@
 ## 当前入口
 
 - `start/principles.md`：Agent-first、产品取舍和设计原则。
-- `build/architecture.md`：仓库拓扑、依赖方向和边界。
-- `build/backend.md`：Go 后端启动、配置、外部依赖、API 和验证。
-- `build/frontend.md`：React/pnpm workspace、环境变量、联调和验证。
+- `develop/architecture.md`：仓库拓扑、依赖方向和边界。
+- `develop/backend.md`：Go 后端启动、配置、外部依赖、API 和验证。
+- `develop/frontend.md`：React/pnpm workspace、环境变量、联调和验证。
 - `operate/reliability.md`：启动、外部依赖、可观测性和排障。
 - `operate/cicd.md`：仓库级 CI/CD、前端测试和 release 制品。
 - `operate/security.md`：认证、权限、加密、密钥、依赖、SBOM 和 provenance。
