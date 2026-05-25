@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	FileAssetStatusActive  = "active"
-	FileAssetStatusDeleted = "deleted"
+	FileAssetStatusPendingUpload = "pending_upload"
+	FileAssetStatusActive        = "active"
+	FileAssetStatusDeleted       = "deleted"
 )
 
 func init() {

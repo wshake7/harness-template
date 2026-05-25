@@ -6,13 +6,8 @@ export interface KnowledgeCollection {
   collectionName: string
   displayName: string
   description: string
-  embeddingModel: string
-  vectorDimension: number
   metricType: string
   indexType: string
-  idMaxLength: number
-  contentMaxLength: number
-  documentCount: number
   status: string
   isEnabled: boolean
   remark: string
@@ -26,12 +21,8 @@ export interface ReqKnowledgeCollectionCreate {
   collectionName: string
   displayName: string
   description?: string
-  embeddingModel: string
-  vectorDimension: number
   metricType?: string
   indexType?: string
-  idMaxLength?: number
-  contentMaxLength?: number
   isEnabled: boolean
   remark?: string
 }

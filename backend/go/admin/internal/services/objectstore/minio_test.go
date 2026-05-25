@@ -121,6 +121,32 @@ func TestMinIOEnginePresignedGetObjectSetsDisposition(t *testing.T) {
 	}
 }
 
+func TestMinIOEnginePresignedPutObject(t *testing.T) {
+	fake := &fakeMinIOClient{
+		presignedURL: mustParseURL(t, "https://minio.local/admin-files/uploads/demo.txt"),
+	}
+	engine := &MinIOEngine{
+		conf:   config.MinIOStorageConfig{Bucket: "admin-files"},
+		client: fake,
+	}
+
+	_, _, err := engine.PresignedPutObject(context.Background(), PresignPutInput{
+		Bucket:      "admin-files",
+		ObjectKey:   "uploads/demo.txt",
+		Expiry:      time.Hour,
+		ContentType: "text/plain",
+	})
+	if err != nil {
+		t.Fatalf("presigned put object failed: %v", err)
+	}
+	if fake.presignedPutBucket != "admin-files" || fake.presignedPutObjectKey != "uploads/demo.txt" {
+		t.Fatalf("unexpected presigned put target: bucket=%q key=%q", fake.presignedPutBucket, fake.presignedPutObjectKey)
+	}
+	if fake.presignedPutExpiry != time.Hour {
+		t.Fatalf("expected expiry 1h, got %s", fake.presignedPutExpiry)
+	}
+}
+
 func TestMinIOEngineRemoveObjectIgnoresMissingObject(t *testing.T) {
 	engine := &MinIOEngine{
 		conf: config.MinIOStorageConfig{Bucket: "admin-files"},
@@ -192,9 +218,12 @@ type fakeMinIOClient struct {
 	putObjectErr    error
 	putObjectResult minio.UploadInfo
 
-	presignedURL    *url.URL
-	presignedErr    error
-	presignedParams url.Values
+	presignedURL          *url.URL
+	presignedErr          error
+	presignedParams       url.Values
+	presignedPutBucket    string
+	presignedPutObjectKey string
+	presignedPutExpiry    time.Duration
 
 	removeObjectErr error
 }
@@ -230,6 +259,24 @@ func (f *fakeMinIOClient) PresignedGetObject(ctx context.Context, bucketName str
 		return nil, f.presignedErr
 	}
 	return f.presignedURL, f.presignedErr
+}
+
+func (f *fakeMinIOClient) PresignedPutObject(ctx context.Context, bucketName string, objectName string, expires time.Duration) (*url.URL, error) {
+	f.presignedPutBucket = bucketName
+	f.presignedPutObjectKey = objectName
+	f.presignedPutExpiry = expires
+	if f.presignedURL == nil {
+		return nil, f.presignedErr
+	}
+	return f.presignedURL, f.presignedErr
+}
+
+func (f *fakeMinIOClient) StatObject(ctx context.Context, bucketName string, objectName string, opts minio.StatObjectOptions) (minio.ObjectInfo, error) {
+	return minio.ObjectInfo{Key: objectName}, nil
+}
+
+func (f *fakeMinIOClient) GetObject(ctx context.Context, bucketName string, objectName string, opts minio.GetObjectOptions) (*minio.Object, error) {
+	return nil, nil
 }
 
 func (f *fakeMinIOClient) RemoveObject(ctx context.Context, bucketName string, objectName string, opts minio.RemoveObjectOptions) error {

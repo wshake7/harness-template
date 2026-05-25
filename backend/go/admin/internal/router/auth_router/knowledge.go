@@ -1,16 +1,19 @@
 package auth_router
 
 import (
+	"admin/internal/appsvc"
+	"admin/internal/config"
 	"admin/internal/fiberc/handler"
 	"admin/internal/router/logic"
+	"admin/internal/services/objectstore"
 	"admin/internal/services/orm/query"
 
 	"github.com/gofiber/fiber/v3"
 )
 
-func registerKnowledgeRouters(router fiber.Router) {
-	collectionHandler := logic.NewKnowledgeCollectionHandler(query.Q)
-	documentHandler := logic.NewKnowledgeDocumentHandler(query.Q)
+func registerKnowledgeRouters(router fiber.Router, conf *config.Config) {
+	collectionHandler := logic.NewKnowledgeCollectionHandler(query.Q, appsvc.NewKnowledgeDocumentIndexer(query.Q, conf, objectstore.Current()))
+	documentHandler := logic.NewKnowledgeDocumentHandler(query.Q, appsvc.NewKnowledgeDocumentIndexer(query.Q, conf, objectstore.Current()), appsvc.NewTemporalService(), conf.Temporal.TaskQueue)
 
 	collectionGroup := router.Group("/collection")
 	collectionGroup.Post("/list", handler.CtxHandlerFunc(collectionHandler.List))
@@ -23,6 +26,7 @@ func registerKnowledgeRouters(router fiber.Router) {
 	documentGroup.Post("/listByCollection", handler.CtxHandlerFunc(documentHandler.ListByCollection))
 	documentGroup.Post("/detail", handler.CtxHandlerFunc(documentHandler.Detail))
 	documentGroup.Post("/create", handler.CtxHandlerNilFunc(documentHandler.Create))
+	documentGroup.Post("/importFile", handler.CtxHandlerFunc(documentHandler.ImportFile))
 	documentGroup.Post("/update", handler.CtxHandlerNilFunc(documentHandler.Update))
 	documentGroup.Post("/del", handler.CtxHandlerNilFunc(documentHandler.Del))
 }

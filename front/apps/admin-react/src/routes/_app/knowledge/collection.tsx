@@ -28,12 +28,8 @@ const KnowledgeCollectionFormSchema = z.object({
   collectionName: z.string(),
   displayName: z.string(),
   description: z.string().optional(),
-  embeddingModel: z.string(),
-  vectorDimension: z.number().optional().nullable(),
   metricType: z.string().optional(),
   indexType: z.string().optional(),
-  idMaxLength: z.number().optional().nullable(),
-  contentMaxLength: z.number().optional().nullable(),
   isEnabled: z.number(),
   remark: z.string().optional(),
 })
@@ -44,12 +40,8 @@ const defaultFormValues: KnowledgeCollectionFormValues = {
   collectionName: '',
   displayName: '',
   description: '',
-  embeddingModel: '',
-  vectorDimension: undefined,
   metricType: '',
   indexType: '',
-  idMaxLength: undefined,
-  contentMaxLength: undefined,
   isEnabled: 1,
   remark: '',
 }
@@ -58,14 +50,10 @@ const KnowledgeCollectionSubmitSchema = KnowledgeCollectionFormSchema.superRefin
   for (const [field, label] of [
     ['collectionName', '集合名称'],
     ['displayName', '显示名称'],
-    ['embeddingModel', 'Embedding模型'],
   ] as const) {
     if (!values[field]?.toString().trim()) {
       ctx.addIssue({ code: 'custom', path: [field], message: `${label}不能为空` })
     }
-  }
-  if (!values.vectorDimension || Number(values.vectorDimension) <= 0) {
-    ctx.addIssue({ code: 'custom', path: ['vectorDimension'], message: '向量维度必须大于0' })
   }
 })
 
@@ -131,12 +119,8 @@ function KnowledgeCollectionManagement() {
           collectionName: values.collectionName.trim(),
           displayName: values.displayName.trim(),
           description: values.description?.trim() ?? '',
-          embeddingModel: values.embeddingModel.trim(),
-          vectorDimension: Number(values.vectorDimension) || 0,
           metricType: values.metricType?.trim() ?? '',
           indexType: values.indexType?.trim() ?? '',
-          idMaxLength: values.idMaxLength ? Number(values.idMaxLength) : undefined,
-          contentMaxLength: values.contentMaxLength ? Number(values.contentMaxLength) : undefined,
           isEnabled: Boolean(values.isEnabled),
           remark: values.remark?.trim() ?? '',
         }
@@ -173,12 +157,8 @@ function KnowledgeCollectionManagement() {
       collectionName: record.collectionName,
       displayName: record.displayName,
       description: record.description,
-      embeddingModel: record.embeddingModel,
-      vectorDimension: record.vectorDimension,
       metricType: record.metricType,
       indexType: record.indexType,
-      idMaxLength: record.idMaxLength,
-      contentMaxLength: record.contentMaxLength,
       isEnabled: record.isEnabled ? 1 : 0,
       remark: record.remark,
     })
@@ -221,9 +201,6 @@ function KnowledgeCollectionManagement() {
     { title: 'ID', dataIndex: 'id', width: 80 },
     { title: '集合名称', dataIndex: 'collectionName', width: 160, ellipsis: true },
     { title: '显示名称', dataIndex: 'displayName', width: 180, ellipsis: true },
-    { title: 'Embedding模型', dataIndex: 'embeddingModel', width: 200, ellipsis: true },
-    { title: '向量维度', dataIndex: 'vectorDimension', width: 100 },
-    { title: '文档数量', dataIndex: 'documentCount', width: 100 },
     {
       title: '度量类型',
       dataIndex: 'metricType',
@@ -309,7 +286,7 @@ function KnowledgeCollectionManagement() {
         dataSource={data}
         loading={loading}
         search={false}
-        scroll={{ x: 1300 }}
+        scroll={{ x: 1000 }}
         pagination={{
           showSizeChanger: true,
           current: page,
@@ -348,12 +325,8 @@ function KnowledgeCollectionManagement() {
           <ProFormText name="collectionName" label="集合名称" fieldProps={{ maxLength: 128 }} rules={rules} />
           <ProFormText name="displayName" label="显示名称" fieldProps={{ maxLength: 255 }} rules={rules} />
           <ProFormTextArea name="description" label="描述" fieldProps={{ rows: 3, maxLength: 512 }} />
-          <ProFormText name="embeddingModel" label="Embedding模型" fieldProps={{ maxLength: 128 }} rules={rules} />
-          <ProFormDigit name="vectorDimension" label="向量维度" min={1} precision={0} rules={rules} />
           <ProFormSelect name="metricType" label="度量类型" options={metricTypeOptions} />
           <ProFormSelect name="indexType" label="索引类型" options={indexTypeOptions} />
-          <ProFormDigit name="idMaxLength" label="ID最大长度" min={1} precision={0} />
-          <ProFormDigit name="contentMaxLength" label="Content最大长度" min={1} precision={0} />
           <ProFormSelect
             name="isEnabled"
             label="启用状态"

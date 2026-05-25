@@ -127,6 +127,71 @@ func (s *fileStorageImpl) Upload(ctx context.Context, input UploadInput) (*model
 	return asset, nil
 }
 
+func (s *fileStorageImpl) PrepareDirectUpload(ctx context.Context, input PrepareDirectUploadInput) (*PrepareDirectUploadResult, error) {
+	if input.Size <= 0 {
+		return nil, res.FailMsg("上传文件不能为空")
+	}
+	if s.conf.maxUploadBytes > 0 && input.Size > s.conf.maxUploadBytes {
+		return nil, res.FailMsg("上传文件超过大小限制")
+	}
+
+	metadata, err := parseStorageMetadata(input.Metadata)
+	if err != nil {
+		return nil, res.FailMsg("元数据格式错误")
+	}
+
+	contentType := strings.TrimSpace(input.ContentType)
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+
+	objectKey := objectstore.BuildObjectKey(s.conf.objectKeyPrefix, input.OriginalName, s.now(), s.newObjectID())
+	asset := &models.FileAsset{
+		OperatorID: mixin.OperatorID{
+			CreatedBy: mixin.CreatedBy{CreatedBy: input.OperatorID},
+			UpdatedBy: mixin.UpdatedBy{UpdatedBy: input.OperatorID},
+		},
+		Remark:       mixin.Remark{Remark: input.Remark},
+		Engine:       engineNameOrDefault(s.conf.engineName, s.engine),
+		Bucket:       s.conf.bucket,
+		ObjectKey:    objectKey,
+		OriginalName: path.Base(strings.ReplaceAll(input.OriginalName, "\\", "/")),
+		ContentType:  contentType,
+		Extension:    strings.ToLower(path.Ext(path.Base(strings.ReplaceAll(input.OriginalName, "\\", "/")))),
+		Size:         input.Size,
+		BizType:      strings.TrimSpace(input.BizType),
+		BizID:        strings.TrimSpace(input.BizID),
+		Metadata:     metadata,
+		Status:       models.FileAssetStatusPendingUpload,
+	}
+	if asset.Extension == "." {
+		asset.Extension = ""
+	}
+
+	if err = s.q.FileAsset.Create(asset); err != nil {
+		return nil, err
+	}
+
+	expiry := objectstore.ClampPresignedExpiry(0, s.conf.presignedExpiresSeconds)
+	url, expiresAt, err := s.engine.PresignedPutObject(ctx, objectstore.PresignPutInput{
+		Bucket:      asset.Bucket,
+		ObjectKey:   asset.ObjectKey,
+		Expiry:      expiry,
+		ContentType: contentType,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &PrepareDirectUploadResult{
+		Asset:     asset,
+		UploadURL: url,
+		Method:    "PUT",
+		Headers:   map[string]string{"Content-Type": contentType},
+		ExpiresAt: expiresAt,
+	}, nil
+}
+
 func (s *fileStorageImpl) Detail(ctx context.Context, id uint64) (*models.FileAsset, error) {
 	item, err := s.q.FileAsset.Where(s.q.FileAsset.ID.Eq(id)).First()
 	if err != nil {
@@ -147,6 +212,9 @@ func (s *fileStorageImpl) PresignedURL(ctx context.Context, input PresignedURLIn
 	if err != nil {
 		return nil, err
 	}
+	if item.Status != models.FileAssetStatusActive {
+		return nil, res.FailMsg("文件尚未完成上传")
+	}
 
 	expiry := objectstore.ClampPresignedExpiry(input.ExpiresSeconds, s.conf.presignedExpiresSeconds)
 	url, expiresAt, err := s.engine.PresignedGetObject(ctx, objectstore.PresignInput{
@@ -159,6 +227,37 @@ func (s *fileStorageImpl) PresignedURL(ctx context.Context, input PresignedURLIn
 		return nil, err
 	}
 	return &PresignedURLResult{URL: url, ExpiresAt: expiresAt}, nil
+}
+
+func (s *fileStorageImpl) CompleteDirectUpload(ctx context.Context, input CompleteDirectUploadInput) (*models.FileAsset, error) {
+	item, err := s.Detail(ctx, input.ID)
+	if err != nil {
+		return nil, err
+	}
+	if item.Status == models.FileAssetStatusActive {
+		return item, nil
+	}
+	if item.Status != models.FileAssetStatusPendingUpload {
+		return nil, res.FailMsg("文件状态不可完成上传")
+	}
+
+	info, err := s.engine.StatObject(ctx, item.Bucket, item.ObjectKey)
+	if err != nil {
+		return nil, err
+	}
+	if info.Size != item.Size {
+		return nil, res.FailMsg("上传文件校验失败")
+	}
+
+	_, err = s.q.FileAsset.Where(s.q.FileAsset.ID.Eq(item.ID)).UpdateSimple(
+		s.q.FileAsset.Status.Value(models.FileAssetStatusActive),
+		s.q.FileAsset.UpdatedBy.Value(input.OperatorID),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.Detail(ctx, item.ID)
 }
 
 func (s *fileStorageImpl) Delete(ctx context.Context, id uint64, operatorID uint64) error {

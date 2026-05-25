@@ -37,6 +37,10 @@ type Config struct {
 
 var conf = new(Config)
 
+func Current() *Config {
+	return conf
+}
+
 type AIConfig struct {
 	Embedding AIEmbeddingConfig `mapstructure:"Embedding"`
 	Knowledge AIKnowledgeConfig `mapstructure:"Knowledge"`

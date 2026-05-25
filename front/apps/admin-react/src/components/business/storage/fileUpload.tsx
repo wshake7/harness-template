@@ -66,7 +66,7 @@ export function StorageFileUpload(props: StorageFileUploadProps) {
           throw new Error('上传返回为空')
         }
         onChange?.(appendAsset(value, asset, maxCount))
-        onSuccess?.(res, file as UploadFile)
+        onSuccess?.(asset)
       }
       catch (error) {
         const message = error instanceof Error ? error.message : '上传失败'

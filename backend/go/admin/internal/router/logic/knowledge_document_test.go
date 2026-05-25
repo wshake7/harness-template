@@ -1,13 +1,19 @@
 package logic
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
+	"admin/internal/appsvc"
+	"admin/internal/mock"
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
+	"admin/internal/services/temporaljob"
 
 	"github.com/stretchr/testify/assert"
+	"go.temporal.io/sdk/client"
+	"go.uber.org/mock/gomock"
 	v1 "orm-crud/api/gen/go/pagination/v1"
 	"orm-crud/gormc/mixin"
 )
@@ -16,7 +22,7 @@ func setupKnowledgeDocumentHandler(t *testing.T) *KnowledgeDocumentHandler {
 	t.Helper()
 	q := mustMigrateKnowledge(t)
 	query.SetDefault(q.KnowledgeDocument.UnderlyingDB())
-	return NewKnowledgeDocumentHandler(q)
+	return NewKnowledgeDocumentHandler(q, nil, nil, "")
 }
 
 func TestKnowledgeDocumentHandler_List_Empty(t *testing.T) {
@@ -95,7 +101,7 @@ func TestKnowledgeDocumentHandler_ListByCollection_WithData(t *testing.T) {
 	})
 
 	result, err := h.ListByCollection(newTestCtx(t), &ReqKnowledgeDocumentListByCollection{
-		CollectionID:  1,
+		CollectionID: 1,
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, uint64(2), result.Total)
@@ -271,4 +277,162 @@ func TestKnowledgeDocumentHandler_Del_NotFound(t *testing.T) {
 	err := h.Del(newTestCtx(t), &ReqKnowledgeDocumentID{ID: 999})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "文档不存在")
+}
+
+func TestKnowledgeDocumentHandler_ImportFileDelegatesToIndexer(t *testing.T) {
+	q := mustMigrateKnowledge(t)
+	query.SetDefault(q.KnowledgeDocument.UnderlyingDB())
+	indexer := &stubKnowledgeDocumentIndexer{
+		importResult: &models.KnowledgeDocument{
+			AutoIncrementID: mixin.AutoIncrementID{ID: 1},
+			CollectionID:    1,
+			DocumentID:      "file-1",
+			Title:           "Imported",
+			VectorStatus:    "indexed",
+		},
+	}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	temporalSvc := mock.NewMockTemporalService(ctrl)
+	temporalSvc.EXPECT().
+		IsConnected().
+		Return(true)
+	temporalSvc.EXPECT().
+		ExecuteWorkflow(gomock.Any(), gomock.Any(), temporaljob.DispatchWorkflowName, gomock.Any()).
+		Return((client.WorkflowRun)(nil), nil)
+	h := NewKnowledgeDocumentHandler(q, indexer, temporalSvc, "admin")
+
+	result, err := h.ImportFile(newTestCtx(t), &ReqKnowledgeDocumentImportFile{
+		CollectionID: 1,
+		FileAssetID:  1,
+		Title:        "Imported",
+		ContentType:  "markdown",
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, uint64(1), result.ID)
+	assert.Equal(t, uint64(1), indexer.lastImport.CollectionID)
+	assert.Equal(t, uint64(1), indexer.lastImport.FileAssetID)
+}
+
+func TestKnowledgeDocumentHandler_CreateIndexesDocument(t *testing.T) {
+	q := mustMigrateKnowledge(t)
+	query.SetDefault(q.KnowledgeDocument.UnderlyingDB())
+	indexer := &stubKnowledgeDocumentIndexer{}
+	h := NewKnowledgeDocumentHandler(q, indexer, nil, "")
+
+	err := h.Create(newTestCtx(t), &ReqKnowledgeDocumentCreate{
+		CollectionID: 1,
+		DocumentID:   "new-doc",
+		Title:        "New Document",
+		Content:      "New content",
+		IsEnabled:    true,
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, uint64(1), indexer.lastIndexedID)
+}
+
+func TestKnowledgeDocumentHandler_UpdateReindexesWhenContentChanges(t *testing.T) {
+	q := mustMigrateKnowledge(t)
+	query.SetDefault(q.KnowledgeDocument.UnderlyingDB())
+	indexer := &stubKnowledgeDocumentIndexer{}
+	h := NewKnowledgeDocumentHandler(q, indexer, nil, "")
+
+	q.KnowledgeDocument.Create(&models.KnowledgeDocument{
+		AutoIncrementID: mixin.AutoIncrementID{ID: 1},
+		CollectionID:    1,
+		DocumentID:      "update-doc",
+		Title:           "Original",
+		Content:         "Original content",
+		ContentType:     "text",
+		VectorStatus:    "pending",
+	})
+
+	nextContent := "Updated content"
+	err := h.Update(newTestCtx(t), &ReqKnowledgeDocumentUpdate{
+		ID:      1,
+		Content: &nextContent,
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, uint64(1), indexer.lastIndexedID)
+}
+
+func TestKnowledgeDocumentHandler_UpdateDoesNotReindexWhenOnlyRemarkChanges(t *testing.T) {
+	q := mustMigrateKnowledge(t)
+	query.SetDefault(q.KnowledgeDocument.UnderlyingDB())
+	indexer := &stubKnowledgeDocumentIndexer{}
+	h := NewKnowledgeDocumentHandler(q, indexer, nil, "")
+
+	q.KnowledgeDocument.Create(&models.KnowledgeDocument{
+		AutoIncrementID: mixin.AutoIncrementID{ID: 1},
+		CollectionID:    1,
+		DocumentID:      "update-doc",
+		Title:           "Original",
+		Content:         "Original content",
+		ContentType:     "text",
+		VectorStatus:    "pending",
+	})
+
+	remark := "Remark only"
+	err := h.Update(newTestCtx(t), &ReqKnowledgeDocumentUpdate{
+		ID:     1,
+		Remark: &remark,
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, uint64(0), indexer.lastIndexedID)
+}
+
+func TestKnowledgeDocumentHandler_DelDeletesVectorsBeforeDBRecord(t *testing.T) {
+	q := mustMigrateKnowledge(t)
+	query.SetDefault(q.KnowledgeDocument.UnderlyingDB())
+	indexer := &stubKnowledgeDocumentIndexer{}
+	h := NewKnowledgeDocumentHandler(q, indexer, nil, "")
+
+	q.KnowledgeDocument.Create(&models.KnowledgeDocument{
+		AutoIncrementID: mixin.AutoIncrementID{ID: 1},
+		CollectionID:    1,
+		DocumentID:      "delete-doc",
+		Title:           "Delete Me",
+		Content:         "Content",
+		VectorStatus:    "indexed",
+	})
+
+	err := h.Del(newTestCtx(t), &ReqKnowledgeDocumentID{ID: 1})
+	assert.NoError(t, err)
+	assert.Equal(t, uint64(1), indexer.lastDeletedID)
+}
+
+type stubKnowledgeDocumentIndexer struct {
+	importResult  *models.KnowledgeDocument
+	lastImport    appsvc.ImportKnowledgeFileInput
+	lastIndexedID uint64
+	lastDeletedID uint64
+	indexErr      error
+	deleteErr     error
+	importErr     error
+}
+
+func (s *stubKnowledgeDocumentIndexer) ImportFile(ctx context.Context, input appsvc.ImportKnowledgeFileInput) (*models.KnowledgeDocument, error) {
+	s.lastImport = input
+	if s.importResult != nil || s.importErr != nil {
+		return s.importResult, s.importErr
+	}
+	return &models.KnowledgeDocument{}, nil
+}
+
+func (s *stubKnowledgeDocumentIndexer) IndexDocument(ctx context.Context, documentID uint64) error {
+	s.lastIndexedID = documentID
+	return s.indexErr
+}
+
+func (s *stubKnowledgeDocumentIndexer) DeleteDocumentVectors(ctx context.Context, documentID uint64) error {
+	s.lastDeletedID = documentID
+	return s.deleteErr
+}
+
+func (s *stubKnowledgeDocumentIndexer) EnsureCollection(ctx context.Context, collection *models.KnowledgeCollection) error {
+	return nil
+}
+
+func (s *stubKnowledgeDocumentIndexer) DropCollection(ctx context.Context, collectionName string) error {
+	return nil
 }

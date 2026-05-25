@@ -17,6 +17,7 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
+	"orm-crud/gormc/mixin"
 )
 
 func TestStorageFileHandlerUploadSuccess(t *testing.T) {
@@ -98,6 +99,24 @@ func TestStorageFileHandlerPresignedRejectsInvalidDisposition(t *testing.T) {
 	}
 }
 
+func TestStorageFileHandlerPrepareAndCompleteDirectUpload(t *testing.T) {
+	h := NewStorageFileHandler(&stubFileStorage{}, 1024)
+
+	_, err := h.PrepareUpload(newTestCtx(t), &ReqStorageFilePrepareUpload{
+		OriginalName: "demo.txt",
+		ContentType:  "text/plain",
+		Size:         5,
+	})
+	if err != nil {
+		t.Fatalf("prepare upload failed: %v", err)
+	}
+
+	_, err = h.CompleteUpload(newTestCtx(t), &ReqStorageFileID{ID: 1})
+	if err != nil {
+		t.Fatalf("complete upload failed: %v", err)
+	}
+}
+
 func newStorageTestApp(t *testing.T, storage appsvc.FileStorage, maxUploadBytes int64) *fiber.App {
 	t.Helper()
 
@@ -149,6 +168,8 @@ type stubFileStorage struct {
 	uploadErr       error
 	presignedResult *appsvc.PresignedURLResult
 	presignedErr    error
+	prepareResult   *appsvc.PrepareDirectUploadResult
+	completeResult  *models.FileAsset
 }
 
 func (s *stubFileStorage) Upload(ctx context.Context, input appsvc.UploadInput) (*models.FileAsset, error) {
@@ -183,4 +204,30 @@ func (s *stubFileStorage) PresignedURL(ctx context.Context, input appsvc.Presign
 
 func (s *stubFileStorage) Delete(ctx context.Context, id uint64, operatorID uint64) error {
 	return nil
+}
+
+func (s *stubFileStorage) PrepareDirectUpload(ctx context.Context, input appsvc.PrepareDirectUploadInput) (*appsvc.PrepareDirectUploadResult, error) {
+	if s.prepareResult != nil {
+		return s.prepareResult, nil
+	}
+	return &appsvc.PrepareDirectUploadResult{
+		Asset: &models.FileAsset{
+			AutoIncrementID: mixin.AutoIncrementID{ID: 1},
+			Status:          models.FileAssetStatusPendingUpload,
+		},
+		UploadURL: "https://minio.local/upload",
+		Method:    http.MethodPut,
+		Headers:   map[string]string{"Content-Type": "text/plain"},
+		ExpiresAt: time.Now().Add(time.Hour),
+	}, nil
+}
+
+func (s *stubFileStorage) CompleteDirectUpload(ctx context.Context, input appsvc.CompleteDirectUploadInput) (*models.FileAsset, error) {
+	if s.completeResult != nil {
+		return s.completeResult, nil
+	}
+	return &models.FileAsset{
+		AutoIncrementID: mixin.AutoIncrementID{ID: input.ID},
+		Status:          models.FileAssetStatusActive,
+	}, nil
 }

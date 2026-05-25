@@ -69,6 +69,8 @@ pnpm e2e:test-ui
 - 登录、登出、访客接口和 `/api/encrypt/public/key` 可以无 Token 请求。
 - 加密请求和响应解密由各应用的 `src/api/encryptRequest.ts` 与共享请求包协作完成。
 - 业务响应 code 检查由应用传入的 `HttpCodeCheck` 负责，HTTP 非 2xx 会按统一错误路径提示。
+- 文件上传分两类：传统 `multipart/form-data` 上传，以及 `prepareUpload -> presigned PUT -> completeUpload` 的对象存储直传。直传的 prepare/complete 请求仍走登录态，真正的文件字节通过浏览器 `fetch` PUT 到预签名 URL。
+- 管理后台知识库文档页 `front/apps/admin-react/src/routes/_app/knowledge/document.tsx` 现支持“导入文件”：先调用 `StorageFileApi.uploadDirect` 上传文件，再调用 `KnowledgeDocumentApi.importFile` 触发后端建文档和向量化。
 
 ## 变更要求
 

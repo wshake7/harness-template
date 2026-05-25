@@ -12,6 +12,7 @@ import (
 //go:generate mockgen -source=temporal_service.go -destination=../mock/mock_temporal_service.go -package=mock -typed
 
 type TemporalService interface {
+	IsConnected() bool
 	CancelWorkflow(ctx context.Context, workflowID, runID string) error
 	ExecuteWorkflow(ctx context.Context, options client.StartWorkflowOptions, workflow any, args ...any) (client.WorkflowRun, error)
 	CreateSchedule(ctx context.Context, options client.ScheduleOptions) (client.ScheduleHandle, error)
@@ -26,6 +27,10 @@ type temporalServiceImpl struct{}
 
 func NewTemporalService() TemporalService {
 	return &temporalServiceImpl{}
+}
+
+func (s *temporalServiceImpl) IsConnected() bool {
+	return temporalc.Client != nil && temporalc.Client.Client != nil
 }
 
 func requireTemporalService() (*temporalc.Temporal, error) {

@@ -15,6 +15,7 @@
 - `/api/encrypt/public/key` 可无 Token 请求，用于获取公钥。
 - 登录、改密等接口会走加密中间件；前端通过 `encryptRequest` 生成加密请求，并在响应头标记为加密时解密响应体。
 - 文件上传接口 `/api/storage/file/upload` 使用 `multipart/form-data`，保留登录态、Casbin 和语言中间件，但必须通过请求层 `meta.skipEncrypt = true` 跳过 AES body 加密。
+- 对象存储直传链路中的 `/api/storage/file/prepareUpload` 与 `/api/storage/file/completeUpload` 也属于 authenticated API；prepare 只返回短期 presigned PUT URL，不返回永久公开地址，complete 必须重新校验对象存在性和大小。
 - 后端 Swagger 注释里保留请求超时、请求重放和请求错误的业务 code；当前 `NonceMiddleware` 在路由注册处仍处于注释状态，后续启用前要补测试和文档。
 - 所有公共 API 响应协议变化都要同步更新前端 `@vp/request` 和 Swagger 注释。
 
@@ -39,6 +40,7 @@
 
 - `file_asset` 只保存元数据，不默认返回永久公开 URL。
 - 文件下载或预览必须通过 `/api/storage/file/presigned` 按需签发短期 presigned URL，默认 1 小时，最大 7 天。
+- 文档导入链路只允许消费 `active` 状态的 `file_asset`，避免把未完成上传或被篡改的对象直接送入知识库索引。
 - 上传默认大小限制来自 `Storage.MaxUploadBytes`，当前示例值为 10 MiB；若要放宽限制，应同时评估后端代理上传的带宽和连接占用风险。
 - 对象上传成功但元数据落库失败时，服务端会立即尝试补偿删除对象，避免长期遗留孤儿文件。
 

@@ -137,6 +137,68 @@ func TestFileStoragePresignedURLCapsExpiry(t *testing.T) {
 	}
 }
 
+func TestFileStoragePrepareDirectUploadCreatesPendingAsset(t *testing.T) {
+	q := newFileStorageTestQuery(t)
+	engine := &fakeStorageEngine{}
+	svc := newTestFileStorage(t, q, engine)
+
+	result, err := svc.PrepareDirectUpload(context.Background(), PrepareDirectUploadInput{
+		OperatorID:   7,
+		OriginalName: "demo.txt",
+		ContentType:  "text/plain",
+		Size:         5,
+		BizType:      "knowledge-document",
+		Metadata:     `{"source":"test"}`,
+	})
+	if err != nil {
+		t.Fatalf("prepare direct upload failed: %v", err)
+	}
+	if engine.presignPutInput == nil {
+		t.Fatal("expected engine presigned put to be called")
+	}
+	if result.Asset.Status != models.FileAssetStatusPendingUpload {
+		t.Fatalf("expected pending upload status, got %q", result.Asset.Status)
+	}
+}
+
+func TestFileStorageCompleteDirectUploadActivatesAfterStat(t *testing.T) {
+	q := newFileStorageTestQuery(t)
+	engine := &fakeStorageEngine{
+		statInfo: objectstore.ObjectInfo{
+			Bucket:    "admin-files",
+			ObjectKey: "uploads/2026/05/24/fixed-object-id.txt",
+			Size:      5,
+		},
+	}
+	svc := newTestFileStorage(t, q, engine)
+
+	if err := q.FileAsset.Create(&models.FileAsset{
+		Engine:       "minio",
+		Bucket:       "admin-files",
+		ObjectKey:    "uploads/2026/05/24/fixed-object-id.txt",
+		OriginalName: "demo.txt",
+		ContentType:  "text/plain",
+		Extension:    ".txt",
+		Size:         5,
+		SHA256:       "",
+		Status:       models.FileAssetStatusPendingUpload,
+		Metadata:     datatypes.JSONMap{},
+	}); err != nil {
+		t.Fatalf("seed pending file asset failed: %v", err)
+	}
+
+	result, err := svc.CompleteDirectUpload(context.Background(), CompleteDirectUploadInput{
+		ID:         1,
+		OperatorID: 9,
+	})
+	if err != nil {
+		t.Fatalf("complete direct upload failed: %v", err)
+	}
+	if result.Status != models.FileAssetStatusActive {
+		t.Fatalf("expected active status, got %q", result.Status)
+	}
+}
+
 func TestFileStorageDeleteIsIdempotentForMissingObject(t *testing.T) {
 	q := newFileStorageTestQuery(t)
 	engine := &fakeStorageEngine{removeErr: objectstore.ErrObjectNotFound}
@@ -214,10 +276,12 @@ func newStoredFileAsset() *models.FileAsset {
 }
 
 type fakeStorageEngine struct {
-	putInput     *objectstore.PutInput
-	presignInput *objectstore.PresignInput
-	removeErr    error
-	removeCalls  int
+	putInput        *objectstore.PutInput
+	presignInput    *objectstore.PresignInput
+	presignPutInput *objectstore.PresignPutInput
+	statInfo        objectstore.ObjectInfo
+	removeErr       error
+	removeCalls     int
 }
 
 func (f *fakeStorageEngine) Name() string {
@@ -245,6 +309,23 @@ func (f *fakeStorageEngine) PresignedGetObject(ctx context.Context, input object
 	copied := input
 	f.presignInput = &copied
 	return "https://minio.local/presigned", time.Now().Add(input.Expiry), nil
+}
+
+func (f *fakeStorageEngine) PresignedPutObject(ctx context.Context, input objectstore.PresignPutInput) (string, time.Time, error) {
+	copied := input
+	f.presignPutInput = &copied
+	return "https://minio.local/presigned-put", time.Now().Add(input.Expiry), nil
+}
+
+func (f *fakeStorageEngine) StatObject(ctx context.Context, bucket string, objectKey string) (objectstore.ObjectInfo, error) {
+	if f.statInfo.Bucket == "" {
+		return objectstore.ObjectInfo{Bucket: bucket, ObjectKey: objectKey}, nil
+	}
+	return f.statInfo, nil
+}
+
+func (f *fakeStorageEngine) GetObject(ctx context.Context, bucket string, objectKey string) (io.ReadCloser, error) {
+	return io.NopCloser(strings.NewReader("")), nil
 }
 
 func (f *fakeStorageEngine) RemoveObject(ctx context.Context, bucket string, objectKey string) error {

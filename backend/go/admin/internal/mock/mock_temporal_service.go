@@ -200,6 +200,44 @@ func (c *MockTemporalServiceExecuteWorkflowCall) DoAndReturn(f func(context.Cont
 	return c
 }
 
+// IsConnected mocks base method.
+func (m *MockTemporalService) IsConnected() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsConnected")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsConnected indicates an expected call of IsConnected.
+func (mr *MockTemporalServiceMockRecorder) IsConnected() *MockTemporalServiceIsConnectedCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsConnected", reflect.TypeOf((*MockTemporalService)(nil).IsConnected))
+	return &MockTemporalServiceIsConnectedCall{Call: call}
+}
+
+// MockTemporalServiceIsConnectedCall wrap *gomock.Call
+type MockTemporalServiceIsConnectedCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTemporalServiceIsConnectedCall) Return(arg0 bool) *MockTemporalServiceIsConnectedCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTemporalServiceIsConnectedCall) Do(f func() bool) *MockTemporalServiceIsConnectedCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTemporalServiceIsConnectedCall) DoAndReturn(f func() bool) *MockTemporalServiceIsConnectedCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // PauseSchedule mocks base method.
 func (m *MockTemporalService) PauseSchedule(ctx context.Context, scheduleID string, options client.SchedulePauseOptions) error {
 	m.ctrl.T.Helper()

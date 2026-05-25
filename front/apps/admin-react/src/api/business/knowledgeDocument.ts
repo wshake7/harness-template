@@ -50,6 +50,14 @@ export interface ReqKnowledgeDocumentID {
   id: number
 }
 
+export interface ReqKnowledgeDocumentImportFile {
+  collectionID: number
+  fileAssetID: number
+  title?: string
+  contentType?: string
+  remark?: string
+}
+
 export interface ReqKnowledgeDocumentListByCollection {
   collectionID: number
   page?: number
@@ -94,6 +102,12 @@ async function del(req: ReqKnowledgeDocumentID) {
   }).send()
 }
 
+async function importFile(req: ReqKnowledgeDocumentImportFile) {
+  return await API.Post<Res<KnowledgeDocument>>('/api/knowledge/document/importFile', req, {
+    cacheFor: 0,
+  }).send()
+}
+
 export const KnowledgeDocumentApi = {
   list,
   listByCollection,
@@ -101,4 +115,5 @@ export const KnowledgeDocumentApi = {
   create,
   update,
   del,
+  importFile,
 }

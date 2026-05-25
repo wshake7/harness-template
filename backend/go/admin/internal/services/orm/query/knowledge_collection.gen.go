@@ -38,13 +38,8 @@ func newKnowledgeCollection(db *gorm.DB, opts ...gen.DOOption) knowledgeCollecti
 	_knowledgeCollection.DeletedAt = field.NewUint(tableName, "deleted_at")
 	_knowledgeCollection.CollectionName = field.NewString(tableName, "collection_name")
 	_knowledgeCollection.DisplayName = field.NewString(tableName, "display_name")
-	_knowledgeCollection.EmbeddingModel = field.NewString(tableName, "embedding_model")
-	_knowledgeCollection.VectorDimension = field.NewInt(tableName, "vector_dimension")
 	_knowledgeCollection.MetricType = field.NewString(tableName, "metric_type")
 	_knowledgeCollection.IndexType = field.NewString(tableName, "index_type")
-	_knowledgeCollection.IDMaxLength = field.NewInt(tableName, "id_max_length")
-	_knowledgeCollection.ContentMaxLength = field.NewInt(tableName, "content_max_length")
-	_knowledgeCollection.DocumentCount = field.NewInt64(tableName, "document_count")
 
 	_knowledgeCollection.fillFieldMap()
 
@@ -66,13 +61,8 @@ type knowledgeCollection struct {
 	DeletedAt        field.Uint
 	CollectionName   field.String // 集合名称（对应 Milvus Collection）
 	DisplayName      field.String // 显示名称
-	EmbeddingModel   field.String // 使用的 Embedding 模型
-	VectorDimension  field.Int    // 向量维度
 	MetricType       field.String // 相似度度量类型
 	IndexType        field.String // 索引类型
-	IDMaxLength      field.Int    // ID 字段最大长度
-	ContentMaxLength field.Int    // Content 字段最大长度
-	DocumentCount    field.Int64  // 文档数量统计
 
 	fieldMap map[string]field.Expr
 }
@@ -100,13 +90,8 @@ func (k *knowledgeCollection) updateTableName(table string) *knowledgeCollection
 	k.DeletedAt = field.NewUint(table, "deleted_at")
 	k.CollectionName = field.NewString(table, "collection_name")
 	k.DisplayName = field.NewString(table, "display_name")
-	k.EmbeddingModel = field.NewString(table, "embedding_model")
-	k.VectorDimension = field.NewInt(table, "vector_dimension")
 	k.MetricType = field.NewString(table, "metric_type")
 	k.IndexType = field.NewString(table, "index_type")
-	k.IDMaxLength = field.NewInt(table, "id_max_length")
-	k.ContentMaxLength = field.NewInt(table, "content_max_length")
-	k.DocumentCount = field.NewInt64(table, "document_count")
 
 	k.fillFieldMap()
 
@@ -123,7 +108,7 @@ func (k *knowledgeCollection) GetFieldByName(fieldName string) (field.OrderExpr,
 }
 
 func (k *knowledgeCollection) fillFieldMap() {
-	k.fieldMap = make(map[string]field.Expr, 18)
+	k.fieldMap = make(map[string]field.Expr, 13)
 	k.fieldMap["id"] = k.ID
 	k.fieldMap["created_at"] = k.CreatedAt
 	k.fieldMap["updated_at"] = k.UpdatedAt
@@ -135,13 +120,8 @@ func (k *knowledgeCollection) fillFieldMap() {
 	k.fieldMap["deleted_at"] = k.DeletedAt
 	k.fieldMap["collection_name"] = k.CollectionName
 	k.fieldMap["display_name"] = k.DisplayName
-	k.fieldMap["embedding_model"] = k.EmbeddingModel
-	k.fieldMap["vector_dimension"] = k.VectorDimension
 	k.fieldMap["metric_type"] = k.MetricType
 	k.fieldMap["index_type"] = k.IndexType
-	k.fieldMap["id_max_length"] = k.IDMaxLength
-	k.fieldMap["content_max_length"] = k.ContentMaxLength
-	k.fieldMap["document_count"] = k.DocumentCount
 }
 
 func (k knowledgeCollection) clone(db *gorm.DB) knowledgeCollection {

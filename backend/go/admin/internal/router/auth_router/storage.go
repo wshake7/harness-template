@@ -19,6 +19,8 @@ func registerStorageRouters(router fiber.Router, conf *config.Config) {
 
 	fileGroup := router.Group("/file")
 	fileGroup.Post("/upload", handler.CtxFunc(storageHandler.Upload))
+	fileGroup.Post("/prepareUpload", handler.CtxHandlerFunc(storageHandler.PrepareUpload))
+	fileGroup.Post("/completeUpload", handler.CtxHandlerFunc(storageHandler.CompleteUpload))
 	fileGroup.Post("/detail", handler.CtxHandlerFunc(storageHandler.Detail))
 	fileGroup.Post("/presigned", handler.CtxHandlerFunc(storageHandler.Presigned))
 	fileGroup.Post("/del", handler.CtxHandlerNilFunc(storageHandler.Del))

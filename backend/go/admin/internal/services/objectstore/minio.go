@@ -16,7 +16,10 @@ type minioClient interface {
 	BucketExists(ctx context.Context, bucketName string) (bool, error)
 	MakeBucket(ctx context.Context, bucketName string, opts minio.MakeBucketOptions) error
 	PutObject(ctx context.Context, bucketName string, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (minio.UploadInfo, error)
+	PresignedPutObject(ctx context.Context, bucketName string, objectName string, expires time.Duration) (*url.URL, error)
 	PresignedGetObject(ctx context.Context, bucketName string, objectName string, expires time.Duration, reqParams url.Values) (*url.URL, error)
+	StatObject(ctx context.Context, bucketName string, objectName string, opts minio.StatObjectOptions) (minio.ObjectInfo, error)
+	GetObject(ctx context.Context, bucketName string, objectName string, opts minio.GetObjectOptions) (*minio.Object, error)
 	RemoveObject(ctx context.Context, bucketName string, objectName string, opts minio.RemoveObjectOptions) error
 }
 
@@ -73,6 +76,31 @@ func (m *MinIOEngine) PresignedGetObject(ctx context.Context, input PresignInput
 	}
 
 	return u.String(), time.Now().Add(input.Expiry), nil
+}
+
+func (m *MinIOEngine) PresignedPutObject(ctx context.Context, input PresignPutInput) (string, time.Time, error) {
+	u, err := m.client.PresignedPutObject(ctx, input.Bucket, input.ObjectKey, input.Expiry)
+	if err != nil {
+		return "", time.Time{}, err
+	}
+
+	return u.String(), time.Now().Add(input.Expiry), nil
+}
+
+func (m *MinIOEngine) StatObject(ctx context.Context, bucket string, objectKey string) (ObjectInfo, error) {
+	info, err := m.client.StatObject(ctx, bucket, objectKey, minio.StatObjectOptions{})
+	if err != nil {
+		return ObjectInfo{}, err
+	}
+	return ObjectInfo{
+		Bucket:    bucket,
+		ObjectKey: info.Key,
+		Size:      info.Size,
+	}, nil
+}
+
+func (m *MinIOEngine) GetObject(ctx context.Context, bucket string, objectKey string) (io.ReadCloser, error) {
+	return m.client.GetObject(ctx, bucket, objectKey, minio.GetObjectOptions{})
 }
 
 func (m *MinIOEngine) RemoveObject(ctx context.Context, bucket string, objectKey string) error {

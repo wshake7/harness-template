@@ -228,10 +228,10 @@ declare global {
   export type { KnowledgeCollection, ReqKnowledgeCollectionCreate, ReqKnowledgeCollectionUpdate, ReqKnowledgeCollectionID } from './api/business/knowledgeCollection'
   import('./api/business/knowledgeCollection')
   // @ts-ignore
-  export type { KnowledgeDocument, ReqKnowledgeDocumentCreate, ReqKnowledgeDocumentUpdate, ReqKnowledgeDocumentID, ReqKnowledgeDocumentListByCollection } from './api/business/knowledgeDocument'
+  export type { KnowledgeDocument, ReqKnowledgeDocumentCreate, ReqKnowledgeDocumentUpdate, ReqKnowledgeDocumentID, ReqKnowledgeDocumentImportFile, ReqKnowledgeDocumentListByCollection } from './api/business/knowledgeDocument'
   import('./api/business/knowledgeDocument')
   // @ts-ignore
-  export type { StorageFileAsset, StorageUploadFields, StorageFileIDReq, StorageFilePresignedReq, StorageFilePresignedRes } from './api/business/storageFile'
+  export type { StorageFileAsset, StorageUploadFields, StorageFileIDReq, StorageFilePrepareUploadReq, StorageFilePresignedReq, StorageFilePresignedRes, StorageFilePrepareUploadRes } from './api/business/storageFile'
   import('./api/business/storageFile')
   // @ts-ignore
   export type { SysApiLog, ReqLogDetail } from './api/business/sysApiLog'

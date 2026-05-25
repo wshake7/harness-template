@@ -3370,3 +3370,81 @@ VALUES
     (66, NULL, NULL, 0, 0, 0, 1, 66, 0),
     (67, NULL, NULL, 0, 0, 0, 1, 67, 0),
     (68, NULL, NULL, 0, 0, 0, 1, 68, 0);
+
+INSERT INTO
+    "public"."sys_resource_api" (
+        "id",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+        "deleted_by",
+        "remark",
+        "sort_order",
+        "is_enabled",
+        "deleted_at",
+        "module",
+        "path",
+        "method"
+    )
+VALUES
+    (69, NULL, NULL, 0, 0, 0, '', 0, TRUE, 0, 'knowledge', '/api/knowledge/document/importFile', 'POST'),
+    (70, NULL, NULL, 0, 0, 0, '', 0, TRUE, 0, 'storage', '/api/storage/file/upload', 'POST'),
+    (71, NULL, NULL, 0, 0, 0, '', 0, TRUE, 0, 'storage', '/api/storage/file/prepareUpload', 'POST'),
+    (72, NULL, NULL, 0, 0, 0, '', 0, TRUE, 0, 'storage', '/api/storage/file/completeUpload', 'POST'),
+    (73, NULL, NULL, 0, 0, 0, '', 0, TRUE, 0, 'storage', '/api/storage/file/detail', 'POST'),
+    (74, NULL, NULL, 0, 0, 0, '', 0, TRUE, 0, 'storage', '/api/storage/file/presigned', 'POST'),
+    (75, NULL, NULL, 0, 0, 0, '', 0, TRUE, 0, 'storage', '/api/storage/file/del', 'POST');
+
+INSERT INTO
+    "public"."sys_resource_menu_api" (
+        "id",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+        "deleted_by",
+        "menu_id",
+        "api_id",
+        "deleted_at"
+    )
+VALUES
+    (68, NULL, NULL, 0, 0, 0, 17, 69, 0),
+    (69, NULL, NULL, 0, 0, 0, 17, 70, 0),
+    (70, NULL, NULL, 0, 0, 0, 17, 71, 0),
+    (71, NULL, NULL, 0, 0, 0, 17, 72, 0),
+    (72, NULL, NULL, 0, 0, 0, 17, 73, 0),
+    (73, NULL, NULL, 0, 0, 0, 17, 74, 0),
+    (74, NULL, NULL, 0, 0, 0, 17, 75, 0);
+
+INSERT INTO
+    "public"."casbin_rule" ("ptype", "v0", "v1", "v2")
+VALUES
+    ('p', 'role:root', '/api/knowledge/document/importFile', 'POST'),
+    ('p', 'role:root', '/api/storage/file/upload', 'POST'),
+    ('p', 'role:root', '/api/storage/file/prepareUpload', 'POST'),
+    ('p', 'role:root', '/api/storage/file/completeUpload', 'POST'),
+    ('p', 'role:root', '/api/storage/file/detail', 'POST'),
+    ('p', 'role:root', '/api/storage/file/presigned', 'POST'),
+    ('p', 'role:root', '/api/storage/file/del', 'POST');
+
+INSERT INTO
+    "public"."sys_role_api" (
+        "id",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+        "deleted_by",
+        "role_id",
+        "api_id",
+        "deleted_at"
+    )
+VALUES
+    (69, NULL, NULL, 0, 0, 0, 1, 69, 0),
+    (70, NULL, NULL, 0, 0, 0, 1, 70, 0),
+    (71, NULL, NULL, 0, 0, 0, 1, 71, 0),
+    (72, NULL, NULL, 0, 0, 0, 1, 72, 0),
+    (73, NULL, NULL, 0, 0, 0, 1, 73, 0),
+    (74, NULL, NULL, 0, 0, 0, 1, 74, 0),
+    (75, NULL, NULL, 0, 0, 0, 1, 75, 0);

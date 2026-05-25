@@ -1,31 +1,44 @@
 package logic
 
 import (
+	"admin/internal/appsvc"
+	"context"
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"admin/internal/fiberc/handler"
 	"admin/internal/fiberc/res"
 	"admin/internal/services/orm/models"
 	"admin/internal/services/orm/query"
+	"admin/internal/services/temporaljob"
+	knowledgedocument "admin/internal/workflows/knowledge_document"
+
+	v1 "orm-crud/api/gen/go/pagination/v1"
+	"orm-crud/gormc"
+	"orm-crud/gormc/mixin"
 
 	"github.com/bytedance/sonic"
+	"go.temporal.io/sdk/client"
 	"go.uber.org/zap"
 	"gorm.io/datatypes"
 	"gorm.io/gen/field"
 	"gorm.io/gorm"
-	v1 "orm-crud/api/gen/go/pagination/v1"
-	"orm-crud/gormc"
-	"orm-crud/gormc/mixin"
 )
 
 type KnowledgeDocumentHandler struct {
-	Q *query.Query
+	Q                 *query.Query
+	Indexer           appsvc.KnowledgeDocumentIndexer
+	Temporal          appsvc.TemporalService
+	TemporalTaskQueue string
 }
 
-func NewKnowledgeDocumentHandler(q *query.Query) *KnowledgeDocumentHandler {
-	return &KnowledgeDocumentHandler{Q: q}
+func NewKnowledgeDocumentHandler(q *query.Query, indexer appsvc.KnowledgeDocumentIndexer, temporal appsvc.TemporalService, temporalTaskQueue string) *KnowledgeDocumentHandler {
+	if indexer == nil {
+		indexer = noopKnowledgeDocumentIndexer{}
+	}
+	return &KnowledgeDocumentHandler{Q: q, Indexer: indexer, Temporal: temporal, TemporalTaskQueue: temporalTaskQueue}
 }
 
 type RespKnowledgeDocument struct {
@@ -66,6 +79,14 @@ type ReqKnowledgeDocumentUpdate struct {
 
 type ReqKnowledgeDocumentID struct {
 	ID uint64 `json:"id" binding:"required" binding_msg:"required=请求错误"`
+}
+
+type ReqKnowledgeDocumentImportFile struct {
+	CollectionID uint64 `json:"collectionID" binding:"required" binding_msg:"required=请选择所属集合"`
+	FileAssetID  uint64 `json:"fileAssetID" binding:"required" binding_msg:"required=请选择文件"`
+	Title        string `json:"title" binding:"max=512" binding_msg:"max=标题最多512位"`
+	ContentType  string `json:"contentType" binding:"max=64" binding_msg:"max=内容类型最多64位"`
+	Remark       string `json:"remark" binding:"max=255" binding_msg:"max=备注最多255位"`
 }
 
 type ReqKnowledgeDocumentListByCollection struct {
@@ -209,7 +230,7 @@ func (h *KnowledgeDocumentHandler) Create(ctx *handler.Ctx, req *ReqKnowledgeDoc
 		metadata = datatypes.JSONMap{}
 	}
 
-	err := h.Q.KnowledgeDocument.Create(&models.KnowledgeDocument{
+	doc := &models.KnowledgeDocument{
 		OperatorID: mixin.OperatorID{
 			CreatedBy: mixin.CreatedBy{CreatedBy: operationID},
 			UpdatedBy: mixin.UpdatedBy{UpdatedBy: operationID},
@@ -226,7 +247,9 @@ func (h *KnowledgeDocumentHandler) Create(ctx *handler.Ctx, req *ReqKnowledgeDoc
 		TotalChunks:  req.TotalChunks,
 		VectorStatus: "pending",
 		Metadata:     metadata,
-	})
+	}
+
+	err := h.Q.KnowledgeDocument.Create(doc)
 	if err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
 			return res.FailMsg("文档ID已存在")
@@ -234,7 +257,7 @@ func (h *KnowledgeDocumentHandler) Create(ctx *handler.Ctx, req *ReqKnowledgeDoc
 		ctx.L().Error("create knowledge document fail", zap.Error(err))
 		return res.FailDefault
 	}
-	return nil
+	return h.Indexer.IndexDocument(ctx.Context(), doc.ID)
 }
 
 // @Summary 更新知识库文档
@@ -247,6 +270,14 @@ func (h *KnowledgeDocumentHandler) Create(ctx *handler.Ctx, req *ReqKnowledgeDoc
 func (h *KnowledgeDocumentHandler) Update(ctx *handler.Ctx, req *ReqKnowledgeDocumentUpdate) error {
 	operationID := ctx.SessionInfo.Id
 	doc := h.Q.KnowledgeDocument
+	before, err := doc.Where(doc.ID.Eq(req.ID)).First()
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return res.FailMsg("文档不存在")
+		}
+		ctx.L().Error("query knowledge document before update fail", zap.Error(err), zap.Uint64("id", req.ID))
+		return res.FailDefault
+	}
 
 	exprs := []field.AssignExpr{doc.UpdatedBy.Value(operationID)}
 	query.ExprAppendSelf(&exprs, req.CollectionID, doc.CollectionID.Value)
@@ -274,6 +305,8 @@ func (h *KnowledgeDocumentHandler) Update(ctx *handler.Ctx, req *ReqKnowledgeDoc
 		exprs = append(exprs, doc.Metadata.Value(metadata))
 	}
 
+	shouldReindex := shouldReindexDocument(before, req)
+
 	info, err := doc.Where(doc.ID.Eq(req.ID)).UpdateSimple(exprs...)
 	if err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
@@ -284,6 +317,9 @@ func (h *KnowledgeDocumentHandler) Update(ctx *handler.Ctx, req *ReqKnowledgeDoc
 	}
 	if info.RowsAffected == 0 {
 		return res.FailMsg("文档不存在")
+	}
+	if shouldReindex {
+		return h.Indexer.IndexDocument(ctx.Context(), req.ID)
 	}
 	return nil
 }
@@ -297,6 +333,9 @@ func (h *KnowledgeDocumentHandler) Update(ctx *handler.Ctx, req *ReqKnowledgeDoc
 // @Router /api/knowledge/document/del [post]
 func (h *KnowledgeDocumentHandler) Del(ctx *handler.Ctx, req *ReqKnowledgeDocumentID) error {
 	doc := h.Q.KnowledgeDocument
+	if err := h.Indexer.DeleteDocumentVectors(ctx.Context(), req.ID); err != nil {
+		return err
+	}
 	info, err := doc.Where(doc.ID.Eq(req.ID)).Delete()
 	if err != nil {
 		ctx.L().Error("delete knowledge document fail", zap.Error(err), zap.Uint64("id", req.ID))
@@ -305,5 +344,166 @@ func (h *KnowledgeDocumentHandler) Del(ctx *handler.Ctx, req *ReqKnowledgeDocume
 	if info.RowsAffected == 0 {
 		return res.FailMsg("文档不存在")
 	}
+	return nil
+}
+
+// @Summary 导入文件创建知识库文档
+// @Tags KnowledgeDocument
+// @Accept json
+// @Produce json
+// @Param req body ReqKnowledgeDocumentImportFile true "导入参数"
+// @Success 200 {object} res.Response{data=models.KnowledgeDocument} "成功"
+// @Router /api/knowledge/document/importFile [post]
+func (h *KnowledgeDocumentHandler) ImportFile(ctx *handler.Ctx, req *ReqKnowledgeDocumentImportFile) (*models.KnowledgeDocument, error) {
+	doc, err := h.Indexer.ImportFile(ctx.Context(), appsvc.ImportKnowledgeFileInput{
+		CollectionID: req.CollectionID,
+		FileAssetID:  req.FileAssetID,
+		Title:        req.Title,
+		ContentType:  req.ContentType,
+		Remark:       req.Remark,
+		OperatorID:   ctx.SessionInfo.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err = h.enqueueIndexDocument(ctx, doc.ID); err != nil {
+		return nil, err
+	}
+	return doc, nil
+}
+
+const knowledgeDocumentIndexJobCodePrefix = "knowledge-document-index"
+
+func KnowledgeDocumentIndexJobCode(documentID uint64) string {
+	return fmt.Sprintf("%s-%d", knowledgeDocumentIndexJobCodePrefix, documentID)
+}
+
+func (h *KnowledgeDocumentHandler) enqueueIndexDocument(ctx *handler.Ctx, documentID uint64) error {
+	if h.Temporal == nil || !h.Temporal.IsConnected() || strings.TrimSpace(h.TemporalTaskQueue) == "" {
+		ctx.L().Warn("Temporal not connected, falling back to direct indexing",
+			zap.Uint64("documentID", documentID),
+			zap.String("taskQueue", h.TemporalTaskQueue))
+		return h.runDirectIndexWithExecutionRecord(ctx.Context(), documentID)
+	}
+
+	workflowID := fmt.Sprintf("%s-dispatch-%d", KnowledgeDocumentIndexJobCode(documentID), time.Now().UnixNano())
+	_, err := h.Temporal.ExecuteWorkflow(ctx.Context(), client.StartWorkflowOptions{
+		ID:        workflowID,
+		TaskQueue: h.TemporalTaskQueue,
+	}, temporaljob.DispatchWorkflowName, temporaljob.DispatchInput{
+		JobCode:          KnowledgeDocumentIndexJobCode(documentID),
+		WorkflowType:     knowledgedocument.IndexWorkflowName,
+		TaskQueue:        h.TemporalTaskQueue,
+		WorkflowIDPrefix: KnowledgeDocumentIndexJobCode(documentID),
+		Input: knowledgedocument.IndexInput{
+			DocumentID: documentID,
+		},
+	})
+	if err != nil {
+		ctx.L().Error("dispatch knowledge document index workflow fail, falling back to direct indexing", zap.Error(err), zap.Uint64("documentID", documentID), zap.String("workflowID", workflowID))
+		return h.runDirectIndexWithExecutionRecord(ctx.Context(), documentID)
+	}
+	return nil
+}
+
+func (h *KnowledgeDocumentHandler) runDirectIndexWithExecutionRecord(ctx context.Context, documentID uint64) error {
+	jobCode := KnowledgeDocumentIndexJobCode(documentID)
+	now := time.Now()
+	execution := &models.JobExecution{
+		JobCode:     jobCode,
+		TriggerTime: now,
+		StartTime:   &now,
+		Status:      models.JobExecutionStatusRunning,
+		RetryCount:  0,
+	}
+	if err := h.Q.JobExecution.WithContext(ctx).Create(execution); err != nil {
+		return err
+	}
+
+	indexErr := h.Indexer.IndexDocument(ctx, documentID)
+
+	if indexErr != nil {
+		_, _ = h.Q.JobExecution.WithContext(ctx).
+			Where(h.Q.JobExecution.ID.Eq(execution.ID)).
+			UpdateSimple(
+				h.Q.JobExecution.Status.Value(models.JobExecutionStatusFailed),
+				h.Q.JobExecution.ErrorMessage.Value(sanitizeError(indexErr)),
+				h.Q.JobExecution.EndTime.Value(time.Now()),
+			)
+		return indexErr
+	}
+
+	_, _ = h.Q.JobExecution.WithContext(ctx).
+		Where(h.Q.JobExecution.ID.Eq(execution.ID)).
+		UpdateSimple(
+			h.Q.JobExecution.Status.Value(models.JobExecutionStatusSuccess),
+			h.Q.JobExecution.EndTime.Value(time.Now()),
+		)
+	return nil
+}
+
+func sanitizeError(err error) string {
+	if err == nil {
+		return ""
+	}
+	msg := err.Error()
+	if len(msg) > 512 {
+		return msg[:512]
+	}
+	return msg
+}
+
+func shouldReindexDocument(before *models.KnowledgeDocument, req *ReqKnowledgeDocumentUpdate) bool {
+	if before == nil {
+		return false
+	}
+	if req.CollectionID != nil && *req.CollectionID != before.CollectionID {
+		return true
+	}
+	if req.DocumentID != nil && *req.DocumentID != before.DocumentID {
+		return true
+	}
+	if req.Title != nil && *req.Title != before.Title {
+		return true
+	}
+	if req.Content != nil && *req.Content != before.Content {
+		return true
+	}
+	if req.ContentType != nil && *req.ContentType != before.ContentType {
+		return true
+	}
+	if req.Source != nil && *req.Source != before.Source {
+		return true
+	}
+	if req.Metadata != nil {
+		current, _ := sonic.MarshalString(before.Metadata)
+		next := strings.TrimSpace(*req.Metadata)
+		if next == "" {
+			next = "{}"
+		}
+		return current != next
+	}
+	return false
+}
+
+type noopKnowledgeDocumentIndexer struct{}
+
+func (noopKnowledgeDocumentIndexer) ImportFile(ctx context.Context, input appsvc.ImportKnowledgeFileInput) (*models.KnowledgeDocument, error) {
+	return &models.KnowledgeDocument{}, nil
+}
+
+func (noopKnowledgeDocumentIndexer) IndexDocument(ctx context.Context, documentID uint64) error {
+	return nil
+}
+
+func (noopKnowledgeDocumentIndexer) DeleteDocumentVectors(ctx context.Context, documentID uint64) error {
+	return nil
+}
+
+func (noopKnowledgeDocumentIndexer) EnsureCollection(ctx context.Context, collection *models.KnowledgeCollection) error {
+	return nil
+}
+
+func (noopKnowledgeDocumentIndexer) DropCollection(ctx context.Context, collectionName string) error {
 	return nil
 }

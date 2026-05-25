@@ -54,10 +54,18 @@ test('getZodIssues returns empty array for non-ZodError', () => {
 })
 
 test('getFirstIssueMessage returns first issue message', () => {
-  const issues: z.core.$ZodIssue[] = [
-    { path: ['name'], message: '名称不能为空', code: 'too_small' },
-    { path: ['email'], message: '邮箱格式错误', code: 'invalid_string' },
-  ]
+  const result = z.object({
+    name: z.string().min(1, '名称不能为空'),
+    email: z.string().email('邮箱格式错误'),
+  }).safeParse({
+    name: '',
+    email: 'invalid',
+  })
+  expect(result.success).toBe(false)
+  if (result.success) {
+    throw new Error('expected zod validation error')
+  }
+  const issues: z.core.$ZodIssue[] = result.error.issues
   expect(getFirstIssueMessage(issues)).toBe('名称不能为空')
 })
 

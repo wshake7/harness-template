@@ -62,9 +62,9 @@ go test ./...
 
 - 前端请求失败：检查 `VITE_API_URL`、Vite proxy、后端是否监听 `3001`、浏览器请求路径是否以 `/api` 开头。
 - 登录或加密请求失败：检查 `/api/encrypt/public/key`、Cookie 中 Token、前端 `encryptRequest` 和后端加密中间件。
-- 上传接口失败：检查 `Storage.Enabled`、`Storage.MinIO.Endpoint`、`Storage.MinIO.Bucket`、`Storage.MaxUploadBytes`，并确认上传请求走 `meta.skipEncrypt=true`，没有被 JSON 加密链路改写。
+- 上传接口失败：检查 `Storage.Enabled`、`Storage.MinIO.Endpoint`、`Storage.MinIO.Bucket`、`Storage.MaxUploadBytes`，并确认传统上传请求走 `meta.skipEncrypt=true`；若是直传链路，还要检查浏览器到 MinIO 的网络可达性、预签名 URL 是否过期，以及 `completeUpload` 校验到的对象大小是否和 prepare 阶段一致。
 - 后端启动失败：检查 `backend/go/admin/etc/config.yaml` 中 Postgres、Redis、Temporal、MinIO、Milvus 是否可访问。
-- AI 知识索引失败：检查 `AI.Embedding.APIKey`（Ark API key）、`AI.Embedding.Model`（如 `doubao-embedding-vision-251215`）、`AI.Embedding.Dimensions`（该模型默认 2048）、`Milvus.DBName` 和 `AI.Knowledge.Collection` 是否与目标环境一致。若报 "collection schema mismatch"，说明 Milvus collection 的向量维度与当前配置不匹配，需要删除旧 collection 后重新创建。
+- AI 知识索引失败：检查 `AI.Embedding.APIKey`（Ark API key）、`AI.Embedding.Model`（如 `doubao-embedding-vision-251215`）、`AI.Embedding.Dimensions`（该模型默认 2048）、`Milvus.DBName` 和 `AI.Knowledge.Collection` 是否与目标环境一致。若报 "collection schema mismatch"，说明 Milvus collection 的向量维度与当前配置不匹配，需要删除旧 collection 后重新创建。若文档状态停在 `failed`，优先查看 `knowledge_document.indexing_error`，再核对文件 content type、对象是否已完成上传，以及 collection embedding 配置是否和目标 Milvus collection 一致。
 - AI Chat Agent 失败：检查 `AI.Models` 中是否配置了目标模型别名（如 `deepseek-v4-flash`）及对应的 APIKey/BaseURL；确认 `AI.McpURL` 指向的 MCP SSE Server 可访问（不可访问时 Agent 会降级跳过日志工具）。若 ReAct Agent 达到 `MaxStep=25` 仍未完成，会返回达到最大步数的错误。
 - 任务调度失败：检查 Temporal 地址、namespace、task queue `admin` 和 worker 是否启用。
 - Swagger 不一致：在 `backend/go/admin` 运行 `make swagger`，确认 `docs/` 生成产物同步。

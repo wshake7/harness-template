@@ -1,15 +1,17 @@
 import type { ProColumns } from '@ant-design/pro-components'
 import type { KnowledgeDocument } from '~/api/business/knowledgeDocument'
+import type { UploadFile, UploadProps } from 'antd'
 import { ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { DEFAULT_PAGE_SIZE } from '@vp/core'
 import { formatDateYYYYMMDDHHmmss } from '@vp/utils'
 import { usePagination } from 'alova/client'
-import { Button, Card, Drawer, Form, Input, Popconfirm, Space, Tag } from 'antd'
+import { Button, Card, Drawer, Form, Input, Popconfirm, Space, Tag, Upload } from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import z from 'zod'
 import { KnowledgeCollectionApi } from '~/api/business/knowledgeCollection'
 import { KnowledgeDocumentApi } from '~/api/business/knowledgeDocument'
+import { StorageFileApi } from '~/api/business/storageFile'
 import { useDictMatch } from '~/hooks/useDictMatch'
 import { gMessage } from '~/utils/message'
 import { useZodForm } from '~/utils/zod'
@@ -39,6 +41,14 @@ const KnowledgeDocumentFormSchema = z.object({
 })
 
 type KnowledgeDocumentFormValues = z.infer<typeof KnowledgeDocumentFormSchema>
+
+const KnowledgeDocumentImportSchema = z.object({
+  title: z.string().optional(),
+  contentType: z.string().optional(),
+  remark: z.string().optional(),
+})
+
+type KnowledgeDocumentImportValues = z.infer<typeof KnowledgeDocumentImportSchema>
 
 const defaultFormValues: KnowledgeDocumentFormValues = {
   collectionID: undefined,
@@ -74,7 +84,7 @@ const KnowledgeDocumentSubmitSchema = KnowledgeDocumentFormSchema.superRefine((v
   }
 })
 
-function KnowledgeDocumentManagement() {
+export function KnowledgeDocumentManagement() {
   const router = useRouter()
   const rawSearch = router.state.location.search as Record<string, unknown>
   const parsed = searchSchema.safeParse(rawSearch)
@@ -82,9 +92,13 @@ function KnowledgeDocumentManagement() {
   const [searchText, setSearchText] = useState('')
   const [collectionName, setCollectionName] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [importDrawerOpen, setImportDrawerOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [importing, setImporting] = useState(false)
   const [editing, setEditing] = useState<KnowledgeDocument>()
+  const [importFileList, setImportFileList] = useState<UploadFile[]>([])
   const [form] = Form.useForm<KnowledgeDocumentFormValues>()
+  const [importForm] = Form.useForm<KnowledgeDocumentImportValues>()
   const contentTypeDict = useDictMatch(DictCode.KNOWLEDGE_CONTENT_TYPE_DICT_CODE)
   const vectorStatusDict = useDictMatch(DictCode.KNOWLEDGE_VECTOR_STATUS_DICT_CODE)
 
@@ -192,6 +206,17 @@ function KnowledgeDocumentManagement() {
     },
   })
 
+  const openImportDrawer = () => {
+    setImportFileList([])
+    importForm.resetFields()
+    importForm.setFieldsValue({
+      contentType: 'markdown',
+      remark: '',
+      title: '',
+    })
+    setImportDrawerOpen(true)
+  }
+
   const openCreateForm = () => {
     setEditing(undefined)
     form.resetFields()
@@ -231,6 +256,63 @@ function KnowledgeDocumentManagement() {
       notifyError(e, fail)
     }
   }, [send])
+
+  const importUploadProps: UploadProps = {
+    accept: '.md,.markdown,.txt,.html,.htm',
+    beforeUpload(file) {
+      setImportFileList([file])
+      const currentTitle = importForm.getFieldValue('title')
+      if (!currentTitle) {
+        importForm.setFieldsValue({
+          title: file.name.replace(/\.[^.]+$/, ''),
+        })
+      }
+      return false
+    },
+    fileList: importFileList,
+    maxCount: 1,
+    onRemove() {
+      setImportFileList([])
+    },
+  }
+
+  const submitImport = async () => {
+    const firstFile = importFileList[0]
+    const file = (firstFile?.originFileObj ?? firstFile) as File | undefined
+    if (!file) {
+      gMessage.error('请选择文件')
+      return
+    }
+
+    const values = await importForm.validateFields()
+    setImporting(true)
+    try {
+      const uploaded = await StorageFileApi.uploadDirect(file, {
+        bizType: 'knowledge-document',
+        bizID: String(collectionId),
+      })
+      if (!uploaded.data) {
+        throw new Error('上传结果为空')
+      }
+      await KnowledgeDocumentApi.importFile({
+        collectionID: collectionId,
+        fileAssetID: uploaded.data.id,
+        title: values.title?.trim() || file.name.replace(/\.[^.]+$/, ''),
+        contentType: values.contentType?.trim() || 'markdown',
+        remark: values.remark?.trim() || '',
+      })
+      gMessage.success('导入成功')
+      setImportDrawerOpen(false)
+      setImportFileList([])
+      await send()
+    }
+    catch (e) {
+      notifyError(e, '导入失败')
+    }
+    finally {
+      setImporting(false)
+    }
+  }
 
   const columns: ProColumns<KnowledgeDocument>[] = useMemo(() => [
     { title: '文档ID', dataIndex: 'documentID', width: 200, ellipsis: true },
@@ -300,6 +382,9 @@ function KnowledgeDocumentManagement() {
         options={{ reload: () => send() }}
         toolBarRender={() => [
           <Button key="create" type="primary" onClick={openCreateForm}>创建文档</Button>,
+          collectionId > 0
+            ? <Button key="import" onClick={openImportDrawer}>导入文件</Button>
+            : null,
           <Input.Search
             key="search"
             allowClear
@@ -343,6 +428,36 @@ function KnowledgeDocumentManagement() {
             rules={rules}
           />
           <ProFormTextArea name="remark" label="备注" fieldProps={{ rows: 2, maxLength: 255 }} />
+        </Form>
+      </Drawer>
+
+      <Drawer
+        title="导入文件"
+        size={480}
+        open={importDrawerOpen}
+        onClose={() => setImportDrawerOpen(false)}
+        extra={(
+          <Space>
+            <Button onClick={() => setImportDrawerOpen(false)}>取消</Button>
+            <Button type="primary" loading={importing} onClick={() => void submitImport()}>开始导入</Button>
+          </Space>
+        )}
+      >
+        <Form form={importForm} layout="vertical">
+          <Form.Item label="文件">
+            <Upload {...importUploadProps}>
+              <Button type="default">选择文件</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item name="title" label="标题">
+            <Input maxLength={512} />
+          </Form.Item>
+          <Form.Item name="contentType" label="内容类型">
+            <Input maxLength={64} />
+          </Form.Item>
+          <Form.Item name="remark" label="备注">
+            <Input.TextArea rows={3} maxLength={255} />
+          </Form.Item>
         </Form>
       </Drawer>
     </>

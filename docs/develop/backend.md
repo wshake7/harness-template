@@ -99,8 +99,19 @@ internal/ai/
 - 当前默认引擎是 MinIO，通过 `internal/services/objectstore` 暴露统一 `Engine` 接口；后续接 S3 兼容存储或本地文件系统时不需要改业务 Handler。
 - 文件元数据表为 `file_asset`，记录 engine、bucket、object key、原始文件名、content type、大小、sha256、业务标签和 JSON metadata。
 - 上传接口 `POST /api/storage/file/upload` 使用 `multipart/form-data`，走登录态、Casbin 和语言中间件，但不走 JSON 加密中间件。
+- 直传链路由 `POST /api/storage/file/prepareUpload`、MinIO presigned PUT 和 `POST /api/storage/file/completeUpload` 组成：后端先创建 `pending_upload` 状态的 `file_asset`，前端拿预签名 URL 直传对象，再由完成接口校验对象存在和大小后切到 `active`。
 - 详情、短链和删除接口分别为 `POST /api/storage/file/detail`、`POST /api/storage/file/presigned`、`POST /api/storage/file/del`。
 - 短链默认 1 小时，最大 7 天；下载或预览必须通过登录接口按需签发 presigned URL，不默认暴露永久公开地址。
+
+## 知识库文档导入与向量化
+
+- `knowledge_document` 创建、更新、删除都要和实际 Milvus 数据保持一致。
+- embedding 模型、向量维度、ID 最大长度、Content 最大长度等配置统一由 `AI.Embedding.*` 和 `AI.Knowledge.*` 提供，不再支持 per-collection 覆盖。
+- `knowledge_collection` 仅保留 `MetricType` 和 `IndexType` 作为可选的 per-collection Milvus 参数。
+- 文档接口 `POST /api/knowledge/document/importFile`，用于把已上传完成的 `file_asset` 读回对象存储，解析为文档内容后创建 `knowledge_document`。
+- `knowledge_document` 在 Create、内容相关 Update、ImportFile 成功后会立即走索引：优先通过 Temporal `DispatchWorkflow` 异步执行，Temporal 不可用时自动 fallback 到同步索引并写入 `job_execution` 记录。
+- 索引元数据至少包含 `_source`、`document_db_id`、`collection_id`、`document_id`、`title`、`chunk_index`，删除或重建索引时优先按 `document_db_id` 清理旧向量。
+- 当前导入能力只支持 `.md`、`.markdown`、`.txt`、`.html`、`.htm` 以及对应 `text/*` content type；扩展 PDF、DOCX 等格式前要先补 loader 和测试。
 
 ## 常用命令
 

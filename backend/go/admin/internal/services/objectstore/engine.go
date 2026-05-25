@@ -18,7 +18,10 @@ var ErrObjectNotFound = errors.New("object storage object not found")
 type Engine interface {
 	Name() string
 	PutObject(ctx context.Context, input PutInput) (PutResult, error)
+	PresignedPutObject(ctx context.Context, input PresignPutInput) (string, time.Time, error)
 	PresignedGetObject(ctx context.Context, input PresignInput) (string, time.Time, error)
+	StatObject(ctx context.Context, bucket string, objectKey string) (ObjectInfo, error)
+	GetObject(ctx context.Context, bucket string, objectKey string) (io.ReadCloser, error)
 	RemoveObject(ctx context.Context, bucket string, objectKey string) error
 	Health(ctx context.Context) error
 }
@@ -43,6 +46,13 @@ type PresignInput struct {
 	ObjectKey   string
 	Expiry      time.Duration
 	Disposition string
+}
+
+type PresignPutInput struct {
+	Bucket      string
+	ObjectKey   string
+	Expiry      time.Duration
+	ContentType string
 }
 
 type ObjectInfo struct {
@@ -106,8 +116,20 @@ func (disabledEngine) PutObject(ctx context.Context, input PutInput) (PutResult,
 	return PutResult{}, ErrStorageDisabled
 }
 
+func (disabledEngine) PresignedPutObject(ctx context.Context, input PresignPutInput) (string, time.Time, error) {
+	return "", time.Time{}, ErrStorageDisabled
+}
+
 func (disabledEngine) PresignedGetObject(ctx context.Context, input PresignInput) (string, time.Time, error) {
 	return "", time.Time{}, ErrStorageDisabled
+}
+
+func (disabledEngine) StatObject(ctx context.Context, bucket string, objectKey string) (ObjectInfo, error) {
+	return ObjectInfo{}, ErrStorageDisabled
+}
+
+func (disabledEngine) GetObject(ctx context.Context, bucket string, objectKey string) (io.ReadCloser, error) {
+	return nil, ErrStorageDisabled
 }
 
 func (disabledEngine) RemoveObject(ctx context.Context, bucket string, objectKey string) error {

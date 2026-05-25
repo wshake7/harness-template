@@ -23,5 +23,5 @@ func RegisterRouters(router fiber.Router, conf *config.Config) {
 	registerSysResourceApiRouters(group.Group("/sys/resource/api"))
 	registerJobScheduleRouters(group.Group("/sys/job/schedule"), conf)
 	registerJobExecutionRouters(group.Group("/sys/job/execution"))
-	registerKnowledgeRouters(group.Group("/knowledge"))
+	registerKnowledgeRouters(group.Group("/knowledge"), conf)
 }
