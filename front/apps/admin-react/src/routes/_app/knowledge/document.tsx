@@ -11,8 +11,8 @@ import z from 'zod'
 import { KnowledgeCollectionApi } from '~/api/business/knowledgeCollection'
 import { KnowledgeDocumentApi } from '~/api/business/knowledgeDocument'
 import { useDictMatch } from '~/hooks/useDictMatch'
-import { useZodForm } from '~/utils/zod'
 import { gMessage } from '~/utils/message'
+import { useZodForm } from '~/utils/zod'
 
 const searchSchema = z.object({
   collectionId: z.number().optional().catch(0),
@@ -92,8 +92,7 @@ function KnowledgeDocumentManagement() {
     contentTypeDict.entries.map(entry => ({
       label: contentTypeDict.getLabel(entry.entryValue, entry.entryLabel),
       value: entry.entryValue,
-    })),
-  [contentTypeDict])
+    })), [contentTypeDict])
 
   const vectorStatusColor: Record<string, string> = {
     pending: 'default',
@@ -103,7 +102,7 @@ function KnowledgeDocumentManagement() {
 
   // 加载 Collection 信息
   useEffect(() => {
-    if (!collectionId) return
+    if (!collectionId) { return }
     KnowledgeCollectionApi.detail({ id: collectionId })
       .then((res) => {
         if (res.data) {

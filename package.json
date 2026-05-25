@@ -11,7 +11,9 @@
     "ready": "eslint . && vp run test -r && vp run build -r",
     "prepare": "vp config",
     "lint:fix": "eslint . --fix",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "echo 'no root-level tests'",
+    "build": "echo 'no root-level build'"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",

@@ -25,7 +25,7 @@
 ## 后端代码边界
 
 - `backend/go/admin/internal/appsvc` 放 router/logic 面向的应用层服务接口和薄实现，例如认证、缓存、权限、数据权限和 Temporal 调度门面。
-- `backend/go/admin/internal/services` 放 Redis、Temporal、Casbin、ORM、HTTP client 等基础设施生命周期服务，以及它们的底层适配能力。
+- `backend/go/admin/internal/services` 放 Redis、Temporal、Casbin、ORM、HTTP client、对象存储等基础设施生命周期服务，以及它们的底层适配能力。
 - `backend/go/admin/internal/workflows` 放具体 Temporal Workflow 业务实现；任务分发、执行记录和 Worker 注册仍由 `internal/services/temporaljob` 承担。
 - `backend/go/admin/internal/domains` 放跨路由、服务和中间件共享的领域常量与轻量 DTO，例如加密公钥缓存 key 和 key pair 结构。
 
@@ -82,8 +82,25 @@ internal/ai/
 | `AI.Models` | ChatModel 数组，每项含 Name/Model/APIKey/BaseURL |
 | `AI.Memory.Type` | `memory`（可选 `redis`、`db`） |
 | `AI.McpURL` | MCP SSE 日志工具 Server URL |
+| `Storage.Enabled` | `false` |
+| `Storage.Engine` | `minio` |
+| `Storage.MaxUploadBytes` | `10485760`（10 MiB） |
+| `Storage.ObjectKeyPrefix` | `uploads` |
+| `Storage.PresignedExpiresSeconds` | `3600` |
+| `Storage.MinIO.Endpoint` | `127.0.0.1:9000` |
+| `Storage.MinIO.Bucket` | `admin-files` |
+| `Storage.MinIO.AutoCreateBucket` | `true` |
 
 配置里包含本地数据库密码，仅用于开发默认值；生产或共享环境必须改用安全的配置注入方式。
+
+## 文件上传与对象存储
+
+- 通用文件上传接口位于 `/api/storage/file/*`，首期由服务端代理上传到当前配置的对象存储引擎。
+- 当前默认引擎是 MinIO，通过 `internal/services/objectstore` 暴露统一 `Engine` 接口；后续接 S3 兼容存储或本地文件系统时不需要改业务 Handler。
+- 文件元数据表为 `file_asset`，记录 engine、bucket、object key、原始文件名、content type、大小、sha256、业务标签和 JSON metadata。
+- 上传接口 `POST /api/storage/file/upload` 使用 `multipart/form-data`，走登录态、Casbin 和语言中间件，但不走 JSON 加密中间件。
+- 详情、短链和删除接口分别为 `POST /api/storage/file/detail`、`POST /api/storage/file/presigned`、`POST /api/storage/file/del`。
+- 短链默认 1 小时，最大 7 天；下载或预览必须通过登录接口按需签发 presigned URL，不默认暴露永久公开地址。
 
 ## 常用命令
 
@@ -94,6 +111,7 @@ make run
 make swagger
 make script-imports
 make script-orm
+PATH="$(go env GOPATH)/bin:$PATH" go generate ./internal/appsvc
 make test-cover
 make test-html
 ```
@@ -116,7 +134,8 @@ go test ./...
 - 服务启动后，`cmd/main.go` 会读取 `-f` 指定的配置文件，默认是 `./etc/config.yaml`。
 - 路由在 `backend/go/admin/internal/router/router.go` 中统一注册到 `/api`。
 - 账号接口位于 `/api/account/*`，加密公钥接口位于 `/api/encrypt/public/key`。
-- 需要登录的业务路由由 `auth_router` 注册，覆盖用户、角色、资源、字典、语言、日志、任务调度、任务执行和知识库（Collection、Document）。
+- 需要登录的业务路由由 `auth_router` 注册，覆盖用户、角色、资源、字典、语言、日志、任务调度、任务执行、知识库（Collection、Document）和存储文件（Storage File）。
+- `/api/storage/file/upload` 为 authenticated non-encrypted 路由，前端必须携带登录态，并通过请求层 `meta.skipEncrypt = true` 跳过 AES body 加密。
 - Swagger 注释说明业务响应 code：成功为 `1`，通用失败为 `2`，请求超时/重放/错误和认证授权失败使用独立 code。
 - 当前代码说明“所有接口均返回 HTTP 200，通过响应体 code 区分业务状态”；前端仍会对 HTTP 非 2xx 走统一错误路径。
 
@@ -125,6 +144,7 @@ go test ./...
 - Postgres：默认数据库 `wshake`，默认本地用户 `postgres`。
 - Redis：默认 `127.0.0.1:6379`。
 - Temporal：默认 `127.0.0.1:7233`，namespace `default`，task queue `admin`。
+- MinIO：默认示例地址 `127.0.0.1:9000`，bucket `admin-files`，由 `Storage.MinIO.*` 配置控制。
 - Swagger：`IsSwagger=true` 时启用，文档生成入口为 `make swagger`。
 - Ark (Volcengine)：需要在 `AI.Embedding.APIKey` 注入火山方舟 embedding API key。
 - Milvus：AI 知识索引默认使用 `Milvus.DBName` 指定的数据库和 `AI.Knowledge.Collection` 指定的 collection。

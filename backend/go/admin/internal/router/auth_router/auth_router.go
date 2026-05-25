@@ -10,6 +10,7 @@ import (
 func RegisterRouters(router fiber.Router, conf *config.Config) {
 	eventGroup := router.Use(middleware.AuthMiddleware(conf.Auth.TokenName), middleware.CasbinAPIMiddleware(), middleware.LanguageMiddleware(conf.DefaultLanguage))
 	registerEventRouters(eventGroup)
+	registerStorageRouters(eventGroup.Group("/storage"), conf)
 
 	group := router.Use(middleware.AuthMiddleware(conf.Auth.TokenName), middleware.CasbinAPIMiddleware(), middleware.EncryptMiddleware(), middleware.LanguageMiddleware(conf.DefaultLanguage))
 	registerSysRoleRouters(group.Group("/sys/role"))

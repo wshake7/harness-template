@@ -472,6 +472,619 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/knowledge/collection/create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeCollection"
+                ],
+                "summary": "创建知识库集合",
+                "parameters": [
+                    {
+                        "description": "创建参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeCollectionCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/collection/del": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeCollection"
+                ],
+                "summary": "删除知识库集合",
+                "parameters": [
+                    {
+                        "description": "集合ID",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeCollectionID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/collection/detail": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeCollection"
+                ],
+                "summary": "获取知识库集合详情",
+                "parameters": [
+                    {
+                        "description": "集合ID",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeCollectionID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_internal_services_orm_models.KnowledgeCollection"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/collection/list": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeCollection"
+                ],
+                "summary": "获取知识库集合分页列表",
+                "parameters": [
+                    {
+                        "description": "分页参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.PagingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/gormc.PagingResult-internal_router_logic_RespKnowledgeCollection"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/collection/update": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeCollection"
+                ],
+                "summary": "更新知识库集合",
+                "parameters": [
+                    {
+                        "description": "更新参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeCollectionUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/document/create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeDocument"
+                ],
+                "summary": "创建知识库文档",
+                "parameters": [
+                    {
+                        "description": "创建参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeDocumentCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/document/del": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeDocument"
+                ],
+                "summary": "删除知识库文档",
+                "parameters": [
+                    {
+                        "description": "文档ID",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeDocumentID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/document/detail": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeDocument"
+                ],
+                "summary": "获取知识库文档详情",
+                "parameters": [
+                    {
+                        "description": "文档ID",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeDocumentID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_internal_services_orm_models.KnowledgeDocument"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/document/list": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeDocument"
+                ],
+                "summary": "获取知识库文档分页列表",
+                "parameters": [
+                    {
+                        "description": "分页参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.PagingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/gormc.PagingResult-internal_router_logic_RespKnowledgeDocument"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/document/listByCollection": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeDocument"
+                ],
+                "summary": "按集合获取知识库文档分页列表",
+                "parameters": [
+                    {
+                        "description": "查询参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeDocumentListByCollection"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/gormc.PagingResult-internal_router_logic_RespKnowledgeDocument"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/knowledge/document/update": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KnowledgeDocument"
+                ],
+                "summary": "更新知识库文档",
+                "parameters": [
+                    {
+                        "description": "更新参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqKnowledgeDocumentUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/storage/file/del": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StorageFile"
+                ],
+                "summary": "删除文件",
+                "parameters": [
+                    {
+                        "description": "文件ID",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqStorageFileID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/storage/file/detail": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StorageFile"
+                ],
+                "summary": "获取文件详情",
+                "parameters": [
+                    {
+                        "description": "文件ID",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqStorageFileID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_internal_services_orm_models.FileAsset"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/storage/file/presigned": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StorageFile"
+                ],
+                "summary": "获取文件临时下载链接",
+                "parameters": [
+                    {
+                        "description": "签名参数",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_router_logic.ReqStorageFilePresigned"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_internal_appsvc.PresignedURLResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/storage/file/upload": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StorageFile"
+                ],
+                "summary": "上传文件",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "上传文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务类型",
+                        "name": "bizType",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务ID",
+                        "name": "bizID",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "JSON 元数据",
+                        "name": "metadata",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "备注",
+                        "name": "remark",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/admin_internal_fiberc_res.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/admin_internal_services_orm_models.FileAsset"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/sys/api/log/detail": {
             "post": {
                 "consumes": [
@@ -2212,6 +2825,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "admin_internal_appsvc.PresignedURLResult": {
+            "type": "object",
+            "properties": {
+                "expiresAt": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "admin_internal_fiberc_res.Response": {
             "type": "object",
             "properties": {
@@ -2223,6 +2847,71 @@ const docTemplate = `{
                 "msg": {
                     "type": "string",
                     "example": "success"
+                }
+            }
+        },
+        "admin_internal_services_orm_models.FileAsset": {
+            "type": "object",
+            "properties": {
+                "bizID": {
+                    "type": "string"
+                },
+                "bizType": {
+                    "type": "string"
+                },
+                "bucket": {
+                    "type": "string"
+                },
+                "contentType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "extension": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/datatypes.JSONMap"
+                },
+                "objectKey": {
+                    "type": "string"
+                },
+                "originalName": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "sha256": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
                 }
             }
         },
@@ -2334,6 +3023,144 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "workflowType": {
+                    "type": "string"
+                }
+            }
+        },
+        "admin_internal_services_orm_models.KnowledgeCollection": {
+            "type": "object",
+            "properties": {
+                "collectionName": {
+                    "type": "string"
+                },
+                "contentMaxLength": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "documentCount": {
+                    "type": "integer"
+                },
+                "embeddingModel": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idMaxLength": {
+                    "type": "integer"
+                },
+                "indexType": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "metricType": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
+                },
+                "vectorDimension": {
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_internal_services_orm_models.KnowledgeDocument": {
+            "type": "object",
+            "properties": {
+                "chunkIndex": {
+                    "type": "integer"
+                },
+                "collection": {
+                    "description": "关联集合",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/admin_internal_services_orm_models.KnowledgeCollection"
+                        }
+                    ]
+                },
+                "collectionID": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "contentType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "documentID": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "indexingError": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "lastIndexedAt": {
+                    "type": "integer"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/datatypes.JSONMap"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "totalChunks": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
+                },
+                "vectorID": {
+                    "type": "string"
+                },
+                "vectorStatus": {
                     "type": "string"
                 }
             }
@@ -2971,6 +3798,34 @@ const docTemplate = `{
                 }
             }
         },
+        "gormc.PagingResult-internal_router_logic_RespKnowledgeCollection": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_router_logic.RespKnowledgeCollection"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "gormc.PagingResult-internal_router_logic_RespKnowledgeDocument": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_router_logic.RespKnowledgeDocument"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "gormc.PagingResult-internal_router_logic_RespSysResourceApi": {
             "type": "object",
             "properties": {
@@ -3469,6 +4324,257 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_router_logic.ReqKnowledgeCollectionCreate": {
+            "type": "object",
+            "required": [
+                "collectionName",
+                "displayName",
+                "embeddingModel",
+                "vectorDimension"
+            ],
+            "properties": {
+                "collectionName": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "contentMaxLength": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 512
+                },
+                "displayName": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "embeddingModel": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "idMaxLength": {
+                    "type": "integer"
+                },
+                "indexType": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "metricType": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "remark": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "vectorDimension": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "internal_router_logic.ReqKnowledgeCollectionID": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_router_logic.ReqKnowledgeCollectionUpdate": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "collectionName": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "contentMaxLength": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 512
+                },
+                "displayName": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "embeddingModel": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idMaxLength": {
+                    "type": "integer"
+                },
+                "indexType": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "metricType": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "remark": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "vectorDimension": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "internal_router_logic.ReqKnowledgeDocumentCreate": {
+            "type": "object",
+            "required": [
+                "collectionID",
+                "content",
+                "documentID",
+                "title"
+            ],
+            "properties": {
+                "chunkIndex": {
+                    "type": "integer"
+                },
+                "collectionID": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "contentType": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "documentID": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "source": {
+                    "type": "string",
+                    "maxLength": 512
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 512
+                },
+                "totalChunks": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_router_logic.ReqKnowledgeDocumentID": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_router_logic.ReqKnowledgeDocumentListByCollection": {
+            "type": "object",
+            "required": [
+                "collectionID"
+            ],
+            "properties": {
+                "collectionID": {
+                    "type": "integer"
+                },
+                "orderBy": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "query": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_router_logic.ReqKnowledgeDocumentUpdate": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "chunkIndex": {
+                    "type": "integer"
+                },
+                "collectionID": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "contentType": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "documentID": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "source": {
+                    "type": "string",
+                    "maxLength": 512
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 512
+                },
+                "totalChunks": {
+                    "type": "integer"
+                },
+                "vectorStatus": {
+                    "type": "string",
+                    "maxLength": 32
+                }
+            }
+        },
         "internal_router_logic.ReqLangEntryBatchCreate": {
             "type": "object",
             "required": [
@@ -3900,6 +5006,34 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_router_logic.ReqStorageFileID": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_router_logic.ReqStorageFilePresigned": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "disposition": {
+                    "type": "string"
+                },
+                "expiresSeconds": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "internal_router_logic.ReqSysRoleBatchDelete": {
             "type": "object",
             "required": [
@@ -4318,6 +5452,156 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/internal_router_logic.RespJobScheduleOption"
                     }
+                }
+            }
+        },
+        "internal_router_logic.RespKnowledgeCollection": {
+            "type": "object",
+            "properties": {
+                "canDelete": {
+                    "type": "boolean"
+                },
+                "canWrite": {
+                    "type": "boolean"
+                },
+                "collectionName": {
+                    "type": "string"
+                },
+                "contentMaxLength": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "documentCount": {
+                    "type": "integer"
+                },
+                "embeddingModel": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idMaxLength": {
+                    "type": "integer"
+                },
+                "indexType": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "metricType": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
+                },
+                "vectorDimension": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_router_logic.RespKnowledgeDocument": {
+            "type": "object",
+            "properties": {
+                "canDelete": {
+                    "type": "boolean"
+                },
+                "canWrite": {
+                    "type": "boolean"
+                },
+                "chunkIndex": {
+                    "type": "integer"
+                },
+                "collection": {
+                    "description": "关联集合",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/admin_internal_services_orm_models.KnowledgeCollection"
+                        }
+                    ]
+                },
+                "collectionID": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "contentType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "type": "integer"
+                },
+                "deletedBy": {
+                    "type": "integer"
+                },
+                "documentID": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "indexingError": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "lastIndexedAt": {
+                    "type": "integer"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/datatypes.JSONMap"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "totalChunks": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "integer"
+                },
+                "vectorID": {
+                    "type": "string"
+                },
+                "vectorStatus": {
+                    "type": "string"
                 }
             }
         },

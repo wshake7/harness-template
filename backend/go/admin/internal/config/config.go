@@ -9,6 +9,7 @@ import (
 
 func Init(configFile string) *Config {
 	flag.Parse()
+	conf = new(Config)
 	_, err := viperc.ParseFile(configFile, conf)
 	if err != nil {
 		panic(err)
@@ -31,6 +32,7 @@ type Config struct {
 	Redis           RedisConfig
 	Temporal        TemporalConfig
 	Milvus          MilvusConfig
+	Storage         StorageConfig
 }
 
 var conf = new(Config)
@@ -79,7 +81,7 @@ type AIKnowledgeConfig struct {
 }
 
 type AIMemoryConfig struct {
-	Type          string `mapstructure:"Type" default:"memory"`     // "memory", "redis", or "db"
+	Type          string `mapstructure:"Type" default:"memory"` // "memory", "redis", or "db"
 	MaxWindowSize int    `mapstructure:"MaxWindowSize" default:"6"`
 	TTLSeconds    int    `mapstructure:"TTLSeconds" default:"3600"` // Redis key TTL in seconds, only used when Type is "redis"
 }
@@ -135,4 +137,23 @@ type MilvusConfig struct {
 	Address string `mapstructure:"Address" default:"127.0.0.1:19530"`
 	APIKey  string `mapstructure:"APIKey"`
 	DBName  string `mapstructure:"DBName"`
+}
+
+type StorageConfig struct {
+	Enabled                 bool               `mapstructure:"Enabled" default:"false"`
+	Engine                  string             `mapstructure:"Engine" default:"minio"`
+	MaxUploadBytes          int64              `mapstructure:"MaxUploadBytes" default:"10485760"`
+	ObjectKeyPrefix         string             `mapstructure:"ObjectKeyPrefix" default:"uploads"`
+	PresignedExpiresSeconds int                `mapstructure:"PresignedExpiresSeconds" default:"3600"`
+	MinIO                   MinIOStorageConfig `mapstructure:"MinIO"`
+}
+
+type MinIOStorageConfig struct {
+	Endpoint         string `mapstructure:"Endpoint"`
+	AccessKeyID      string `mapstructure:"AccessKeyID"`
+	SecretAccessKey  string `mapstructure:"SecretAccessKey"`
+	Bucket           string `mapstructure:"Bucket" default:"admin-files"`
+	Region           string `mapstructure:"Region" default:"us-east-1"`
+	UseSSL           bool   `mapstructure:"UseSSL" default:"false"`
+	AutoCreateBucket bool   `mapstructure:"AutoCreateBucket" default:"true"`
 }

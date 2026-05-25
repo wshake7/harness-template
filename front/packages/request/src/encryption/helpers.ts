@@ -82,6 +82,15 @@ export function createEncryptedRequestHelpers(options: CreateEncryptedRequestHel
       return
     }
 
+    if (method.meta?.skipEncrypt === true) {
+      const timestamp = Date.now()
+      const nonce = Math.random().toString(36).substring(2, 18)
+      method.config.headers = method.config.headers || {}
+      method.config.headers[XHeader.XRequestTimestamp] = timestamp
+      method.config.headers[XHeader.XRequestID] = nonce
+      return
+    }
+
     const encryptedConfig = await createEncryptedRequestConfig({
       data: method.data,
       headers: method.config.headers,

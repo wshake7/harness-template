@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  admin_internal_appsvc.PresignedURLResult:
+    properties:
+      expiresAt:
+        type: string
+      url:
+        type: string
+    type: object
   admin_internal_fiberc_res.Response:
     properties:
       code:
@@ -9,6 +16,49 @@ definitions:
       msg:
         example: success
         type: string
+    type: object
+  admin_internal_services_orm_models.FileAsset:
+    properties:
+      bizID:
+        type: string
+      bizType:
+        type: string
+      bucket:
+        type: string
+      contentType:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: integer
+      deletedAt:
+        type: integer
+      deletedBy:
+        type: integer
+      engine:
+        type: string
+      extension:
+        type: string
+      id:
+        type: integer
+      metadata:
+        $ref: '#/definitions/datatypes.JSONMap'
+      objectKey:
+        type: string
+      originalName:
+        type: string
+      remark:
+        type: string
+      sha256:
+        type: string
+      size:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: integer
     type: object
   admin_internal_services_orm_models.JobExecution:
     properties:
@@ -82,6 +132,96 @@ definitions:
       updatedAt:
         type: string
       workflowType:
+        type: string
+    type: object
+  admin_internal_services_orm_models.KnowledgeCollection:
+    properties:
+      collectionName:
+        type: string
+      contentMaxLength:
+        type: integer
+      createdAt:
+        type: string
+      createdBy:
+        type: integer
+      deletedAt:
+        type: integer
+      deletedBy:
+        type: integer
+      displayName:
+        type: string
+      documentCount:
+        type: integer
+      embeddingModel:
+        type: string
+      id:
+        type: integer
+      idMaxLength:
+        type: integer
+      indexType:
+        type: string
+      isEnabled:
+        type: boolean
+      metricType:
+        type: string
+      remark:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: integer
+      vectorDimension:
+        type: integer
+    type: object
+  admin_internal_services_orm_models.KnowledgeDocument:
+    properties:
+      chunkIndex:
+        type: integer
+      collection:
+        allOf:
+        - $ref: '#/definitions/admin_internal_services_orm_models.KnowledgeCollection'
+        description: 关联集合
+      collectionID:
+        type: integer
+      content:
+        type: string
+      contentType:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: integer
+      deletedAt:
+        type: integer
+      deletedBy:
+        type: integer
+      documentID:
+        type: string
+      id:
+        type: integer
+      indexingError:
+        type: string
+      isEnabled:
+        type: boolean
+      lastIndexedAt:
+        type: integer
+      metadata:
+        $ref: '#/definitions/datatypes.JSONMap'
+      remark:
+        type: string
+      source:
+        type: string
+      title:
+        type: string
+      totalChunks:
+        type: integer
+      updatedAt:
+        type: string
+      updatedBy:
+        type: integer
+      vectorID:
+        type: string
+      vectorStatus:
         type: string
     type: object
   admin_internal_services_orm_models.SysApiLog:
@@ -501,6 +641,24 @@ definitions:
       total:
         type: integer
     type: object
+  gormc.PagingResult-internal_router_logic_RespKnowledgeCollection:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_router_logic.RespKnowledgeCollection'
+        type: array
+      total:
+        type: integer
+    type: object
+  gormc.PagingResult-internal_router_logic_RespKnowledgeDocument:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_router_logic.RespKnowledgeDocument'
+        type: array
+      total:
+        type: integer
+    type: object
   gormc.PagingResult-internal_router_logic_RespSysResourceApi:
     properties:
       items:
@@ -546,8 +704,8 @@ definitions:
         minLength: 6
         type: string
     required:
-      - newPwd
-      - oldPwd
+    - newPwd
+    - oldPwd
     type: object
   internal_router_logic.ReqAccountPwdLogin:
     properties:
@@ -558,8 +716,8 @@ definitions:
         maxLength: 24
         type: string
     required:
-      - pwd
-      - username
+    - pwd
+    - username
     type: object
   internal_router_logic.ReqDictEntryBatchCopy:
     properties:
@@ -571,8 +729,8 @@ definitions:
       targetTypeId:
         type: integer
     required:
-      - entryIds
-      - targetTypeId
+    - entryIds
+    - targetTypeId
     type: object
   internal_router_logic.ReqDictEntryBatchDelete:
     properties:
@@ -582,7 +740,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqDictEntryCreate:
     properties:
@@ -608,9 +766,9 @@ definitions:
       sysDictTypeId:
         type: integer
     required:
-      - entryLabel
-      - entryValue
-      - sysDictTypeId
+    - entryLabel
+    - entryValue
+    - sysDictTypeId
     type: object
   internal_router_logic.ReqDictEntryMatch:
     properties:
@@ -620,7 +778,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - codes
+    - codes
     type: object
   internal_router_logic.ReqDictEntryUpdate:
     properties:
@@ -678,7 +836,7 @@ definitions:
       sysDictTypeId:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqDictTypeBatchDelete:
     properties:
@@ -688,7 +846,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqDictTypeCreate:
     properties:
@@ -706,8 +864,8 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - typeCode
-      - typeName
+    - typeCode
+    - typeName
     type: object
   internal_router_logic.ReqDictTypeUpdate:
     properties:
@@ -727,14 +885,14 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqJobExecutionID:
     properties:
       id:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqJobScheduleCreate:
     properties:
@@ -777,25 +935,25 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - jobCode
-      - jobName
-      - scheduleType
-      - taskQueue
-      - workflowType
+    - jobCode
+    - jobName
+    - scheduleType
+    - taskQueue
+    - workflowType
     type: object
   internal_router_logic.ReqJobScheduleDetail:
     properties:
       id:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqJobScheduleID:
     properties:
       id:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqJobScheduleSwitch:
     properties:
@@ -804,7 +962,7 @@ definitions:
       id:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqJobScheduleUpdate:
     properties:
@@ -843,7 +1001,183 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - id
+    - id
+    type: object
+  internal_router_logic.ReqKnowledgeCollectionCreate:
+    properties:
+      collectionName:
+        maxLength: 128
+        type: string
+      contentMaxLength:
+        type: integer
+      description:
+        maxLength: 512
+        type: string
+      displayName:
+        maxLength: 255
+        type: string
+      embeddingModel:
+        maxLength: 128
+        type: string
+      idMaxLength:
+        type: integer
+      indexType:
+        maxLength: 32
+        type: string
+      isEnabled:
+        type: boolean
+      metricType:
+        maxLength: 32
+        type: string
+      remark:
+        maxLength: 255
+        type: string
+      vectorDimension:
+        minimum: 1
+        type: integer
+    required:
+    - collectionName
+    - displayName
+    - embeddingModel
+    - vectorDimension
+    type: object
+  internal_router_logic.ReqKnowledgeCollectionID:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  internal_router_logic.ReqKnowledgeCollectionUpdate:
+    properties:
+      collectionName:
+        maxLength: 128
+        type: string
+      contentMaxLength:
+        type: integer
+      description:
+        maxLength: 512
+        type: string
+      displayName:
+        maxLength: 255
+        type: string
+      embeddingModel:
+        maxLength: 128
+        type: string
+      id:
+        type: integer
+      idMaxLength:
+        type: integer
+      indexType:
+        maxLength: 32
+        type: string
+      isEnabled:
+        type: boolean
+      metricType:
+        maxLength: 32
+        type: string
+      remark:
+        maxLength: 255
+        type: string
+      vectorDimension:
+        minimum: 1
+        type: integer
+    required:
+    - id
+    type: object
+  internal_router_logic.ReqKnowledgeDocumentCreate:
+    properties:
+      chunkIndex:
+        type: integer
+      collectionID:
+        type: integer
+      content:
+        type: string
+      contentType:
+        maxLength: 64
+        type: string
+      documentID:
+        maxLength: 255
+        type: string
+      isEnabled:
+        type: boolean
+      metadata:
+        type: string
+      remark:
+        maxLength: 255
+        type: string
+      source:
+        maxLength: 512
+        type: string
+      title:
+        maxLength: 512
+        type: string
+      totalChunks:
+        type: integer
+    required:
+    - collectionID
+    - content
+    - documentID
+    - title
+    type: object
+  internal_router_logic.ReqKnowledgeDocumentID:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  internal_router_logic.ReqKnowledgeDocumentListByCollection:
+    properties:
+      collectionID:
+        type: integer
+      orderBy:
+        type: string
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      query:
+        type: string
+    required:
+    - collectionID
+    type: object
+  internal_router_logic.ReqKnowledgeDocumentUpdate:
+    properties:
+      chunkIndex:
+        type: integer
+      collectionID:
+        type: integer
+      content:
+        type: string
+      contentType:
+        maxLength: 64
+        type: string
+      documentID:
+        maxLength: 255
+        type: string
+      id:
+        type: integer
+      isEnabled:
+        type: boolean
+      metadata:
+        type: string
+      remark:
+        maxLength: 255
+        type: string
+      source:
+        maxLength: 512
+        type: string
+      title:
+        maxLength: 512
+        type: string
+      totalChunks:
+        type: integer
+      vectorStatus:
+        maxLength: 32
+        type: string
+    required:
+    - id
     type: object
   internal_router_logic.ReqLangEntryBatchCreate:
     properties:
@@ -859,7 +1193,7 @@ definitions:
           type: string
         type: object
     required:
-      - entryCode
+    - entryCode
     type: object
   internal_router_logic.ReqLangEntryBatchDelete:
     properties:
@@ -869,7 +1203,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqLangEntryCreate:
     properties:
@@ -889,9 +1223,9 @@ definitions:
       sysLanguageTypeId:
         type: integer
     required:
-      - entryCode
-      - entryValue
-      - sysLanguageTypeId
+    - entryCode
+    - entryValue
+    - sysLanguageTypeId
     type: object
   internal_router_logic.ReqLangEntryUpdate:
     properties:
@@ -937,7 +1271,7 @@ definitions:
       sysLanguageTypeId:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqLangTypeBatchDelete:
     properties:
@@ -947,7 +1281,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqLangTypeCreate:
     properties:
@@ -964,8 +1298,8 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - typeCode
-      - typeName
+    - typeCode
+    - typeName
     type: object
   internal_router_logic.ReqLangTypeUpdate:
     properties:
@@ -984,21 +1318,21 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqLogDetail:
     properties:
       id:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqLoginLogDetail:
     properties:
       id:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqResourceApiBatchDelete:
     properties:
@@ -1008,7 +1342,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqResourceApiCreate:
     properties:
@@ -1029,8 +1363,8 @@ definitions:
       sortOrder:
         type: integer
     required:
-      - method
-      - path
+    - method
+    - path
     type: object
   internal_router_logic.ReqResourceApiUpdate:
     properties:
@@ -1053,7 +1387,7 @@ definitions:
       sortOrder:
         type: integer
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqResourceMenuBatchDelete:
     properties:
@@ -1063,7 +1397,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqResourceMenuCreate:
     properties:
@@ -1100,7 +1434,7 @@ definitions:
       sortOrder:
         type: integer
     required:
-      - menuType
+    - menuType
     type: object
   internal_router_logic.ReqResourceMenuUpdate:
     properties:
@@ -1139,7 +1473,25 @@ definitions:
       sortOrder:
         type: integer
     required:
-      - id
+    - id
+    type: object
+  internal_router_logic.ReqStorageFileID:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  internal_router_logic.ReqStorageFilePresigned:
+    properties:
+      disposition:
+        type: string
+      expiresSeconds:
+        type: integer
+      id:
+        type: integer
+    required:
+    - id
     type: object
   internal_router_logic.ReqSysRoleBatchDelete:
     properties:
@@ -1149,7 +1501,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqSysRoleCreate:
     properties:
@@ -1167,8 +1519,8 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - code
-      - name
+    - code
+    - name
     type: object
   internal_router_logic.ReqSysRolePermissionSave:
     properties:
@@ -1183,7 +1535,7 @@ definitions:
           type: integer
         type: array
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqSysRoleUpdate:
     properties:
@@ -1203,7 +1555,7 @@ definitions:
         maxLength: 255
         type: string
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ReqSysUserBatchDelete:
     properties:
@@ -1213,7 +1565,7 @@ definitions:
         minItems: 1
         type: array
     required:
-      - ids
+    - ids
     type: object
   internal_router_logic.ReqSysUserCreate:
     properties:
@@ -1255,7 +1607,7 @@ definitions:
         maxLength: 64
         type: string
     required:
-      - id
+    - id
     type: object
   internal_router_logic.ResAccountPwdLogin:
     properties:
@@ -1422,6 +1774,104 @@ definitions:
         items:
           $ref: '#/definitions/internal_router_logic.RespJobScheduleOption'
         type: array
+    type: object
+  internal_router_logic.RespKnowledgeCollection:
+    properties:
+      canDelete:
+        type: boolean
+      canWrite:
+        type: boolean
+      collectionName:
+        type: string
+      contentMaxLength:
+        type: integer
+      createdAt:
+        type: string
+      createdBy:
+        type: integer
+      deletedAt:
+        type: integer
+      deletedBy:
+        type: integer
+      displayName:
+        type: string
+      documentCount:
+        type: integer
+      embeddingModel:
+        type: string
+      id:
+        type: integer
+      idMaxLength:
+        type: integer
+      indexType:
+        type: string
+      isEnabled:
+        type: boolean
+      metricType:
+        type: string
+      remark:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: integer
+      vectorDimension:
+        type: integer
+    type: object
+  internal_router_logic.RespKnowledgeDocument:
+    properties:
+      canDelete:
+        type: boolean
+      canWrite:
+        type: boolean
+      chunkIndex:
+        type: integer
+      collection:
+        allOf:
+        - $ref: '#/definitions/admin_internal_services_orm_models.KnowledgeCollection'
+        description: 关联集合
+      collectionID:
+        type: integer
+      content:
+        type: string
+      contentType:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: integer
+      deletedAt:
+        type: integer
+      deletedBy:
+        type: integer
+      documentID:
+        type: string
+      id:
+        type: integer
+      indexingError:
+        type: string
+      isEnabled:
+        type: boolean
+      lastIndexedAt:
+        type: integer
+      metadata:
+        $ref: '#/definitions/datatypes.JSONMap'
+      remark:
+        type: string
+      source:
+        type: string
+      title:
+        type: string
+      totalChunks:
+        type: integer
+      updatedAt:
+        type: string
+      updatedBy:
+        type: integer
+      vectorID:
+        type: string
+      vectorStatus:
+        type: string
     type: object
   internal_router_logic.RespResourceMenuNode:
     properties:
@@ -1633,7 +2083,7 @@ definitions:
         type: array
       fieldMask:
         allOf:
-          - $ref: '#/definitions/fieldmaskpb.FieldMask'
+        - $ref: '#/definitions/fieldmaskpb.FieldMask'
         description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT
           *。
       filteringType:
@@ -1664,7 +2114,7 @@ definitions:
     properties:
       direction:
         allOf:
-          - $ref: '#/definitions/v1.Sorting_Direction'
+        - $ref: '#/definitions/v1.Sorting_Direction'
         description: 排序方向
       field:
         description: 排序字段（如"id"、"create_time"）
@@ -1672,13 +2122,13 @@ definitions:
     type: object
   v1.Sorting_Direction:
     enum:
-      - 0
-      - 1
+    - 0
+    - 1
     format: int32
     type: integer
     x-enum-varnames:
-      - Sorting_ASC
-      - Sorting_DESC
+    - Sorting_ASC
+    - Sorting_DESC
 info:
   contact: {}
   description: |-
@@ -1699,16 +2149,16 @@ paths:
   /api/account/changePwd:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 修改密码参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqAccountChangePwd'
+      - description: 修改密码参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqAccountChangePwd'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1716,42 +2166,42 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 修改密码
       tags:
-        - Account
+      - Account
   /api/account/login/pwd:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 登录参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqAccountPwdLogin'
+      - description: 登录参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqAccountPwdLogin'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/internal_router_logic.ResAccountPwdLogin'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_router_logic.ResAccountPwdLogin'
+              type: object
       summary: 用户密码登录
       tags:
-        - Account
+      - Account
   /api/account/logout:
     get:
       parameters:
-        - description: 登录 Token，或使用 cookie 中的 token
-          in: header
-          name: Authorization
-          type: string
+      - description: 登录 Token，或使用 cookie 中的 token
+        in: header
+        name: Authorization
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1759,20 +2209,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 退出登录
       tags:
-        - Account
+      - Account
   /api/dict/entry/batch/copy:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量复制参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictEntryBatchCopy'
+      - description: 批量复制参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictEntryBatchCopy'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1780,20 +2230,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 批量复制字典数据项
       tags:
-        - Dict
+      - Dict
   /api/dict/entry/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 字典数据项创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictEntryCreate'
+      - description: 字典数据项创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictEntryCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1801,20 +2251,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建字典数据项
       tags:
-        - Dict
+      - Dict
   /api/dict/entry/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictEntryBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictEntryBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1822,46 +2272,46 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 批量删除字典数据项
       tags:
-        - Dict
+      - Dict
   /api/dict/entry/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysDictEntry'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysDictEntry'
+              type: object
       summary: 获取字典数据项分页列表
       tags:
-        - Dict
+      - Dict
   /api/dict/entry/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 字典数据项更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictEntryUpdate'
+      - description: 字典数据项更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictEntryUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1869,20 +2319,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新字典数据项
       tags:
-        - Dict
+      - Dict
   /api/dict/type/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 字典类型创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictTypeCreate'
+      - description: 字典类型创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictTypeCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1890,20 +2340,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建字典类型
       tags:
-        - Dict
+      - Dict
   /api/dict/type/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictTypeBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictTypeBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1911,46 +2361,46 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 批量删除字典类型
       tags:
-        - Dict
+      - Dict
   /api/dict/type/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespDictType'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespDictType'
+              type: object
       summary: 获取字典类型分页列表
       tags:
-        - Dict
+      - Dict
   /api/dict/type/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 字典类型更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictTypeUpdate'
+      - description: 字典类型更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictTypeUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -1958,115 +2408,485 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新字典类型
       tags:
-        - Dict
+      - Dict
   /api/encrypt/public/key:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/internal_router_logic.ResPublicKey'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_router_logic.ResPublicKey'
+              type: object
       summary: 获取加密公钥
       tags:
-        - Encrypt
+      - Encrypt
+  /api/knowledge/collection/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeCollectionCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/admin_internal_fiberc_res.Response'
+      summary: 创建知识库集合
+      tags:
+      - KnowledgeCollection
+  /api/knowledge/collection/del:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 集合ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeCollectionID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/admin_internal_fiberc_res.Response'
+      summary: 删除知识库集合
+      tags:
+      - KnowledgeCollection
+  /api/knowledge/collection/detail:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 集合ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeCollectionID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.KnowledgeCollection'
+              type: object
+      summary: 获取知识库集合详情
+      tags:
+      - KnowledgeCollection
+  /api/knowledge/collection/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespKnowledgeCollection'
+              type: object
+      summary: 获取知识库集合分页列表
+      tags:
+      - KnowledgeCollection
+  /api/knowledge/collection/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeCollectionUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/admin_internal_fiberc_res.Response'
+      summary: 更新知识库集合
+      tags:
+      - KnowledgeCollection
+  /api/knowledge/document/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeDocumentCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/admin_internal_fiberc_res.Response'
+      summary: 创建知识库文档
+      tags:
+      - KnowledgeDocument
+  /api/knowledge/document/del:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文档ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeDocumentID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/admin_internal_fiberc_res.Response'
+      summary: 删除知识库文档
+      tags:
+      - KnowledgeDocument
+  /api/knowledge/document/detail:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文档ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeDocumentID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.KnowledgeDocument'
+              type: object
+      summary: 获取知识库文档详情
+      tags:
+      - KnowledgeDocument
+  /api/knowledge/document/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespKnowledgeDocument'
+              type: object
+      summary: 获取知识库文档分页列表
+      tags:
+      - KnowledgeDocument
+  /api/knowledge/document/listByCollection:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 查询参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeDocumentListByCollection'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespKnowledgeDocument'
+              type: object
+      summary: 按集合获取知识库文档分页列表
+      tags:
+      - KnowledgeDocument
+  /api/knowledge/document/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqKnowledgeDocumentUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/admin_internal_fiberc_res.Response'
+      summary: 更新知识库文档
+      tags:
+      - KnowledgeDocument
+  /api/storage/file/del:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文件ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqStorageFileID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/admin_internal_fiberc_res.Response'
+      summary: 删除文件
+      tags:
+      - StorageFile
+  /api/storage/file/detail:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文件ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqStorageFileID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.FileAsset'
+              type: object
+      summary: 获取文件详情
+      tags:
+      - StorageFile
+  /api/storage/file/presigned:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 签名参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqStorageFilePresigned'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_appsvc.PresignedURLResult'
+              type: object
+      summary: 获取文件临时下载链接
+      tags:
+      - StorageFile
+  /api/storage/file/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 上传文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: 业务类型
+        in: formData
+        name: bizType
+        type: string
+      - description: 业务ID
+        in: formData
+        name: bizID
+        type: string
+      - description: JSON 元数据
+        in: formData
+        name: metadata
+        type: string
+      - description: 备注
+        in: formData
+        name: remark
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.FileAsset'
+              type: object
+      summary: 上传文件
+      tags:
+      - StorageFile
   /api/sys/api/log/detail:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 日志详情参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLogDetail'
+      - description: 日志详情参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLogDetail'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/admin_internal_services_orm_models.SysApiLog'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.SysApiLog'
+              type: object
       summary: 获取API日志详情
       tags:
-        - Log
+      - Log
   /api/sys/api/log/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysApiLog'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysApiLog'
+              type: object
       summary: 获取API日志分页列表
       tags:
-        - Log
+      - Log
   /api/sys/dict/entry/match:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 字典类型编码
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqDictEntryMatch'
+      - description: 字典类型编码
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqDictEntryMatch'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/internal_router_logic.RespDictEntryMatch'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_router_logic.RespDictEntryMatch'
+              type: object
       summary: 通过字典编码批量获取启用字典项
       tags:
-        - Dict
+      - Dict
   /api/sys/job/execution/cancel:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 取消参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobExecutionID'
+      - description: 取消参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobExecutionID'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2074,72 +2894,72 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 取消运行中的任务执行
       tags:
-        - JobExecution
+      - JobExecution
   /api/sys/job/execution/detail:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 详情参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobExecutionID'
+      - description: 详情参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobExecutionID'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/admin_internal_services_orm_models.JobExecution'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.JobExecution'
+              type: object
       summary: 获取任务执行记录详情
       tags:
-        - JobExecution
+      - JobExecution
   /api/sys/job/execution/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespJobExecution'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespJobExecution'
+              type: object
       summary: 获取任务执行记录分页列表
       tags:
-        - JobExecution
+      - JobExecution
   /api/sys/job/execution/retry:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 重试参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobExecutionID'
+      - description: 重试参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobExecutionID'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2147,20 +2967,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 重试失败态任务执行
       tags:
-        - JobExecution
+      - JobExecution
   /api/sys/job/schedule/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobScheduleCreate'
+      - description: 创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobScheduleCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2168,20 +2988,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建任务调度配置
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 任务ID
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobScheduleID'
+      - description: 任务ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobScheduleID'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2189,89 +3009,89 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 删除任务调度配置
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/detail:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 任务ID
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobScheduleDetail'
+      - description: 任务ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobScheduleDetail'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/admin_internal_services_orm_models.JobSchedule'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.JobSchedule'
+              type: object
       summary: 获取任务调度配置详情
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespJobSchedule'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespJobSchedule'
+              type: object
       summary: 获取任务调度配置分页列表
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/options:
     post:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/internal_router_logic.RespJobScheduleOptions'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_router_logic.RespJobScheduleOptions'
+              type: object
       summary: 获取任务调度表单选项
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/switch:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 切换参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobScheduleSwitch'
+      - description: 切换参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobScheduleSwitch'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2279,20 +3099,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 启用或停用任务调度配置
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/sync:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 任务ID
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobScheduleID'
+      - description: 任务ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobScheduleID'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2300,20 +3120,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 同步任务调度配置到 Temporal
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/trigger:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 任务ID
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobScheduleID'
+      - description: 任务ID
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobScheduleID'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2321,20 +3141,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 立即触发任务调度
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/job/schedule/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqJobScheduleUpdate'
+      - description: 更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqJobScheduleUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2342,20 +3162,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新任务调度配置
       tags:
-        - JobSchedule
+      - JobSchedule
   /api/sys/language/entry/batch/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLangEntryBatchCreate'
+      - description: 批量创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLangEntryBatchCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2363,20 +3183,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 批量创建语言条目
       tags:
-        - Language
+      - Language
   /api/sys/language/entry/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 语言条目创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLangEntryCreate'
+      - description: 语言条目创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLangEntryCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2384,20 +3204,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建语言条目
       tags:
-        - Language
+      - Language
   /api/sys/language/entry/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLangEntryBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLangEntryBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2405,46 +3225,46 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 批量删除语言条目
       tags:
-        - Language
+      - Language
   /api/sys/language/entry/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysLanguageEntry'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysLanguageEntry'
+              type: object
       summary: 获取语言条目分页列表
       tags:
-        - Language
+      - Language
   /api/sys/language/entry/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 语言条目更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLangEntryUpdate'
+      - description: 语言条目更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLangEntryUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2452,20 +3272,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新语言条目
       tags:
-        - Language
+      - Language
   /api/sys/language/type/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 语言类型创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLangTypeCreate'
+      - description: 语言类型创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLangTypeCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2473,20 +3293,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建语言类型
       tags:
-        - Language
+      - Language
   /api/sys/language/type/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLangTypeBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLangTypeBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2494,46 +3314,46 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 批量删除语言类型
       tags:
-        - Language
+      - Language
   /api/sys/language/type/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysLanguageType'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysLanguageType'
+              type: object
       summary: 获取语言类型分页列表
       tags:
-        - Language
+      - Language
   /api/sys/language/type/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 语言类型更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLangTypeUpdate'
+      - description: 语言类型更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLangTypeUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2541,72 +3361,72 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新语言类型
       tags:
-        - Language
+      - Language
   /api/sys/login/log/detail:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 日志详情参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqLoginLogDetail'
+      - description: 日志详情参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqLoginLogDetail'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/admin_internal_services_orm_models.SysLoginLog'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/admin_internal_services_orm_models.SysLoginLog'
+              type: object
       summary: 获取登录日志详情
       tags:
-        - Log
+      - Log
   /api/sys/login/log/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysLoginLog'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-admin_internal_services_orm_models_SysLoginLog'
+              type: object
       summary: 获取登录日志分页列表
       tags:
-        - Log
+      - Log
   /api/sys/resource/api/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: API资源创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqResourceApiCreate'
+      - description: API资源创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqResourceApiCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2614,20 +3434,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建API资源
       tags:
-        - ResourceApi
+      - ResourceApi
   /api/sys/resource/api/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqResourceApiBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqResourceApiBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2635,46 +3455,46 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 删除API资源
       tags:
-        - ResourceApi
+      - ResourceApi
   /api/sys/resource/api/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysResourceApi'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysResourceApi'
+              type: object
       summary: 获取API资源分页列表
       tags:
-        - ResourceApi
+      - ResourceApi
   /api/sys/resource/api/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: API资源更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqResourceApiUpdate'
+      - description: API资源更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqResourceApiUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2682,20 +3502,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新API资源
       tags:
-        - ResourceApi
+      - ResourceApi
   /api/sys/resource/menu/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 菜单资源创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqResourceMenuCreate'
+      - description: 菜单资源创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqResourceMenuCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2703,20 +3523,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建菜单资源
       tags:
-        - ResourceMenu
+      - ResourceMenu
   /api/sys/resource/menu/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqResourceMenuBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqResourceMenuBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2724,65 +3544,65 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 删除菜单资源
       tags:
-        - ResourceMenu
+      - ResourceMenu
   /api/sys/resource/menu/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysResourceMenu'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysResourceMenu'
+              type: object
       summary: 获取菜单资源列表
       tags:
-        - ResourceMenu
+      - ResourceMenu
   /api/sys/resource/menu/tree:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    items:
-                      $ref: '#/definitions/internal_router_logic.RespResourceMenuNode'
-                    type: array
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/internal_router_logic.RespResourceMenuNode'
+                  type: array
+              type: object
       summary: 获取当前用户动态菜单树
       tags:
-        - ResourceMenu
+      - ResourceMenu
   /api/sys/resource/menu/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 菜单资源更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqResourceMenuUpdate'
+      - description: 菜单资源更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqResourceMenuUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2790,43 +3610,43 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新菜单资源
       tags:
-        - ResourceMenu
+      - ResourceMenu
   /api/sys/role/{id}/permissions:
     get:
       parameters:
-        - description: 角色 ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: 角色 ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/internal_router_logic.RespRolePermission'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_router_logic.RespRolePermission'
+              type: object
       summary: 获取角色授权
       tags:
-        - Role
+      - Role
   /api/sys/role/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 角色创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqSysRoleCreate'
+      - description: 角色创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqSysRoleCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2834,20 +3654,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建角色
       tags:
-        - Role
+      - Role
   /api/sys/role/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqSysRoleBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqSysRoleBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2855,46 +3675,46 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 删除角色
       tags:
-        - Role
+      - Role
   /api/sys/role/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysRole'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysRole'
+              type: object
       summary: 获取角色列表
       tags:
-        - Role
+      - Role
   /api/sys/role/permissions:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 角色授权参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqSysRolePermissionSave'
+      - description: 角色授权参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqSysRolePermissionSave'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2902,39 +3722,39 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 保存角色授权
       tags:
-        - Role
+      - Role
   /api/sys/role/tree:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    items:
-                      $ref: '#/definitions/internal_router_logic.RespSysRole'
-                    type: array
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/internal_router_logic.RespSysRole'
+                  type: array
+              type: object
       summary: 获取角色树
       tags:
-        - Role
+      - Role
   /api/sys/role/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 角色更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqSysRoleUpdate'
+      - description: 角色更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqSysRoleUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2942,20 +3762,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新角色
       tags:
-        - Role
+      - Role
   /api/sys/user/create:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 用户创建参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqSysUserCreate'
+      - description: 用户创建参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqSysUserCreate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2963,20 +3783,20 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 创建用户
       tags:
-        - User
+      - User
   /api/sys/user/del:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 批量删除参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqSysUserBatchDelete'
+      - description: 批量删除参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqSysUserBatchDelete'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -2984,46 +3804,46 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 删除用户
       tags:
-        - User
+      - User
   /api/sys/user/list:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分页参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/v1.PagingRequest'
+      - description: 分页参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PagingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
           schema:
             allOf:
-              - $ref: '#/definitions/admin_internal_fiberc_res.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysUser'
-                type: object
+            - $ref: '#/definitions/admin_internal_fiberc_res.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gormc.PagingResult-internal_router_logic_RespSysUser'
+              type: object
       summary: 获取用户分页列表
       tags:
-        - User
+      - User
   /api/sys/user/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 用户更新参数
-          in: body
-          name: req
-          required: true
-          schema:
-            $ref: '#/definitions/internal_router_logic.ReqSysUserUpdate'
+      - description: 用户更新参数
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router_logic.ReqSysUserUpdate'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 成功
@@ -3031,5 +3851,5 @@ paths:
             $ref: '#/definitions/admin_internal_fiberc_res.Response'
       summary: 更新用户
       tags:
-        - User
+      - User
 swagger: "2.0"

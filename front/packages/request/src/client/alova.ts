@@ -12,6 +12,7 @@ export interface RequestMethodMeta {
   meta?: {
     authRole?: string
     aesKey?: CryptoKey
+    skipEncrypt?: boolean
   }
   url: string
 }

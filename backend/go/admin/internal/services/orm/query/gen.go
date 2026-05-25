@@ -19,6 +19,7 @@ var (
 	Q                   = new(Query)
 	AgentMessage        *agentMessage
 	AgentSession        *agentSession
+	FileAsset           *fileAsset
 	JobExecution        *jobExecution
 	JobSchedule         *jobSchedule
 	KnowledgeCollection *knowledgeCollection
@@ -45,6 +46,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	AgentMessage = &Q.AgentMessage
 	AgentSession = &Q.AgentSession
+	FileAsset = &Q.FileAsset
 	JobExecution = &Q.JobExecution
 	JobSchedule = &Q.JobSchedule
 	KnowledgeCollection = &Q.KnowledgeCollection
@@ -72,6 +74,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		db:                  db,
 		AgentMessage:        newAgentMessage(db, opts...),
 		AgentSession:        newAgentSession(db, opts...),
+		FileAsset:           newFileAsset(db, opts...),
 		JobExecution:        newJobExecution(db, opts...),
 		JobSchedule:         newJobSchedule(db, opts...),
 		KnowledgeCollection: newKnowledgeCollection(db, opts...),
@@ -100,6 +103,7 @@ type Query struct {
 
 	AgentMessage        agentMessage
 	AgentSession        agentSession
+	FileAsset           fileAsset
 	JobExecution        jobExecution
 	JobSchedule         jobSchedule
 	KnowledgeCollection knowledgeCollection
@@ -129,6 +133,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		db:                  db,
 		AgentMessage:        q.AgentMessage.clone(db),
 		AgentSession:        q.AgentSession.clone(db),
+		FileAsset:           q.FileAsset.clone(db),
 		JobExecution:        q.JobExecution.clone(db),
 		JobSchedule:         q.JobSchedule.clone(db),
 		KnowledgeCollection: q.KnowledgeCollection.clone(db),
@@ -165,6 +170,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		db:                  db,
 		AgentMessage:        q.AgentMessage.replaceDB(db),
 		AgentSession:        q.AgentSession.replaceDB(db),
+		FileAsset:           q.FileAsset.replaceDB(db),
 		JobExecution:        q.JobExecution.replaceDB(db),
 		JobSchedule:         q.JobSchedule.replaceDB(db),
 		KnowledgeCollection: q.KnowledgeCollection.replaceDB(db),
@@ -191,6 +197,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 type queryCtx struct {
 	AgentMessage        IAgentMessageDo
 	AgentSession        IAgentSessionDo
+	FileAsset           IFileAssetDo
 	JobExecution        IJobExecutionDo
 	JobSchedule         IJobScheduleDo
 	KnowledgeCollection IKnowledgeCollectionDo
@@ -217,6 +224,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		AgentMessage:        q.AgentMessage.WithContext(ctx),
 		AgentSession:        q.AgentSession.WithContext(ctx),
+		FileAsset:           q.FileAsset.WithContext(ctx),
 		JobExecution:        q.JobExecution.WithContext(ctx),
 		JobSchedule:         q.JobSchedule.WithContext(ctx),
 		KnowledgeCollection: q.KnowledgeCollection.WithContext(ctx),

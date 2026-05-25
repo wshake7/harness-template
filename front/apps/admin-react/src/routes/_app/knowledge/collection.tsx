@@ -16,8 +16,8 @@ import { useCallback, useMemo, useState } from 'react'
 import z from 'zod'
 import { KnowledgeCollectionApi } from '~/api/business/knowledgeCollection'
 import { useDictMatch } from '~/hooks/useDictMatch'
-import { useZodForm } from '~/utils/zod'
 import { gMessage } from '~/utils/message'
+import { useZodForm } from '~/utils/zod'
 
 export const Route = createFileRoute('/_app/knowledge/collection')({
   staleTime: 1000 * 60 * 2,
@@ -209,15 +209,13 @@ function KnowledgeCollectionManagement() {
     metricTypeDict.entries.map(entry => ({
       label: metricTypeDict.getLabel(entry.entryValue, entry.entryLabel),
       value: entry.entryValue,
-    })),
-  [metricTypeDict])
+    })), [metricTypeDict])
 
   const indexTypeOptions = useMemo(() =>
     indexTypeDict.entries.map(entry => ({
       label: indexTypeDict.getLabel(entry.entryValue, entry.entryLabel),
       value: entry.entryValue,
-    })),
-  [indexTypeDict])
+    })), [indexTypeDict])
 
   const columns: ProColumns<KnowledgeCollection>[] = useMemo(() => [
     { title: 'ID', dataIndex: 'id', width: 80 },

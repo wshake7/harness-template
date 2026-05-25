@@ -50,3 +50,17 @@ Milvus:
   Enabled: true
   Address: localhost:19530
   APIKey:
+Storage:
+  Enabled: false
+  Engine: minio
+  MaxUploadBytes: 10485760
+  ObjectKeyPrefix: uploads
+  PresignedExpiresSeconds: 3600
+  MinIO:
+    Endpoint: 127.0.0.1:9000
+    AccessKeyID:
+    SecretAccessKey:
+    Bucket: admin-files
+    Region: us-east-1
+    UseSSL: false
+    AutoCreateBucket: true

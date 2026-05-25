@@ -1,6 +1,5 @@
 import { HttpCode, HttpCodeSet, XHeader } from '@vp/core'
-import { appNotifier } from '~/utils/notifier'
-import { markNotified, notifiedError } from '~/utils/notifier'
+import { appNotifier, markNotified, notifiedError } from '~/utils/notifier'
 
 export { HttpCode, XHeader }
 export type { CodeType } from '@vp/core'

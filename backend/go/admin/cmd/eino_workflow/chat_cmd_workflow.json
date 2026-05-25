@@ -1,4 +1,3 @@
-
 {
   "name": "EinoAgent",
   "node_trigger_mode": "AllPredecessor",
@@ -1586,4 +1585,3 @@
     "default": 3
   }
 }
-

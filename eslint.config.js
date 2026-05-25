@@ -29,5 +29,9 @@ export default antfu({
     '.vscode',
     '.husky',
     '**/*.md',
+    '**/swagger.json',
+    '**/swagger.yaml',
+    '**/docs/docs.go',
+    '**/backend/**',
   ],
 })

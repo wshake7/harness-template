@@ -32,6 +32,8 @@ declare global {
   const ResourceApiApi: typeof import('./api/business/sysResourceApi').ResourceApiApi
   const ResourceMenuApi: typeof import('./api/business/sysResourceMenu').ResourceMenuApi
   const RoleApi: typeof import('./api/business/sysRole').RoleApi
+  const StorageFileApi: typeof import('./api/business/storageFile').StorageFileApi
+  const StorageFileUpload: typeof import('./components/business/storage/fileUpload').StorageFileUpload
   const Suspense: typeof import('react').Suspense
   const SysUserApi: typeof import('./api/business/sysUser').SysUserApi
   const TAB_REFRESH_INTERVAL: typeof import('./config/tabs').TAB_REFRESH_INTERVAL
@@ -44,6 +46,7 @@ declare global {
   const antIconPicker: typeof import('./components/common/antIconPicker').default
   const api: typeof import('./api/index').default
   const appNotifier: typeof import('./utils/notifier').appNotifier
+  const appendAsset: typeof import('./components/business/storage/fileUpload').appendAsset
   const arrayBufferToBase64: typeof import('./utils/encrypt').arrayBufferToBase64
   const base64ToArrayBuffer: typeof import('./utils/encrypt').base64ToArrayBuffer
   const cache: typeof import('react').cache
@@ -207,6 +210,9 @@ declare global {
   export type { ChangePwdFormValues } from './components/business/account/changePwdModal'
   import('./components/business/account/changePwdModal')
   // @ts-ignore
+  export type { StorageFileUploadProps } from './components/business/storage/fileUpload'
+  import('./components/business/storage/fileUpload')
+  // @ts-ignore
   export type { DictTypeFormValues, DictEntryFormValues } from './components/business/system/dictPanels'
   import('./components/business/system/dictPanels')
   // @ts-ignore
@@ -224,6 +230,9 @@ declare global {
   // @ts-ignore
   export type { KnowledgeDocument, ReqKnowledgeDocumentCreate, ReqKnowledgeDocumentUpdate, ReqKnowledgeDocumentID, ReqKnowledgeDocumentListByCollection } from './api/business/knowledgeDocument'
   import('./api/business/knowledgeDocument')
+  // @ts-ignore
+  export type { StorageFileAsset, StorageUploadFields, StorageFileIDReq, StorageFilePresignedReq, StorageFilePresignedRes } from './api/business/storageFile'
+  import('./api/business/storageFile')
   // @ts-ignore
   export type { SysApiLog, ReqLogDetail } from './api/business/sysApiLog'
   import('./api/business/sysApiLog')
