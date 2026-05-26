@@ -2,6 +2,8 @@
 
 后端代码位于 `backend/go/`，使用 Go workspace 管理多个模块。当前核心服务是 `backend/go/admin`。
 
+Java 版管理后台服务预留在 `backend/java/admin`。当前目录尚未落工程骨架，Go Admin 到 Java Admin 的移植目标、分层映射、阶段计划和验收要求见 `docs/develop/java-admin-migration.md`。
+
 ## 工作区结构
 
 - `backend/go/admin`：管理后台 API 服务，入口为 `cmd/main.go`。

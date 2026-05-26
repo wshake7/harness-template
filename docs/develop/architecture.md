@@ -5,6 +5,7 @@
 ## 顶层结构
 
 - `backend/go/`：Go workspace，包含管理后台 API、共享 Go 库、ORM/分页工具和 sa-token 适配。
+- `backend/java/admin`：预留给 Java 版管理后台服务；当前为空目录，移植边界和阶段见 `docs/develop/java-admin-migration.md`。
 - `front/`：pnpm workspace，包含三个 React 应用和一组 `@vp/*` 前端共享包。
 - `docs/`：面向人和评审的架构、流程、质量、运行、安全和交付文档。
 - `context/`：面向 Agent 执行的稳定上下文入口。
@@ -23,6 +24,7 @@
 - `backend/go/go-common` 提供通用 DTO、结果封装、日志、配置读取、集合、加密、ID、字符串、时间等 Go 共享能力。
 - `backend/go/orm-crud` 提供 ORM CRUD、分页 proto 和 GORM 查询辅助能力；`backend/go/orm-crud/api` 含 Buf/protobuf 相关生成入口。
 - `backend/go/go.work` 统一串起 `go-common`、`orm-crud/*`、`admin` 和 `sa-token/rueidis`，后台开发应优先在 workspace 根目录下验证。
+- Java 版 admin 尚未落工程骨架；开始实现前先按 `docs/develop/java-admin-migration.md` 固定 API、配置、认证加密、数据模型和阶段验收，再同步服务矩阵。
 
 ## 前端拓扑
 

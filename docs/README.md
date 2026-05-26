@@ -25,6 +25,7 @@
 - `start/principles.md`：Agent-first、产品取舍和设计原则。
 - `develop/architecture.md`：仓库拓扑、依赖方向和边界。
 - `develop/backend.md`：Go 后端启动、配置、外部依赖、API 和验证。
+- `develop/java-admin-migration.md`：Go Admin 移植到 Java Admin 的目标、分层映射、阶段顺序和验收口径。
 - `develop/frontend.md`：React/pnpm workspace、环境变量、联调和验证。
 - `operate/reliability.md`：启动、外部依赖、可观测性和排障。
 - `operate/cicd.md`：仓库级 CI/CD、前端测试和 release 制品。
