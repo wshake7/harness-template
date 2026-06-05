@@ -31,6 +31,13 @@ services:
     package_path: backend/go/go-common
     infra_path: "{infra-root}/admin-backend"
     description: Go Fiber 管理后台 API 服务，默认读取 backend/go/admin/etc/config.yaml，暴露 /api 路由和 Swagger 文档。
+  admin-java-backend:
+    module: admin
+    repo_path: backend/java/admin
+    infra_path: "{infra-root}/admin-java-backend"
+    description: Java Spring Boot 管理后台 API 服务 (迁移目标)，端口 3002，保留 /api 前缀。Spring Boot 3.5.9 + Java 25 + Sa-Token + jCasbin + Flyway + Easy Query + Temporal + MinIO + Milvus。
+    startup: cd backend/java/admin && ./gradlew bootRun
+    test: cd backend/java/admin && ./gradlew test
   admin-react:
     module: admin
     repo_path: "{app-root}/admin-react"

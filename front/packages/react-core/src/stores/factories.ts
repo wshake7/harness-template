@@ -4,6 +4,17 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
+const base64PublicKeyPattern = /^[A-Za-z0-9+/]+={0,2}$/
+
+function isValidStoredPublicKey(key: string) {
+  return key !== ''
+    && !key.includes('BEGIN PUBLIC KEY')
+    && !key.includes('END PUBLIC KEY')
+    && !/\s/.test(key)
+    && key.length % 4 === 0
+    && base64PublicKeyPattern.test(key)
+}
+
 export interface AccountActions {
   account: () => AccountState
   login: (token: string) => void
@@ -67,21 +78,34 @@ export function createDeviceStore(options: CreateDeviceStoreOptions = {}) {
         publicKey: '',
         setPublicKey(key) {
           set((state) => {
-            state.publicKey = key
+            state.publicKey = isValidStoredPublicKey(key) ? key : ''
           })
         },
         getPublicCryptoKey: async () => {
           const state = get()
           if (state.publicKey !== '') {
-            const keyData = base64ToArrayBuffer(state.publicKey)
-            const publicKey = await window.crypto.subtle.importKey(
-              'spki',
-              keyData,
-              { name: 'RSA-OAEP', hash: 'SHA-256' },
-              false,
-              ['encrypt'],
-            )
-            return publicKey
+            if (!isValidStoredPublicKey(state.publicKey)) {
+              set((draft) => {
+                draft.publicKey = ''
+              })
+              return undefined
+            }
+            try {
+              const keyData = base64ToArrayBuffer(state.publicKey)
+              const publicKey = await window.crypto.subtle.importKey(
+                'spki',
+                keyData,
+                { name: 'RSA-OAEP', hash: 'SHA-256' },
+                false,
+                ['encrypt'],
+              )
+              return publicKey
+            }
+            catch {
+              set((draft) => {
+                draft.publicKey = ''
+              })
+            }
           }
           return undefined
         },

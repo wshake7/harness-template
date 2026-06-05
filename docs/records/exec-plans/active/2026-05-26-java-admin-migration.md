@@ -6,7 +6,7 @@
 
 **Architecture:** The Java service is a parallel Spring Boot 3.x service, initially running on port `3002` while the Go service keeps port `3001`. The implementation follows the migration guide in `docs/develop/java-admin-migration.md`: Controller handles HTTP protocol, application services own business orchestration, Easy Query owns persistence, infrastructure packages isolate Redis, Sa-Token, jCasbin, Temporal, MinIO, Milvus, and AI integrations. Each stage must be independently testable and must not require deleting or disabling `backend/go/admin`.
 
-**Tech Stack:** Spring Boot 3.x latest stable line, Java 25, Gradle, Flyway, Lombok, linpeilie/mapstruct-plus, dromara/easy-query v3, Sa-Token Java, jCasbin, Spring Data Redis, Temporal Java SDK, MinIO Java SDK, Knife4j, Micrometer, Actuator.
+**Tech Stack:** Spring Boot 3.x latest stable line, Java 25, Gradle, Flyway, Lombok, linpeilie/mapstruct-plus, dromara/easy-query v3, Sa-Token Java, jCasbin, Spring Data Redis, Temporal Java SDK, LangChain4j, MinIO Java SDK, Knife4j, Micrometer, Actuator.
 
 ---
 
@@ -363,7 +363,7 @@
 
   - Tests fail before filters/interceptor exist and pass after wiring.
 
-- [ ] **Step 2.4: 实现 jCasbin 权限拦截**
+- [x] **Step 2.4: 实现 jCasbin 权限拦截**
 
   Files:
 
@@ -391,7 +391,7 @@
 
 ### Milestone 3: 数据模型和系统管理 CRUD
 
-- [ ] **Step 3.1: 建 Easy Query 实体和 Flyway baseline**
+- [x] **Step 3.1: 建 Easy Query 实体和 Flyway baseline**
 
   Files:
 
@@ -415,7 +415,7 @@
 
   - Tests fail before migration and entity metadata exist and pass after baseline is complete.
 
-- [ ] **Step 3.2: 建 mapstruct-plus 转换层**
+- [x] **Step 3.2: 建 mapstruct-plus 转换层**
 
   Files:
 
@@ -812,7 +812,8 @@ Observability checks:
 ## 进度记录
 
 - [x] 2026-05-26: 移植指南已建立在 `docs/develop/java-admin-migration.md`。
-- [x] 2026-05-26: Java 技术栈已固定为 Spring Boot 3.x、Java 25、Gradle、Flyway、Lombok、mapstruct-plus、easy-query v3、Sa-Token、jCasbin、Spring Data Redis、Temporal、MinIO、Knife4j、Micrometer/Actuator。
+- [x] 2026-05-26: Java 技术栈已固定为 Spring Boot 3.x、Java 25、Gradle、Flyway、Lombok、mapstruct-plus、easy-query v3、Sa-Token、jCasbin、Spring Data Redis、Temporal、LangChain4j、MinIO、Knife4j、Micrometer/Actuator。
+- [x] 2026-05-26: Java admin 已移除主代码中的 JdbcTemplate 业务持久化，改为经 Easy Query client 适配层访问；同时补齐 Flyway baseline、Easy Query 方言和 LangChain4j 依赖/调用边界。
 - [ ] Milestone 0: 基线冻结。
 - [ ] Milestone 1: Java 工程骨架。
 - [ ] Milestone 2: 认证、加密和权限基础。
@@ -830,3 +831,6 @@ Observability checks:
 - 2026-05-26: ORM 使用 `dromara/easy-query` v3 最新稳定版；原因是用户指定，并且其 entity/proxy/query 模式适合承接现有 GORM model 和查询。
 - 2026-05-26: 类转换使用 `linpeilie/mapstruct-plus`；原因是统一 DTO、VO、request、response 和 entity 转换边界，减少手写拷贝。
 - 2026-05-26: API 文档使用 Knife4j；原因是用户指定，迁移时仍需保持 OpenAPI/Swagger contract 可核对。
+- 2026-05-26: AI 编排使用 LangChain4j；原因是用户指定，后续 RAG、ChatModel、工具调用和 Agent 迁移以 LangChain4j 为边界。
+- 2026-05-26: 对已有 Go schema 启用 Flyway `baseline-on-migrate`；原因是 `public` schema 非空但没有 `flyway_schema_history` 时，Flyway 默认会拒绝启动。
+- 2026-05-26: Easy Query 主键字段统一标记 `generatedKey = true`，插入通过 `executeRows(true)` 回填；原因是 PostgreSQL `BIGSERIAL` id 需要由 ORM 显式回写到实体，后续更新、删除和查询依赖该 id。

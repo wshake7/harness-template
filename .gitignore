@@ -1,4 +1,5 @@
 config.local.yaml*
+.gradle
 
 # OS / editor
 .DS_Store

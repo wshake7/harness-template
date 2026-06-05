@@ -1,0 +1,13 @@
+{
+  "_description": "Golden test parameters for cross-language encryption protocol verification",
+  "timestamp": 1711411200000,
+  "requestId": "test-request-id-0001",
+  "queryParams": {
+    "page": "1",
+    "pageSize": "10"
+  },
+  "plainBody": "{\"username\":\"admin\"}",
+  "expectedAad": "X-Request-ID=test-request-id-0001&X-Timestamp=1711411200000&page=1&pageSize=10",
+  "responsePlainBody": "{\"code\":1,\"msg\":\"success\",\"data\":null}",
+  "_note": "RSA key pair, AES key, and encrypted values are generated at test runtime. See CryptoServiceTests.java."
+}

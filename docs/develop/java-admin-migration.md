@@ -64,6 +64,7 @@ Java 版 admin 采用下面的技术栈。Spring Boot 固定在 3.x 最新稳定
 | 权限 | jCasbin | 要兼容现有 `sys_role`、`sys_resource_*`、Casbin rule 数据。 |
 | Redis | Spring Data Redis | 用于会话、缓存、加密 key、nonce 等。 |
 | Temporal | Temporal Java SDK | namespace、task queue、workflow 名称要与 Go 侧兼容或显式分版本。 |
+| AI 编排 | LangChain4j | 用于 ChatModel、RAG、EmbeddingStore、工具调用和后续 Agent 编排。 |
 | 对象存储 | MinIO Java SDK | 保持上传、预签名、完成上传语义。 |
 | API 文档 | Knife4j | 路由、请求体、响应体和业务 code 要对齐现有 Swagger/OpenAPI。 |
 | 可观测性 | Micrometer + Actuator | 对齐 `/metrics`、健康检查和 Prometheus 采集目标。 |
@@ -257,8 +258,8 @@ Go 当前 model 位于 `backend/go/admin/internal/services/orm/models`，Java �
 
 ### 阶段 6：AI Agent
 
-- 迁移 ChatModel 工厂、embedding、retriever、indexer、memory、工具调用和 Agent 编排。
-- Java 生态不一定有 Eino 的直接等价物，可以先以应用服务接口隔离，实现最小对话和 RAG，再迁移 Plan-Execute-Replan。
+- 基于 LangChain4j 迁移 ChatModel 工厂、embedding、retriever、indexer、memory、工具调用和 Agent 编排。
+- 先以应用服务接口隔离，实现最小对话和 RAG，再迁移 Plan-Execute-Replan。
 - MCP SSE 工具、Prometheus 告警、数据库 CRUD 工具和内部文档搜索要分批接入。
 
 验收：

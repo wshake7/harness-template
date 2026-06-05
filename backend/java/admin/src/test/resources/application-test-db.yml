@@ -1,0 +1,44 @@
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+easy-query:
+  enable: true
+  database: pgsql
+
+sa-token:
+  token-name: token
+  is-read-cookie: true
+  is-read-header: true
+  timeout: 2592000
+  cookie:
+    http-only: true
+
+server:
+  port: 3002
+
+admin:
+  rest-prefix: /api
+  default-language: zh-CN
+  auth:
+    token-name: token
+  temporal:
+    enabled: false
+  storage:
+    enabled: false
+  milvus:
+    enabled: false
+  ai:
+    embedding:
+      provider: ark
+      model: text-embedding-v3
+      dimensions: 2048
+    knowledge:
+      collection: biz
+    memory:
+      type: memory
+
+logging:
+  level:
+    cn.harnesstemplate: DEBUG

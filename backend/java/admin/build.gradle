@@ -1,0 +1,96 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.9'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'cn.harnesstemplate'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    mapstructPlusVersion = '1.4.8'
+    knife4jVersion = '4.5.0'
+    saTokenVersion = '1.44.0'
+    easyQueryVersion = '3.2.10'
+    langChain4jVersion = '1.12.1'
+}
+
+dependencies {
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Configuration processor
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // MapStruct Plus
+    implementation "io.github.linpeilie:mapstruct-plus-spring-boot-starter:${mapstructPlusVersion}"
+    annotationProcessor "io.github.linpeilie:mapstruct-plus-processor:${mapstructPlusVersion}"
+
+    // Knife4j
+    implementation "com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:${knife4jVersion}"
+
+    // Sa-Token
+    implementation "cn.dev33:sa-token-spring-boot3-starter:${saTokenVersion}"
+
+    // jCasbin
+    implementation 'org.casbin:jcasbin:1.55.0'
+
+    // Password encoder (bcrypt matching Go's bcrypt.MinCost)
+    implementation 'org.springframework.security:spring-security-crypto'
+
+    // Temporal
+    implementation 'io.temporal:temporal-sdk:1.30.0'
+
+    // Micrometer (included via actuator, explicit for Prometheus)
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Database
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.postgresql:postgresql'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+
+    // Easy Query
+    implementation "com.easy-query:sql-springboot-starter:${easyQueryVersion}"
+
+    // LangChain4j
+    implementation "dev.langchain4j:langchain4j:${langChain4jVersion}"
+
+    // H2 for testing (lightweight tests that don't need Postgres)
+    testImplementation 'com.h2database:h2'
+
+    // Testcontainers for integration tests needing real PostgreSQL
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.testcontainers:junit-jupiter'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

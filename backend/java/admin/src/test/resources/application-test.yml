@@ -1,0 +1,59 @@
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+  flyway:
+    enabled: false
+
+  # Default in-memory H2 for fast tests that don't need Postgres
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+
+easy-query:
+  enable: true
+  database: h2
+
+knife4j:
+  enable: false
+
+sa-token:
+  token-name: token
+  is-read-cookie: true
+  is-read-header: true
+  timeout: 2592000
+  cookie:
+    http-only: true
+
+server:
+  port: 3002
+
+admin:
+  rest-prefix: /api
+  default-language: zh-CN
+  auth:
+    token-name: token
+  temporal:
+    enabled: false
+  storage:
+    enabled: false
+  milvus:
+    enabled: false
+  ai:
+    embedding:
+      provider: ark
+      model: text-embedding-v3
+      dimensions: 2048
+    knowledge:
+      collection: biz
+    memory:
+      type: memory
+
+logging:
+  level:
+    cn.harnesstemplate: DEBUG
